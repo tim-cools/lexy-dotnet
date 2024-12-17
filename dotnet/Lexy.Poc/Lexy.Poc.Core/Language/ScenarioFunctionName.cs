@@ -1,4 +1,5 @@
 using Lexy.Poc.Core.Parser;
+using Microsoft.Extensions.Configuration;
 
 namespace Lexy.Poc.Core.Language
 {
@@ -6,9 +7,10 @@ namespace Lexy.Poc.Core.Language
     {
         public string Value { get; private set; }
 
-        public IComponent Parse(Line line, Components components)
+        public IComponent Parse(ParserContext parserContext)
         {
-            Value = line.Parameter();
+            var line = parserContext.CurrentLine;
+            Value = line.TokenValue(1);
             return this;
         }
 

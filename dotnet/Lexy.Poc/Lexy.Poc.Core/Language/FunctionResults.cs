@@ -5,16 +5,21 @@ using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class FunctionResult : IComponent
+    public class FunctionResults : IComponent
     {
         public IList<VariableDefinition> Variables { get; } = new List<VariableDefinition>();
 
-        public IComponent Parse(Line line, Components components)
+        public IComponent Parse(ParserContext parserContext)
         {
+            var line = parserContext.CurrentLine;
+
             var variableDefinition = VariableDefinition.Parse(line);
             if (variableDefinition.Default != null)
-                throw new InvalidOperationException("Result variable " + variableDefinition.Name +
-                                                    " should not have a default value. (Line:" + line + ")");
+            {
+                parserContext.Fail(
+                    $"Result variable {variableDefinition.Name} should not have a default value. (Line:{line})");
+                return null;
+            }
             Variables.Add(variableDefinition);
 
             return this;

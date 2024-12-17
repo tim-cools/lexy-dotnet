@@ -12,6 +12,8 @@ namespace Lexy.Poc.Core.Parser
         public string Content { get; }
         public string TrimmedContent { get; }
 
+        internal Token[] Tokens { get; private set; }
+
         public Line(int index, string line, string[] code)
         {
             this.code = code;
@@ -70,6 +72,7 @@ namespace Lexy.Poc.Core.Parser
 
         public bool IsEmpty() => Content.Length == 0;
 
+        /*
         public string FirstTokenName()
         {
             var indexOfSpace = TrimmedContent.IndexOf(" ", StringComparison.Ordinal);
@@ -80,6 +83,26 @@ namespace Lexy.Poc.Core.Parser
         {
             var indexOfSpace = TrimmedContent.IndexOf(" ", StringComparison.Ordinal);
             return indexOfSpace == -1 ? string.Empty : TrimmedContent[(indexOfSpace + 1)..].Trim();
+        }*/
+
+        internal void Tokenize(ITokenizer tokenizer, ParserContext parserContext)
+        {
+            Tokens = tokenizer.Tokenize(this, parserContext);
+        }
+
+        public string TokenValue(int index)
+        {
+            return index >= 0 && index <= Tokens.Length - 1 ? Tokens[index].Value : null;
+        }
+
+        public bool IsTokenType<T>(int index)
+        {
+            return index >= 0 && index <= Tokens.Length - 1 && Tokens[index].GetType() == typeof(T);
+        }
+
+        public Type TokenType<T>(int index)
+        {
+            return index >= 0 && index <= Tokens.Length - 1 ? Tokens[index].GetType() : null;
         }
     }
 }

@@ -44,8 +44,10 @@ namespace Lexy.Poc.Core.Parser
 
         private void WriteResult(Function function, ClassWriter stringWriter, Components components)
         {
-            WriteVariables(stringWriter, function.Result.Variables, components);
-            WriteResultMethod(stringWriter, function.Result.Variables);
+            var variables = function.Results.Variables;
+
+            WriteVariables(stringWriter, variables, components);
+            WriteResultMethod(stringWriter, variables);
         }
 
         private void WriteResultMethod(ClassWriter stringWriter, IList<VariableDefinition> resultVariables)

@@ -117,12 +117,12 @@ namespace Lexy.Poc.Core.Specifications
                 return;
             }
 
-            if (function.FailedException != null)
+            if (function.FailedMessages.Any())
             {
+                var message = function.FailedMessages.Single();
                 if (scenario.ExpectError.HasValue)
                 {
-                    var message = function.FailedException.Message;
-                    if (message.StartsWith(scenario.ExpectError.Message))
+                    if (message.Contains(scenario.ExpectError.Message))
                     {
                         context.Success(scenario);
                     }
@@ -139,6 +139,11 @@ namespace Lexy.Poc.Core.Specifications
                 return;
             }
 
+            if (scenario.ExpectError.HasValue)
+            {
+                context.Fail(scenario, $"Exception expected but didn't occur: {scenario.ExpectError.Message}");
+                return;
+            }
 
             var compiler = new LexyCompiler();
             var environment = compiler.Compile(components, function);
@@ -147,12 +152,12 @@ namespace Lexy.Poc.Core.Specifications
             var result = executable.Run(values);
             var validationResult = new StringWriter();
 
-            foreach (var expected in scenario.Result.Assignments)
+            foreach (var expected in scenario.Results.Assignments)
             {
                 var actual = result[expected.Name];
 
                 var expectedValue = TypeConverter.Convert(environment, expected.Value,
-                    function.Result.GetParameterType(expected.Name));
+                    function.Results.GetParameterType(expected.Name));
 
                 if (Comparer.Default.Compare(actual, expectedValue) != 0)
                 {

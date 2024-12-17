@@ -7,8 +7,9 @@ namespace Lexy.Poc.Core.Language
     {
         public IList<string> Lines { get; } = new List<string>();
 
-        public IComponent Parse(Line line, Components components)
+        public IComponent Parse(ParserContext parserContext)
         {
+            var line = parserContext.CurrentLine;
             Lines.Add(line.TrimmedContent);
             return this;
         }

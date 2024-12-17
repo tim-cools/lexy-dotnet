@@ -8,8 +8,9 @@ namespace Lexy.Poc.Core.Language
     {
         public IList<FunctionInclude> Definitions { get; } = new List<FunctionInclude>();
 
-        public IComponent Parse(Line line, Components components)
+        public IComponent Parse(ParserContext parserContext)
         {
+            var line = parserContext.CurrentLine;
             if (line.IsEmpty()) return this;
 
             var definition = FunctionInclude.Parse(line);

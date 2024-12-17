@@ -8,8 +8,10 @@ namespace Lexy.Poc.Core.Language
         public TableHeaders Headers { get; private set; }
         public IList<TableRow> Rows { get; } = new List<TableRow>();
 
-        public IComponent Parse(Line line, Components components)
+        public IComponent Parse(ParserContext parserContext)
         {
+            var line = parserContext.CurrentLine;
+
             if (line.IsEmpty()) return this;
 
             if (Headers == null)

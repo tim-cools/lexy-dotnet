@@ -7,8 +7,10 @@ namespace Lexy.Poc.Core.Language
     {
         public IList<VariableDefinition> Variables { get; } = new List<VariableDefinition>();
 
-        public IComponent Parse(Line line, Components components)
+        public IComponent Parse(ParserContext parserContext)
         {
+            var line = parserContext.CurrentLine;
+
             if (line.IsEmpty()) return this;
 
             var variableDefinition = VariableDefinition.Parse(line);

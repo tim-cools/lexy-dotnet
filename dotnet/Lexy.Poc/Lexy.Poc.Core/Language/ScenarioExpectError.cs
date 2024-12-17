@@ -7,9 +7,10 @@ namespace Lexy.Poc.Core.Language
         public string Message { get; private set; }
         public bool HasValue { get => Message != null; }
 
-        public IComponent Parse(Line line, Components components)
+        public IComponent Parse(ParserContext parserContext)
         {
-            Message = line.Parameter();
+            var line = parserContext.CurrentLine;
+            Message = line.TokenValue(1);
             return this;
         }
     }

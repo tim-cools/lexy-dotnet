@@ -1,19 +1,21 @@
-using System;
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
     public abstract class RootComponent : IRootComponent
     {
-        public Exception FailedException { get; private set; }
+        private IList<string> failedMessages { get; } = new List<string>();
+
+        public IEnumerable<string> FailedMessages => failedMessages;
 
         public abstract string TokenName { get; }
 
-        public abstract IComponent Parse(Line line, Components components);
+        public abstract IComponent Parse(ParserContext parserContext);
 
-        public void Fail(Exception exception)
+        public void Fail(string message)
         {
-            FailedException = exception;
+            failedMessages.Add(message);
         }
     }
 }

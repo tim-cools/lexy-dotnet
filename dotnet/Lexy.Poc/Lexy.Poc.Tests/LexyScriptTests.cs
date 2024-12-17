@@ -9,8 +9,8 @@ namespace Lexy.Poc
         [Test]
         public void TestSimpleReturn()
         {
-            var script = LexyScript.Create(@"Function: Test simple return
-  Result
+            var script = LexyScript.Create(@"Function: TestSimpleReturn
+  Results
     int Result
   Code
     Result = 777");
@@ -21,10 +21,10 @@ namespace Lexy.Poc
         [Test]
         public void TestParameterDefaultReturn()
         {
-            var script = LexyScript.Create(@"Function: Test simple return
+            var script = LexyScript.Create(@"Function: TestSimpleReturn
   Parameters
     int Input = 5
-  Result
+  Results
     int Result
   Code
     Result = Input");
@@ -35,11 +35,11 @@ namespace Lexy.Poc
         [Test]
         public void TestAssignmentReturn()
         {
-            var script = LexyScript.Create(@"Function: Test simple return
+            var script = LexyScript.Create(@"Function: TestSimpleReturn
   Parameters
     int Input = 5
 
-  Result
+  Results
     int Result
   Code
     Result = Input");

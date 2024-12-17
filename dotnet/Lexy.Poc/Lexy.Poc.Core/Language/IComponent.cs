@@ -4,6 +4,6 @@ namespace Lexy.Poc.Core.Language
 {
     public interface IComponent
     {
-        IComponent Parse(Line line, Components components);
+        IComponent Parse(ParserContext parserContext);
     }
 }

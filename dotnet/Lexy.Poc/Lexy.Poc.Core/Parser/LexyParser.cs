@@ -11,15 +11,15 @@ namespace Lexy.Poc.Core.Parser
         public Components ParseFile(string fileName)
         {
             var code = File.ReadAllLines(fileName);
-            var lines = code.Select((line, index) => new Line(index, line, code));
 
-            return Parse(lines);
+            return Parse(code);
         }
 
-        public Components Parse(IEnumerable<Line> lines)
+        public Components Parse(string[] code)
         {
-            if (lines == null) throw new ArgumentNullException(nameof(lines));
+            if (code == null) throw new ArgumentNullException(nameof(code));
 
+            var context = new ParserContext();
             var components = new Components();
             var currentIndent = 0;
 
@@ -27,97 +27,74 @@ namespace Lexy.Poc.Core.Parser
             IComponent currentComponent = null;
 
             var componentStack = new Stack<IComponent>();
-            var failed = false;
+            var lines = code.Select((line, index) => new Line(index, line, code));
 
             foreach (var line in lines)
             {
+                context.ProcessLine(line);
+
                 var indent = line.Indent();
                 if (indent == 0 && !line.IsComment() && !line.IsEmpty())
                 {
-                    root = GetToken(line);
+                    root = GetToken(line, context);
                     components.Add(root);
 
                     currentComponent = root;
                     currentIndent = indent;
 
-                    failed = false;
                     componentStack.Clear();
+                    continue;
                 }
-                else if (!failed)
+
+                if (line.IsComment() || line.IsEmpty())
                 {
-                    if (line.IsComment() || line.IsEmpty())
+                    currentComponent?.Parse(context);
+                    continue;
+                }
+
+                if (currentComponent == null)
+                {
+                    context.Fail("Unexpected line: " + line.Content);
+                    continue;
+                }
+
+                if (indent <= currentIndent)
+                {
+                    currentComponent = componentStack.Pop();
+                }
+
+                try
+                {
+                    var component = currentComponent.Parse(context);
+                    if (component != currentComponent)
                     {
-                        currentComponent?.Parse(line, components);
+                        componentStack.Push(currentComponent);
+                        currentComponent = component;
+                        currentIndent = indent;
                     }
-                    else
-                    {
-                        if (currentComponent == null)
-                        {
-                            throw new InvalidOperationException($"Invalid syntax: {line};");
-                        }
-
-                        try
-                        {
-                            if (currentComponent is RootComponent && indent < currentIndent
-                             || !(currentComponent is RootComponent) && indent <= currentIndent)
-                            {
-                                currentComponent = componentStack.Pop();
-                            }
-
-                            var component = currentComponent.Parse(line, components);
-                            if (component != currentComponent)
-                            {
-                                componentStack.Push(currentComponent);
-                                currentComponent = component;
-                            }
-
-                            currentIndent = indent;
-                        }
-                        catch (InvalidOperationException exception)
-                        {
-                            Console.Write("Parse token failed: " + exception);
-
-                            componentStack.Clear();
-                            root.Fail(exception);
-                            failed = true;
-                        }
-                    }
+                }
+                catch (Exception e)
+                {
+                    currentComponent = null;
                 }
             }
 
             return components;
         }
 
-        private IRootComponent GetToken(Line line)
+        private IRootComponent GetToken(Line line, ParserContext context)
         {
-            var tokenName = TokenName.Parse(line);
+            var tokenName = ComponentName.Parse(line, context);
 
-            return tokenName.Name switch
+            return tokenName?.Name switch
             {
-                TokenNames.Function => Function.Parse(tokenName),
-                TokenNames.Enum => EnumDefinition.Parse(tokenName),
-                TokenNames.Scenario => Scenario.Parse(tokenName),
-                TokenNames.Table => Table.Parse(tokenName),
+                null => null,
+                TokenNames.FunctionComponent => Function.Parse(tokenName),
+                TokenNames.EnumComponent => EnumDefinition.Parse(tokenName),
+                TokenNames.ScenarioComponent => Scenario.Parse(tokenName),
+                TokenNames.TableComponent => Table.Parse(tokenName),
                 _ => throw new InvalidOperationException($"Unknown keyword: {tokenName.Name}")
             };
         }
-    }
-
-    internal class TokenNames
-    {
-        public const string Function = "Function";
-        public const string Enum = "Enum";
-        public const string Table = "Table";
-        public const string Scenario = "Scenario";
-
-        public const string Include = "Include";
-        public const string Parameters = "Parameters";
-        public const string Result = "Result";
-        public const string Code = "Code";
-        public const string ExpectError = "ExpectError";
-
-        public const string Comment = "#";
-        public const char CommentChar = '#';
-        public const char TableSeparator = '|';
     }
 }

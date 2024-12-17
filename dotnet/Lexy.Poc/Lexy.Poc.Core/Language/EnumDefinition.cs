@@ -16,18 +16,19 @@ namespace Lexy.Poc.Core.Language
             Name.ParseName(name);
         }
 
-        internal static EnumDefinition Parse(TokenName name)
+        internal static EnumDefinition Parse(ComponentName name)
         {
             return new EnumDefinition(name.Parameter);
         }
 
-        public override IComponent Parse(Line line, Components components)
+        public override IComponent Parse(ParserContext parserContext)
         {
+            var line = parserContext.CurrentLine;
             if (line.IsEmpty()) return this;
 
             if (line.IsComment())
             {
-                Comments.Parse(line, components);
+                Comments.Parse(parserContext);
             }
             else
             {

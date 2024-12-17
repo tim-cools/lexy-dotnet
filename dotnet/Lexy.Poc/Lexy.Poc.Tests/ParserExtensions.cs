@@ -11,10 +11,8 @@ namespace Lexy.Poc
         public static Function ParseFunction(this LexyParser parser, string code)
         {
             var codeLines = code.Split(Environment.NewLine);
-            var lines = codeLines
-                .Select((line, index) => new Line(index, line, codeLines));
 
-            var typeSystem = parser.Parse(lines);
+            var typeSystem = parser.Parse(codeLines);
 
             if (typeSystem.Count != 1)
             {
@@ -27,7 +25,7 @@ namespace Lexy.Poc
             {
                 throw new InvalidOperationException("Token not a function. Actual: " + first?.GetType());
             }
-            function.FailedException.ShouldBeNull();
+            function.FailedMessages.ShouldBeEmpty();
 
             return function;
         }
@@ -35,10 +33,7 @@ namespace Lexy.Poc
         public static Components ParseFunctionCode(this LexyParser parser, string code)
         {
             var codeLines = code.Split(Environment.NewLine);
-            var lines = codeLines
-                .Select((line, index) => new Line(index, line, codeLines));
-
-            var typeSystem = parser.Parse(lines);
+            var typeSystem = parser.Parse(codeLines);
 
             if (typeSystem.Count != 1)
             {
@@ -51,7 +46,7 @@ namespace Lexy.Poc
             {
                 throw new InvalidOperationException("Token not a function. Actual: " + first?.GetType());
             }
-            function.FailedException.ShouldBeNull();
+            function.FailedMessages.ShouldBeEmpty();
 
             return typeSystem;
         }
