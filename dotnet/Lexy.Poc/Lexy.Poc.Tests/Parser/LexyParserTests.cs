@@ -2,7 +2,7 @@ using Lexy.Poc.Core.Parser;
 using NUnit.Framework;
 using Shouldly;
 
-namespace Lexy.Poc
+namespace Lexy.Poc.Parser
 {
     public class LexyParserTests
     {

@@ -7,23 +7,39 @@ namespace Lexy.Poc.Core.Language
 {
     public class TableRow
     {
-        public IList<string> Values { get; } = new List<string>();
+        public IList<ILiteralToken> Values { get; } = new List<ILiteralToken>();
 
-        private TableRow(string[] values)
+        private TableRow(ILiteralToken[] values)
         {
             Values = values;
         }
 
-        public static TableRow Parse(Line line)
+        public static TableRow Parse(ParserContext context)
         {
-            throw new NotSupportedException();
-            /* var values = line.TrimmedContent
-                .Trim(TokenValues.TableSeparator)
-                .Split(TokenValues.TableSeparator)
-                .Select(part => part.Trim())
-                .ToArray();
+            var index = 0;
+            var validator = context.ValidateTokens<TableHeaders>();
 
-            return new TableRow(values);*/
+            if (!validator.Type<TableSeparatorToken>(index).IsValid)
+            {
+                return null;
+            }
+
+            var tokens = new List<ILiteralToken>();
+            while (++index < context.CurrentLine.Tokens.Length)
+            {
+                if (!validator
+                    .IsLiteralToken(index)
+                    .Type<TableSeparatorToken>(index + 1)
+                    .IsValid)
+                {
+                    return null;
+                }
+
+                var token = context.CurrentLine.LiteralToken(index++);
+                tokens.Add(token);
+            }
+
+            return new TableRow(tokens.ToArray());
         }
     }
 }

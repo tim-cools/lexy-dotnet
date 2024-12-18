@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Shouldly;
 
-namespace Lexy.Poc
+namespace Lexy.Poc.Compiler
 {
     public class LexyScriptTests
     {

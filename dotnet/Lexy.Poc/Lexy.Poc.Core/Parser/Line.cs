@@ -110,5 +110,10 @@ namespace Lexy.Poc.Core.Parser
         {
             return (T) Tokens[index];
         }
+
+        public ILiteralToken LiteralToken(int index)
+        {
+            return index >= 0 && index <= Tokens.Length - 1 ? Tokens[index] as ILiteralToken : null;
+        }
     }
 }

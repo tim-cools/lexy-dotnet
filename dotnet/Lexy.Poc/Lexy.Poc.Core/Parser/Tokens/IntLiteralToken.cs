@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace Lexy.Poc.Core.Parser
 {
-    internal class IntLiteralToken : Token
+    public class IntLiteralToken : Token, ILiteralToken
     {
         public int NumberValue { get; }
 

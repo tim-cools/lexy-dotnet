@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
@@ -14,15 +13,38 @@ namespace Lexy.Poc.Core.Language
             Values = values;
         }
 
-        public static TableHeaders Parse(Line line)
+        public static TableHeaders Parse(ParserContext context)
         {
-            throw new NotSupportedException();
-            /* var headers = line.TrimmedContent.Trim(TokenValues.TableSeparator)
-                .Split(TokenValues.TableSeparator)
-                .Select(value => TableHeader.Parse(value, line))
-                .ToArray();
+            var index = 0;
+            var validator = context.ValidateTokens<TableHeaders>();
 
-            return new TableHeaders(headers); */
+            if (!validator.Type<TableSeparatorToken>(index).IsValid)
+            {
+                return null;
+            }
+
+            var headers = new List<TableHeader>();
+            while (++index < context.CurrentLine.Tokens.Length)
+            {
+                if (!validator
+                        .Type<StringLiteralToken>(index)
+                        .Type<StringLiteralToken>(index + 1)
+                        .Type<TableSeparatorToken>(index + 2)
+                        .IsValid)
+                {
+                    return null;
+                }
+
+                var typeName = context.CurrentLine.TokenValue(index);
+                var name = context.CurrentLine.TokenValue(++index);
+
+                var header = TableHeader.Parse(name, typeName);
+                headers.Add(header);
+
+                ++index;
+            }
+
+            return new TableHeaders(headers.ToArray());
         }
     }
 }

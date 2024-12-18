@@ -2,7 +2,7 @@ using System;
 
 namespace Lexy.Poc.Core.Parser
 {
-    public class QuotedLiteralToken : ParsableToken
+    public class QuotedLiteralToken : ParsableToken, ILiteralToken
     {
         private bool quoteClosed;
 

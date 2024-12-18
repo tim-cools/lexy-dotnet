@@ -30,11 +30,11 @@ namespace Lexy.Poc.Core.Language
             }
             else if (Headers == null)
             {
-                Headers = TableHeaders.Parse(line);
+                Headers = TableHeaders.Parse(context);
             }
             else
             {
-                Rows.Add(TableRow.Parse(line));
+                Rows.Add(TableRow.Parse(context));
             }
 
             return this;

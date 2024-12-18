@@ -116,7 +116,7 @@ namespace Lexy.Poc.Core.Parser
             var token = ValidateType<IntLiteralToken>(index);
             if (token != null && token.NumberValue != value)
             {
-                parserContext.Fail($"Invalid token value. Expected: '{value}' Actual: '{token.Value}'");
+                parserContext.Fail($"Invalid token {index} value. Expected: '{value}' Actual: '{token.Value}'");
                 IsValid = false;
             }
             return this;
@@ -127,7 +127,7 @@ namespace Lexy.Poc.Core.Parser
             var token = ValidateType<NumberLiteralToken>(index);
             if (token != null && token.NumberValue != value)
             {
-                parserContext.Fail($"Invalid token value. Expected: '{value}' Actual: '{token.Value}'");
+                parserContext.Fail($"Invalid token {index} value. Expected: '{value}' Actual: '{token.Value}'");
                 IsValid = false;
             }
             return this;
@@ -138,7 +138,7 @@ namespace Lexy.Poc.Core.Parser
             var token = ValidateType<BooleanLiteral>(index);
             if (token != null && token.BooleanValue != value)
             {
-                parserContext.Fail($"Invalid token value. Expected: '{value}' Actual: '{token.Value}'");
+                parserContext.Fail($"Invalid token {index} value. Expected: '{value}' Actual: '{token.Value}'");
                 IsValid = false;
             }
             return this;
@@ -150,7 +150,7 @@ namespace Lexy.Poc.Core.Parser
             var value = new System.DateTime(year, month, day, hours, minutes, seconds);
             if (token != null && token.DateTimeValue != value)
             {
-                parserContext.Fail($"Invalid token value. Expected: '{value}' Actual: '{token.Value}'");
+                parserContext.Fail($"Invalid token {index} value. Expected: '{value}' Actual: '{token.Value}'");
                 IsValid = false;
             }
             return this;
@@ -162,11 +162,32 @@ namespace Lexy.Poc.Core.Parser
             return this;
         }
 
+        public TokenValidator IsLiteralToken(int index)
+        {
+            if (index >= tokens.Length)
+            {
+                parserContext.Fail($"Invalid token '{index}' Length: '{tokens.Length}'");
+                IsValid = false;
+
+                return this;
+            }
+
+            var token = tokens[index] as ILiteralToken;
+            if (token == null)
+            {
+                parserContext.Fail($"Invalid token {index}  type. Expected: 'ILiteralToken' Actual: '{tokens[index].GetType().Name}'");
+                IsValid = false;
+
+                return this;
+            }
+            return this;
+        }
+
         private T ValidateType<T>(int index) where T: Token
         {
             if (index >= tokens.Length)
             {
-                parserContext.Fail($"Invalid token index '{index}' Length: '{tokens.Length}'");
+                parserContext.Fail($"Invalid token '{index}' Length: '{tokens.Length}'");
                 IsValid = false;
 
                 return null;
@@ -176,7 +197,7 @@ namespace Lexy.Poc.Core.Parser
             var type = token.GetType();
             if (type != typeof(T))
             {
-                parserContext.Fail($"Invalid token type. Expected: '{typeof(T).Name}' Actual: '{type.Name}'");
+                parserContext.Fail($"Invalid token {index}  type. Expected: '{typeof(T).Name}' Actual: '{type.Name}'");
                 IsValid = false;
 
                 return null;
@@ -189,7 +210,7 @@ namespace Lexy.Poc.Core.Parser
             var token = tokens[index];
             if (token.Value != expectedValue)
             {
-                parserContext.Fail($"Invalid token value. Expected: '{expectedValue}' Actual: '{token.Value}'");
+                parserContext.Fail($"Invalid token  {index} value. Expected: '{expectedValue}' Actual: '{token.Value}'");
                 IsValid = false;
             }
             return this;

@@ -2,7 +2,7 @@ using System;
 
 namespace Lexy.Poc.Core.Parser
 {
-    public class BooleanLiteral : Token
+    public class BooleanLiteral : Token, ILiteralToken
     {
         public bool BooleanValue { get; }
 

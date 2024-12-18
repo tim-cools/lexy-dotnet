@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace Lexy.Poc.Core.Parser
 {
-    public class LiteralToken : ParsableToken
+    public class BuildLiteralToken : ParsableToken
     {
         private bool hasMemberAccessor;
         private bool lastMemberAccessor;
 
-        public LiteralToken(char value) : base(value)
+        public BuildLiteralToken(char value) : base(value)
         {
         }
 
@@ -84,7 +84,7 @@ namespace Lexy.Poc.Core.Parser
         }
     }
 
-    public class DateTimeLiteral : ParsableToken
+    public class DateTimeLiteral : ParsableToken, ILiteralToken
     {
         private int index = 0;
 
@@ -163,5 +163,10 @@ namespace Lexy.Poc.Core.Parser
             return ParseTokenResult.Invalid(
                 $@"Unexpected end of line. Closing quote expected. Format: d""2024/12/18 14:17:30""");
         }
+    }
+
+    public interface ILiteralToken
+    {
+        string Value { get; }
     }
 }

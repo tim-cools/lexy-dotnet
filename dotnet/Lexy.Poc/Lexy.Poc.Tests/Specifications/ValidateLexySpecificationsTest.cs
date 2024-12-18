@@ -1,7 +1,7 @@
 using Lexy.Poc.Core.Specifications;
 using NUnit.Framework;
 
-namespace Lexy.Poc
+namespace Lexy.Poc.Specifications
 {
     public class ValidateLexySpecificationsTest
     {

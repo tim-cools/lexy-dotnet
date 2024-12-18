@@ -12,13 +12,14 @@ namespace Lexy.Poc.Core.Parser
                 { TokenValues.CommentChar, value => new CommentToken(value) },
                 { TokenValues.Quote, value => new QuotedLiteralToken(value) },
                 { TokenValues.Assignment, value => new AssignmentOperatorToken() },
+                { TokenValues.TableSeparator, value => new TableSeparatorToken() },
             };
 
         private readonly IDictionary<Func<char, bool>, Func<char, ParsableToken>> tokensValidators =
             new Dictionary<Func<char, bool>, Func<char, ParsableToken>>
             {
                 { char.IsDigit, value => new NumericLiteralToken(value)},
-                { char.IsLetter, value => new LiteralToken(value)},
+                { char.IsLetter, value => new BuildLiteralToken(value)},
                 { char.IsWhiteSpace, value => new WhitespaceToken(value)}
             };
 
