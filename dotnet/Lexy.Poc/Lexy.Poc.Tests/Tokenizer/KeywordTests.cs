@@ -1,3 +1,4 @@
+using Lexy.Poc.Core.Parser.Tokens;
 using NUnit.Framework;
 
 namespace Lexy.Poc.Tokenizer
@@ -57,7 +58,7 @@ namespace Lexy.Poc.Tokenizer
                 .ValidateTokens()
                 .Count(3)
                 .StringLiteral(0, "Value")
-                .AssignmentOperator(1)
+                .Operator(1, OperatorType.Assignment)
                 .MemberAccess(2, "ValidateEnumKeyword.Second")
                 .Assert();
         }

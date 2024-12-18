@@ -1,5 +1,6 @@
 using System;
 using Lexy.Poc.Core.Parser;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
@@ -19,7 +20,7 @@ namespace Lexy.Poc.Core.Language
             var valid = context.ValidateTokens<AssignmentDefinition>()
                 .CountMinimum(3)
                 .StringLiteral(0)
-                .AssignmentOperator(1)
+                .Operator(1, OperatorType.Assignment)
                 .IsValid;
 
             if (!valid) return null;

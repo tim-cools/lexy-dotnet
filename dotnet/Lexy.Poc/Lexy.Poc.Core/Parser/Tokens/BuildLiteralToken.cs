@@ -7,6 +7,15 @@ namespace Lexy.Poc.Core.Parser
 {
     public class BuildLiteralToken : ParsableToken
     {
+        private static char[] terminatorValues = new[]
+        {
+            TokenValues.Space,
+            TokenValues.OpenParentheses,
+            TokenValues.OpenBrackets,
+            TokenValues.CloseParentheses,
+            TokenValues.CloseBrackets,
+        };
+
         private bool hasMemberAccessor;
         private bool lastMemberAccessor;
 
@@ -16,7 +25,7 @@ namespace Lexy.Poc.Core.Parser
 
         public override ParseTokenResult Parse(char value, ParserContext parserContext)
         {
-            if (char.IsWhiteSpace(value))
+            if (terminatorValues.Contains(value))
             {
                 return ParseTokenResult.Finished(false, SealLiteral());
             }
@@ -42,10 +51,11 @@ namespace Lexy.Poc.Core.Parser
                 return ParseTokenResult.InProgress();
             }
 
-            if (value == TokenValues.Quote && Value == "d")
+            if (value == TokenValues.Quote && Value == TokenValues.DateTimeStarter)
             {
                 return ParseTokenResult.InProgress(new DateTimeLiteral());
             }
+
             return ParseTokenResult.Invalid($"Unexpected character: '{value}'");
         }
 

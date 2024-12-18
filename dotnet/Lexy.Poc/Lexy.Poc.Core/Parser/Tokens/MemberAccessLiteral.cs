@@ -1,6 +1,6 @@
 namespace Lexy.Poc.Core.Parser
 {
-    internal class MemberAccessLiteral : Token
+    public class MemberAccessLiteral : Token
     {
         public override string Value { get; }
 

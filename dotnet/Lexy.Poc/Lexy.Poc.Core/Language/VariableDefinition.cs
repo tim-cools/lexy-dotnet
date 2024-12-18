@@ -1,4 +1,5 @@
 using Lexy.Poc.Core.Parser;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
@@ -35,7 +36,7 @@ namespace Lexy.Poc.Core.Language
                 return new VariableDefinition(name, type);
             }
 
-            if (!line.IsTokenType<AssignmentOperatorToken>(2))
+            if (line.Token<OperatorToken>(2).Type != OperatorType.Assignment)
             {
                 context.Fail("Invalid variable declaration token. Expected '='.");
                 return null;

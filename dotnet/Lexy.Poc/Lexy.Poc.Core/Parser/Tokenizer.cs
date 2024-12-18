@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Parser
 {
@@ -11,8 +12,25 @@ namespace Lexy.Poc.Core.Parser
             {
                 { TokenValues.CommentChar, value => new CommentToken(value) },
                 { TokenValues.Quote, value => new QuotedLiteralToken(value) },
-                { TokenValues.Assignment, value => new AssignmentOperatorToken() },
-                { TokenValues.TableSeparator, value => new TableSeparatorToken() },
+                { TokenValues.Assignment, value => new OperatorToken(value) },
+                { TokenValues.Addition, value => new OperatorToken(value) },
+                { TokenValues.Subtraction, value => new OperatorToken(value) },
+                { TokenValues.Multiplication, value => new OperatorToken(value) },
+                { TokenValues.Division, value => new OperatorToken(value) },
+                { TokenValues.Modulus, value => new OperatorToken(value) },
+
+                { TokenValues.OpenParentheses, value => new OperatorToken(value) },
+                { TokenValues.CloseParentheses, value => new OperatorToken(value) },
+                { TokenValues.OpenBrackets, value => new OperatorToken(value) },
+                { TokenValues.CloseBrackets, value => new OperatorToken(value) },
+
+                { TokenValues.GreaterThan, value => new OperatorToken(value) },
+                { TokenValues.LessThan, value => new OperatorToken(value) },
+
+                { TokenValues.NotEqualStart, value => new OperatorToken(value) },
+
+                { TokenValues.And, value => new OperatorToken(value) },
+                { TokenValues.Or, value => new OperatorToken(value) },
             };
 
         private readonly IDictionary<Func<char, bool>, Func<char, ParsableToken>> tokensValidators =

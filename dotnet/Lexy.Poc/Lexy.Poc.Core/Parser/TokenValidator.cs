@@ -1,4 +1,5 @@
 using System;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Parser
 {
@@ -82,10 +83,22 @@ namespace Lexy.Poc.Core.Parser
             return this;
         }
 
-        public TokenValidator AssignmentOperator(int index)
+        public TokenValidator Operator(int index, OperatorType operatorType)
         {
-            Type<AssignmentOperatorToken>(index);
+            if (index >= tokens.Length)
+            {
+                parserContext.Fail($"Invalid token {index} value. Only {tokens.Length} tokens.");
+                IsValid = false;
+                return this;
+            }
 
+            Type<OperatorToken>(index);
+            var token = tokens[index] as OperatorToken;
+            if (token.Type != operatorType)
+            {
+                parserContext.Fail($"Invalid operator token {index} value. Expected: '{operatorType}' Actual: '{token.Type}'");
+                IsValid = false;
+            }
             return this;
         }
 
@@ -207,6 +220,12 @@ namespace Lexy.Poc.Core.Parser
 
         public TokenValidator Value(int index, string expectedValue)
         {
+            if (index >= tokens.Length)
+            {
+                parserContext.Fail($"Invalid token {index} value. Only {tokens.Length} tokens.");
+                IsValid = false;
+                return this;
+            }
             var token = tokens[index];
             if (token.Value != expectedValue)
             {
