@@ -12,7 +12,6 @@ namespace Lexy.Poc.Core.Specifications
 
         private readonly ILogger<SpecificationRunnerContext> logger;
 
-        public IList<string> DebugMessages { get; } = new List<string>();
         public IList<string> Messages { get; } = new List<string>();
 
         public int Failed { get; private set; }
@@ -52,12 +51,6 @@ namespace Lexy.Poc.Core.Specifications
             var log = $"- SUCCESS - {scenario.Name}";
             Messages.Add(log);
             logger.LogInformation(log);
-        }
-
-        public void LogDebug(string message)
-        {
-            DebugMessages.Add(message);
-            logger.LogDebug(message);
         }
 
         public void Add(ISpecificationFileRunner fileRunner)

@@ -9,6 +9,8 @@ namespace Lexy.Poc.Specifications
         [Test]
         public void AllSpecifications()
         {
+            LoggingConfiguration.LogFileNames();
+
             var runner = ServiceProvider.GetRequiredService<ISpecificationsRunner>();
             runner.RunAll("../../../../../../laws/Specifications");
         }

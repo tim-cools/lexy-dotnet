@@ -13,6 +13,13 @@ namespace Lexy.Poc
 {
     public static class LoggingConfiguration
     {
+        private const string ParserLogFile = "parser.log";
+        private const string CompilerLogFile = "compiler.log";
+        private const string ExecutionLogFile = "execution.log";
+        private const string TestsLogFile = "tests.log";
+
+        private static readonly string logRun = $"{DateTime.Now:yyyyMMddHHmmss}-lexy-";
+
         public static ILoggerFactory CreateLoggerFactory()
         {
             var factory = new LoggerFactory();
@@ -22,30 +29,42 @@ namespace Lexy.Poc
 
         public static void ConfigureSerilog()
         {
-            var logRun = $"{DateTime.Now:yyyyMMddHHmmss}-lexy-";
-
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.FromSource<ParserContext>())
-                    .WriteTo.File(logRun + "parser.log"))
+                    .WriteTo.File(FullLogFile(ParserLogFile)))
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.FromSource<CompilerContext>())
-                    .WriteTo.File(logRun + "compiler.log"))
+                    .WriteTo.File(FullLogFile(CompilerLogFile)))
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.FromSource<ExecutionContext>())
-                    .WriteTo.File(logRun + "execution.log"))
+                    .WriteTo.File(FullLogFile(ExecutionLogFile)))
                 .WriteTo.Logger(lc => lc
                     .Filter.ByExcluding(Matching.FromSource<ParserContext>())
                     .Filter.ByExcluding(Matching.FromSource<CompilerContext>())
                     .Filter.ByExcluding(Matching.FromSource<ExecutionContext>())
-                    .WriteTo.File(logRun + "tests.log"))
+                    .WriteTo.File(FullLogFile(TestsLogFile)))
                 .CreateLogger();
         }
 
+        public static void LogFileNames()
+        {
+            Console.WriteLine("Log Files:");
+            Console.WriteLine($"  parser: {FullLogFile(ParserLogFile)}");
+            Console.WriteLine($"  compiler: {FullLogFile(CompilerLogFile)}");
+            Console.WriteLine($"  execution: {FullLogFile(ExecutionLogFile)}");
+            Console.WriteLine($"  tests: {FullLogFile(TestsLogFile)}");
+            Console.WriteLine();
+        }
+
+        private static string FullLogFile(string fileName) => Path.Combine(LogFilesDirectory(), LogFile(fileName));
+
+        private static string LogFile(string fileName) => logRun + fileName;
+
         public static void RemoveOldFiles()
         {
-            var logFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.log");
+            var logFiles = Directory.GetFiles(LogFilesDirectory(), "*.log");
 
             foreach (var logFile in logFiles)
             {
@@ -58,6 +77,11 @@ namespace Lexy.Poc
                     }
                 }
             }
+        }
+
+        private static string LogFilesDirectory()
+        {
+            return Directory.GetCurrentDirectory();
         }
     }
 }

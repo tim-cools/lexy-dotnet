@@ -37,13 +37,6 @@ namespace Lexy.Poc.Core.Specifications
                 Console.WriteLine(message);
             }
 
-            Console.WriteLine("--------------- DEBUG LOGGING ---------------");
-
-            foreach (var message in context.DebugMessages)
-            {
-                Console.WriteLine(message);
-            }
-
             if (context.Failed > 0)
             {
                 Failed(context);
