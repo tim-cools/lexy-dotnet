@@ -71,7 +71,7 @@ namespace Lexy.Poc.Core.Parser
             foreach (var variable in variables)
             {
                 stringWriter.WriteLineStart($"public {components.MapType(variable.Type)} {variable.Name}");
-                if (variable.Default != null) stringWriter.Write($" = {variable.Default.Value}");
+                if (variable.Default != null) stringWriter.Write($" = {FormatLiteralValue(variable.Default)}");
                 stringWriter.Write(";");
                 stringWriter.EndLine();
             }
@@ -83,13 +83,26 @@ namespace Lexy.Poc.Core.Parser
 
             foreach (var line in function.Code.Lines)
             {
-                if (!string.IsNullOrWhiteSpace(line.Value))
+                writer.WriteLineStart();
+                foreach (var token in line.Tokens)
                 {
-                    writer.WriteLine($"{line.Value};");
+                    writer.Write(FormatLiteralValue(token));
                 }
+                writer.WriteLineEnd(";");
             }
 
             writer.CloseScope();
+        }
+
+        private string FormatLiteralValue(Token token)
+        {
+            return token switch
+            {
+                //StringLiteralToken _ => $@"""{token.Value}""",
+                QuotedLiteralToken _ => $@"""{token.Value}""",
+                NumberLiteralToken _ => $@"{token.Value}m",
+                _ => token.Value
+            };
         }
     }
 }

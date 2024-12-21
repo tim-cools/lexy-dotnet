@@ -19,6 +19,9 @@ namespace Lexy.Poc.Parser
             var parser = ServiceProvider.GetRequiredService<ILexyParser>();
             var script = parser.ParseTable(code);
 
+            var context = GetService<IParserContext>();
+            context.Logger.HasErrors().ShouldBeFalse(context.Logger.FormatMessages());
+
             script.Name.Value.ShouldBe("TestTable");
             script.Headers.Values.Count.ShouldBe(2);
             script.Headers.Values[0].Name.ShouldBe("Value");

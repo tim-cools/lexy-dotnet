@@ -17,7 +17,7 @@ namespace Lexy.Poc.Core.Parser
 
             writer.OpenScope($"public enum {name}");
 
-            WriteValues(enumDefinition, writer, components);
+            WriteValues(enumDefinition, writer);
 
             writer.CloseScope();
 
@@ -25,11 +25,11 @@ namespace Lexy.Poc.Core.Parser
 
         }
 
-        private void WriteValues(EnumDefinition enumDefinition, ClassWriter classWriter, Components components)
+        private void WriteValues(EnumDefinition enumDefinition, ClassWriter classWriter)
         {
             foreach (var value in enumDefinition.Assignments)
             {
-                classWriter.WriteLine($"{value.Name} = {value.Value},");
+                classWriter.WriteLine($"{value.Name} = {value.Expression},");
             }
         }
     }

@@ -22,10 +22,7 @@ namespace Lexy.Poc.Core.Parser
                 Message = message;
             }
 
-            public override string ToString()
-            {
-                return $"{(IsError ? "ERROR - " : string.Empty)} {Message}";
-            }
+            public override string ToString() => Message;
         }
 
         private readonly ILogger<ParserContext> logger;
@@ -43,9 +40,7 @@ namespace Lexy.Poc.Core.Parser
 
         public void Log(string message, string componentName)
         {
-            var item = componentName != null
-                ? $"{sourceCodeDocument.CurrentLine?.Index + 1}: ({componentName}) {message}"
-                : $"{sourceCodeDocument.CurrentLine?.Index + 1}: {message}";
+            var item = $"{sourceCodeDocument.CurrentLine?.Index + 1}: {message}";
 
             logger.LogDebug(item);
             logEntries.Add(new LogEntry(componentName, false, item));
@@ -54,9 +49,7 @@ namespace Lexy.Poc.Core.Parser
         public void Fail(string message, string componentName)
         {
             failedMessages++;
-            var item = componentName != null
-                ? $"{sourceCodeDocument.CurrentLine?.Index + 1}: ERROR - ({componentName}) {message}"
-                : $"{sourceCodeDocument.CurrentLine?.Index + 1}: ERROR - {message}";
+            var item = $"{sourceCodeDocument.CurrentLine?.Index + 1}: ERROR - {message}";
 
             logger.LogError(item);
             logEntries.Add(new LogEntry(componentName, true, item));
@@ -64,7 +57,7 @@ namespace Lexy.Poc.Core.Parser
 
         public bool HasErrorMessage(string expectedError)
         {
-            return logEntries.Any(message =>  message.Message.StartsWith(expectedError));
+            return logEntries.Any(message => message.IsError && message.Message.StartsWith(expectedError));
         }
 
         public string FormatMessages()

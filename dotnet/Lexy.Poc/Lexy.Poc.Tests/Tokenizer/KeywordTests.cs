@@ -67,9 +67,9 @@ namespace Lexy.Poc.Tokenizer
         public void TestAssignmentWithDoubleMemberAccess()
         {
             ServiceProvider
-                .TestLine(@"  Value = ValidateEnumKeyword..Second")
+                .TestLine(@"  Value = ValidateEnumKeyword..Second", false)
                 .ValidateTokens()
-                .ExpectError("1: ERROR - Invalid token 30: Unexpected character: '.'. Member accessor should be followed by member name.")
+                .ExpectError("1: ERROR - Invalid token at 30: Unexpected character: '.'. Member accessor should be followed by member name.")
                 .Assert();
         }
 
@@ -77,7 +77,7 @@ namespace Lexy.Poc.Tokenizer
         public void TestAssignmentWithMemberAccessWithoutLastMember()
         {
             ServiceProvider
-                .TestLine(@"  Value = ValidateEnumKeyword.")
+                .TestLine(@"  Value = ValidateEnumKeyword.", false)
                 .ValidateTokens()
                 .ExpectError("1: ERROR - Invalid token at end of line: InvalidToken (Unexpected end of line. Member accessor should be followed by member name.)")
                 .Assert();

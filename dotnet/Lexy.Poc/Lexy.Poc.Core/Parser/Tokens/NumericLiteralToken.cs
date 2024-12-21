@@ -1,10 +1,27 @@
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace Lexy.Poc.Core.Parser
 {
     public class NumberLiteralToken : ParsableToken, ILiteralToken
     {
+        private readonly char[] allowedNextTokensValues = {
+            TokenValues.TableSeparator,
+            TokenValues.Space,
+            TokenValues.Assignment,
+
+            TokenValues.Addition,
+            TokenValues.Subtraction,
+            TokenValues.Multiplication,
+            TokenValues.Division,
+            TokenValues.Modulus,
+            TokenValues.CloseParentheses,
+            TokenValues.CloseBrackets,
+            TokenValues.GreaterThan,
+            TokenValues.LessThan
+        };
+
         private bool hasDecimalSeparator;
         private decimal? numberValue;
 
@@ -48,7 +65,9 @@ namespace Lexy.Poc.Core.Parser
                 return ParseTokenResult.InProgress();
             }
 
-            return Finish();
+            return allowedNextTokensValues.Contains(value)
+                ? Finish()
+                : ParseTokenResult.Invalid($"Invalid number token character: {value}");
         }
 
         public override ParseTokenResult Finalize(ParserContext parserContext)

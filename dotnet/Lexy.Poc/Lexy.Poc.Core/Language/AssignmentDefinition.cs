@@ -1,4 +1,3 @@
-using System;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
@@ -6,12 +5,12 @@ namespace Lexy.Poc.Core.Language
 {
     public class AssignmentDefinition
     {
-        public string Value { get; }
+        public Expression Expression { get; }
         public string Name { get; }
 
-        public AssignmentDefinition(string name, Expression value)
+        public AssignmentDefinition(string name, Expression expression)
         {
-            Value = value.Value;
+            Expression = expression;
             Name = name;
         }
 

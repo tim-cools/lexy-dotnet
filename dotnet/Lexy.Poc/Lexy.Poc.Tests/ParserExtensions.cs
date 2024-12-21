@@ -13,13 +13,14 @@ namespace Lexy.Poc
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
             var codeLines = code.Split(Environment.NewLine);
-            var context = parser.Parse(codeLines, true);
+            var context = parser.Parse(codeLines, false);
 
             return context.Components;
         }
 
         public static Function ParseFunction(this ILexyParser parser, string code) => parser.ParseComponent<Function>(code);
         public static Table ParseTable(this ILexyParser parser, string code) => parser.ParseComponent<Table>(code);
+        public static Scenario ParseScenario(this ILexyParser parser, string code) => parser.ParseComponent<Scenario>(code);
 
         public static T ParseComponent<T>(this ILexyParser parser, string code) where T : RootComponent
         {

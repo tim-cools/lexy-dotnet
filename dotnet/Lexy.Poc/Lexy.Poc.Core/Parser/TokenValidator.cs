@@ -182,7 +182,7 @@ namespace Lexy.Poc.Core.Parser
             var token = tokens[index] as ILiteralToken;
             if (token == null)
             {
-                parserContext.Logger.Fail($"Invalid token {index}  type. Expected: 'ILiteralToken' Actual: '{tokens[index].GetType().Name}'", componentName);
+                parserContext.Logger.Fail($"Invalid token {index}  type. Expected: 'ILiteralToken' Actual: '{tokens[index].GetType().Name}({token.Value})'", componentName);
                 IsValid = false;
 
                 return this;
@@ -204,7 +204,7 @@ namespace Lexy.Poc.Core.Parser
             var type = token.GetType();
             if (type != typeof(T))
             {
-                parserContext.Logger.Fail($"Invalid token {index}  type. Expected: '{typeof(T).Name}' Actual: '{type.Name}'", componentName);
+                parserContext.Logger.Fail($"Invalid token {index}  type. Expected: '{typeof(T).Name}' Actual: '{type.Name}({token.Value})'", componentName);
                 IsValid = false;
 
                 return null;

@@ -14,7 +14,7 @@ namespace Lexy.Poc.Core.Language
             var line = context.CurrentLine;
 
             var variableDefinition = VariableDefinition.Parse(context);
-            if (variableDefinition.Default != null)
+            if (variableDefinition?.Default != null)
             {
                 context.Logger.Fail(
                     $"Result variable {variableDefinition.Name} should not have a default value. (Line:{line})", context.CurrentComponent?.ComponentName);

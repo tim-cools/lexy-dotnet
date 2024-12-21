@@ -36,5 +36,21 @@ namespace Lexy.Poc.Tokenizer
                     .NumberLiteral(0, 456.78m)
                 .Assert();
         }
+
+        [Test]
+        public void TestInvalidDecimalLiteral()
+        {
+            ServiceProvider
+                .TestLine(@"   456d78", false)
+                .ValidateError("1: ERROR - Invalid token at 6: Invalid number token character: d");
+        }
+
+        [Test]
+        public void TestInvalidDecimalOpenParLiteral()
+        {
+            ServiceProvider
+                .TestLine(@"   456(78", false)
+                .ValidateError("1: ERROR - Invalid token at 6: Invalid number token character: (");
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace Lexy.Poc.Parser
             script.Results.Variables[0].Name.ShouldBe("Result");
             script.Results.Variables[0].Type.ShouldBe("number");
             script.Code.Lines.Count.ShouldBe(1);
-            script.Code.Lines[0].Value.ShouldBe("Result=777");
+            script.Code.Lines[0].ToString().ShouldBe("Result=777");
         }
 
         [Test]

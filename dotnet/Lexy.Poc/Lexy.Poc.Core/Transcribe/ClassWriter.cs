@@ -43,15 +43,23 @@ namespace Lexy.Poc.Core.Parser
             WriteLine("}" + suffix);
         }
 
-        public void WriteLineStart(string text)
+        public void WriteLineStart(string text = null)
         {
             WriteIntend();
             Write(text);
         }
 
-        public void Write(string text)
+        public void WriteLineEnd(string text = null)
         {
-            stringWriter.Write(text);
+            stringWriter.WriteLine(text);
+        }
+
+        public void Write(string text = null)
+        {
+            if (text != null)
+            {
+                stringWriter.Write(text);
+            }
         }
 
         public override string ToString()

@@ -111,7 +111,7 @@ namespace Lexy.Poc.Core.Specifications
             {
                 var actual = result[expected.Name];
 
-                var expectedValue = TypeConverter.Convert(environment, expected.Value,
+                var expectedValue = TypeConverter.Convert(environment, expected.Expression.ToString(),
                     function.Results.GetParameterType(expected.Name));
 
                 if (Comparer.Default.Compare(actual, expectedValue) != 0)
@@ -177,7 +177,7 @@ namespace Lexy.Poc.Core.Specifications
                 {
                     throw new InvalidOperationException($"Function parameter '{parameter.Name}' not found.");
                 }
-                var value = GetValue(environment, parameter.Value, type);
+                var value = GetValue(environment, parameter.Expression.ToString(), type);
                 result.Add(parameter.Name, value);
             }
             return result;
