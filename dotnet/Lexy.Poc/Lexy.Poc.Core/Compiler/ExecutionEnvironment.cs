@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using System.Reflection;
 using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.Parser;
-using Microsoft.Extensions.Logging;
+using Lexy.Poc.Core.RunTime;
+using Lexy.Poc.Core.Transcribe;
 
 namespace Lexy.Poc.Core.Compiler
 {
-    public class ExecutionEnvironment
+    public class ExecutionEnvironment : IExecutionEnvironment
     {
         private readonly IList<GeneratedClass> generatedTypes = new List<GeneratedClass>();
         private readonly IDictionary<string, ExecutableFunction> executables = new Dictionary<string, ExecutableFunction>();
         private readonly IDictionary<string, Type> enums = new Dictionary<string, Type>();
         private readonly IDictionary<string, Type> tables = new Dictionary<string, Type>();
+
+        private readonly IExecutionContext executionContext;
+
+        public ExecutionEnvironment(IExecutionContext executionContext)
+        {
+            this.executionContext = executionContext ?? throw new ArgumentNullException(nameof(executionContext));
+        }
 
         public void CreateExecutables(Assembly assembly)
         {
@@ -25,7 +33,7 @@ namespace Lexy.Poc.Core.Compiler
                     case Function _:
                     {
                         var instance = assembly.CreateInstance(generatedClass.FullClassName);
-                        var executable = new ExecutableFunction(instance);
+                        var executable = new ExecutableFunction(instance, executionContext);
 
                         executables.Add(generatedClass.Component.ComponentName, executable);
                         break;
@@ -48,24 +56,14 @@ namespace Lexy.Poc.Core.Compiler
             }
         }
 
-        internal void AddType(GeneratedClass generatedType)
+        public void AddType(GeneratedClass generatedType)
         {
             generatedTypes.Add(generatedType);
         }
 
-        public ExecutableFunction GetFunction(Function function)
+        public CompilerResult Result()
         {
-            return executables[function.ComponentName];
-        }
-
-        public bool ContainsEnum(string type)
-        {
-            return enums.ContainsKey(type);
-        }
-
-        public Type GetEnumType(string type)
-        {
-            return enums[type];
+            return new CompilerResult(executables, enums);
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Parser.Tokens
 {
     public abstract class ParsableToken : Token
     {

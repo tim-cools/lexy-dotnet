@@ -1,11 +1,11 @@
 using System;
 using System.Text;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Parser
 {
     public class Line
     {
-
         public int Index { get; }
 
         internal string Content { get; }
@@ -58,7 +58,7 @@ namespace Lexy.Poc.Core.Parser
 
         public override string ToString()
         {
-            return $"Line {Index + 1}: {Content}";
+            return $"{Index + 1}: {Content}";
         }
 
         public bool IsComment()

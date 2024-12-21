@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Transcribe
 {
     public class ClassWriter
     {
@@ -9,6 +9,11 @@ namespace Lexy.Poc.Core.Parser
 
         private readonly StringWriter stringWriter = new StringWriter();
         private int intend;
+
+        public void WriteLine()
+        {
+            stringWriter.WriteLine();
+        }
 
         public void WriteLine(string text)
         {

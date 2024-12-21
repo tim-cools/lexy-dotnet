@@ -1,6 +1,6 @@
 using Lexy.Poc.Core.Language;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Transcribe
 {
     public class GeneratedClass
     {

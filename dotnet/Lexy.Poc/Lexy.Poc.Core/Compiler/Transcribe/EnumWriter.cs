@@ -1,8 +1,7 @@
 using System;
-using Lexy.Poc.Core.Compiler;
 using Lexy.Poc.Core.Language;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Transcribe
 {
     public class EnumWriter : IRootTokenWriter
     {

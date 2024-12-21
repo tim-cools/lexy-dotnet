@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Lexy.Poc.Core
+namespace Lexy.Poc.Core.RunTime
 {
     public class FunctionResult
     {

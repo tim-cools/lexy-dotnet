@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Poc.Core.Compiler;
 using Lexy.Poc.Core.Language;
+using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Poc.Core.RunTime;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Transcribe
 {
     public class FunctionWriter : IRootTokenWriter
     {
@@ -54,7 +55,7 @@ namespace Lexy.Poc.Core.Parser
 
         private void WriteResultMethod(ClassWriter stringWriter, IList<VariableDefinition> resultVariables)
         {
-            var resultType = $"{typeof(Core.FunctionResult).Namespace}.{nameof(Core.FunctionResult)}";
+            var resultType = $"{typeof(FunctionResult).Namespace}.{nameof(FunctionResult)}";
 
             stringWriter.OpenScope($"public {resultType} __Result()");
             stringWriter.WriteLine($"var result = new {resultType}();");
@@ -79,10 +80,11 @@ namespace Lexy.Poc.Core.Parser
 
         private void WriteRunMethod(Function function, ClassWriter writer)
         {
-            writer.OpenScope("public void __Run()");
+            writer.OpenScope("public void __Run(IExecutionContext executionContext)");
 
             foreach (var line in function.Code.Lines)
             {
+                writer.WriteLine($@"executionContext.LogDebug(""{line.SourceLine}"");");
                 writer.WriteLineStart();
                 foreach (var token in line.Tokens)
                 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Parser.Tokens
 {
     public class DateTimeLiteral : ParsableToken, ILiteralToken
     {

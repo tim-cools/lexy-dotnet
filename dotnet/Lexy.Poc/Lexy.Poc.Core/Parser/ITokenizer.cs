@@ -1,3 +1,5 @@
+using Lexy.Poc.Core.Parser.Tokens;
+
 namespace Lexy.Poc.Core.Parser
 {
     public interface ITokenizer

@@ -1,6 +1,6 @@
 using System;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Parser.Tokens
 {
     public class QuotedLiteralToken : ParsableToken, ILiteralToken
     {

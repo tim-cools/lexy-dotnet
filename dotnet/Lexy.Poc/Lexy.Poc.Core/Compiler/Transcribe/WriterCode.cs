@@ -1,4 +1,4 @@
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Transcribe
 {
     public class WriterCode
     {

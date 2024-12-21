@@ -6,6 +6,7 @@ using System.Linq;
 using Lexy.Poc.Core.Compiler;
 using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.Parser;
+using Lexy.Poc.Core.RunTime;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lexy.Poc.Core.Specifications
@@ -81,13 +82,13 @@ namespace Lexy.Poc.Core.Specifications
 
             if (ValidateErrors(context)) return;
 
-            var environment = lexyCompiler.Compile(components, function);
-            var executable = environment.GetFunction(function);
-            var values = GetValues(scenario.Parameters, function.Parameters, environment);
+            var compilerResult = lexyCompiler.Compile(components, function);
+            var executable = compilerResult.GetFunction(function);
+            var values = GetValues(scenario.Parameters, function.Parameters, compilerResult);
 
             var result = executable.Run(values);
 
-            var validationResultText = GetValidationResult(result, environment);
+            var validationResultText = GetValidationResult(result, compilerResult);
             if (validationResultText.Length > 0)
             {
                 Fail(validationResultText);
@@ -104,14 +105,14 @@ namespace Lexy.Poc.Core.Specifications
             context.Fail(scenario, message);
         }
 
-        private string GetValidationResult(FunctionResult result, ExecutionEnvironment environment)
+        private string GetValidationResult(FunctionResult result, CompilerResult compilerResult)
         {
             var validationResult = new StringWriter();
             foreach (var expected in scenario.Results.Assignments)
             {
                 var actual = result[expected.Name];
 
-                var expectedValue = TypeConverter.Convert(environment, expected.Expression.ToString(),
+                var expectedValue = TypeConverter.Convert(compilerResult, expected.Expression.ToString(),
                     function.Results.GetParameterType(expected.Name));
 
                 if (Comparer.Default.Compare(actual, expectedValue) != 0)
@@ -167,7 +168,7 @@ namespace Lexy.Poc.Core.Specifications
         }
 
         private IDictionary<string, object> GetValues(ScenarioParameters scenarioParameters,
-            FunctionParameters functionParameters, ExecutionEnvironment environment)
+            FunctionParameters functionParameters, CompilerResult compilerResult)
         {
             var result = new Dictionary<string, object>();
             foreach (var parameter in scenarioParameters.Assignments)
@@ -177,15 +178,15 @@ namespace Lexy.Poc.Core.Specifications
                 {
                     throw new InvalidOperationException($"Function parameter '{parameter.Name}' not found.");
                 }
-                var value = GetValue(environment, parameter.Expression.ToString(), type);
+                var value = GetValue(compilerResult, parameter.Expression.ToString(), type);
                 result.Add(parameter.Name, value);
             }
             return result;
         }
 
-        private object GetValue(ExecutionEnvironment environment, string value, VariableDefinition definition)
+        private object GetValue(CompilerResult compilerResult, string value, VariableDefinition definition)
         {
-            return TypeConverter.Convert(environment, value, definition.Type);
+            return TypeConverter.Convert(compilerResult, value, definition.Type);
         }
 
         public string ParserLogging()

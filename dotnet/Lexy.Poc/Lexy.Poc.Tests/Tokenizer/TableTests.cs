@@ -1,4 +1,5 @@
 using Lexy.Poc.Core.Parser;
+using Lexy.Poc.Core.Parser.Tokens;
 using NUnit.Framework;
 
 namespace Lexy.Poc.Tokenizer

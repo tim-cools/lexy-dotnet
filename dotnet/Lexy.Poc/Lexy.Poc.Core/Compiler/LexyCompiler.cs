@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.Parser;
+using Lexy.Poc.Core.RunTime;
+using Lexy.Poc.Core.Transcribe;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -15,27 +17,27 @@ namespace Lexy.Poc.Core.Compiler
 {
     public class LexyCompiler : ILexyCompiler
     {
+        private readonly IExecutionEnvironment environment;
         private readonly ICompilerContext compilerContext;
 
-        public LexyCompiler(ICompilerContext compilerContext)
+        public LexyCompiler(ICompilerContext compilerContext, IExecutionEnvironment environment)
         {
             this.compilerContext = compilerContext ?? throw new ArgumentNullException(nameof(compilerContext));
+            this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
 
-        public ExecutionEnvironment Compile(Components components, Function function)
+        public CompilerResult Compile(Components components, Function function)
         {
             if (components == null) throw new ArgumentNullException(nameof(components));
             if (function == null) throw new ArgumentNullException(nameof(function));
 
-            var environment = new ExecutionEnvironment();
-
             var generateNodes = FunctionComponentAndDependencies(components, function);
 
-            var code = GenerateCode(components, generateNodes, environment);
+            var code = GenerateCode(components, generateNodes);
             var assembly = CreateAssembly(code);
 
             environment.CreateExecutables(assembly);
-            return environment;
+            return environment.Result();
         }
 
         private static List<IRootComponent> FunctionComponentAndDependencies(Components components, Function function)
@@ -98,16 +100,18 @@ namespace Lexy.Poc.Core.Compiler
             return references;
         }
 
-        private string GenerateCode(Components components, List<IRootComponent> generateNodes, ExecutionEnvironment environment)
+        private string GenerateCode(Components components, List<IRootComponent> generateComponents)
         {
             var classWriter = new ClassWriter();
             classWriter.WriteLine($"using System.Collections.Generic;");
+            classWriter.WriteLine($"using {typeof(IExecutionContext).Namespace};");
+            classWriter.WriteLine();
             classWriter.OpenScope($"namespace {WriterCode.Namespace}");
 
-            foreach (var generateNode in generateNodes)
+            foreach (var component in generateComponents)
             {
-                var writer = GetWriter(generateNode);
-                var generatedType = writer.CreateCode(classWriter, generateNode, components);
+                var writer = GetWriter(component);
+                var generatedType = writer.CreateCode(classWriter, component, components);
 
                 environment.AddType(generatedType);
             }
@@ -131,12 +135,12 @@ namespace Lexy.Poc.Core.Compiler
             };
         }
 
-        private string FormatCompilationErrors(ImmutableArray<Diagnostic> emitResult)
+        private static string FormatCompilationErrors(ImmutableArray<Diagnostic> emitResult)
         {
             var stringWriter = new StringWriter();
             foreach (var diagnostic in emitResult)
             {
-                stringWriter.WriteLine("  " + diagnostic);
+                stringWriter.WriteLine($"  {diagnostic}");
             }
             return stringWriter.ToString();
         }

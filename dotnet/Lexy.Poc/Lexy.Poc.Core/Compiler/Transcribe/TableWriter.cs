@@ -1,8 +1,7 @@
 using System;
 using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Parser;
 
-namespace Lexy.Poc.Core.Compiler
+namespace Lexy.Poc.Core.Transcribe
 {
     internal class TableWriter : IRootTokenWriter
     {

@@ -1,5 +1,5 @@
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Poc.Core.Parser.Tokens
 {
     public class CommentToken : ParsableToken
     {

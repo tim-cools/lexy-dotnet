@@ -5,13 +5,13 @@ namespace Lexy.Poc.Core.Specifications
 {
     internal static class TypeConverter
     {
-        public static object Convert(ExecutionEnvironment environment, string value, string type)
+        public static object Convert(CompilerResult compilerResult, string value, string type)
         {
-            if (environment.ContainsEnum(type))
+            if (compilerResult.ContainsEnum(type))
             {
                 var indexOfSeparator = value.IndexOf(".");
                 var enumValue = value[(indexOfSeparator + 1)..];
-                return Enum.Parse(environment.GetEnumType(type), enumValue);
+                return Enum.Parse(compilerResult.GetEnumType(type), enumValue);
             }
 
             return type switch

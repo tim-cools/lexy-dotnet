@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
+using Lexy.Poc.Core.RunTime;
 
 namespace Lexy.Poc.Core.Compiler
 {
@@ -10,14 +10,16 @@ namespace Lexy.Poc.Core.Compiler
         private readonly object[] emptyParameters = Array.Empty<object>();
 
         private readonly object functionObject;
+        private readonly IExecutionContext context;
         private readonly MethodInfo resultMethod;
 
         private readonly MethodInfo runMethod;
         private readonly IDictionary<string, FieldInfo> variables = new Dictionary<string, FieldInfo>();
 
-        public ExecutableFunction(object functionObject)
+        public ExecutableFunction(object functionObject, IExecutionContext context)
         {
-            this.functionObject = functionObject;
+            this.functionObject = functionObject ?? throw new ArgumentNullException(nameof(functionObject));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
 
             runMethod = functionObject.GetType().GetMethod("__Run", BindingFlags.Instance | BindingFlags.Public);
             resultMethod = functionObject.GetType().GetMethod("__Result", BindingFlags.Instance | BindingFlags.Public);
@@ -25,7 +27,7 @@ namespace Lexy.Poc.Core.Compiler
 
         public FunctionResult Run()
         {
-            runMethod.Invoke(functionObject, emptyParameters);
+            runMethod.Invoke(functionObject, new []{context});
 
             return (FunctionResult)resultMethod.Invoke(functionObject, emptyParameters);
         }
@@ -39,7 +41,7 @@ namespace Lexy.Poc.Core.Compiler
                 field.SetValue(functionObject, convertedValue);
             }
 
-            runMethod.Invoke(functionObject, emptyParameters);
+            runMethod.Invoke(functionObject, new []{context});
 
             return (FunctionResult)resultMethod.Invoke(functionObject, emptyParameters);
         }
