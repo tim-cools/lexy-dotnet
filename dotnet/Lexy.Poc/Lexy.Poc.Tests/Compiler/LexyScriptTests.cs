@@ -50,5 +50,29 @@ namespace Lexy.Poc.Compiler
             });
             result.Number("Result").ShouldBe(777);
         }
+
+
+        [Test]
+        public void TestMemberAccessAssignment()
+        {
+            var script = ServiceScope.CompileFunction(@"Table: ValidateTableKeyword
+# Validate table keywords
+  | number Value | number Result |
+  | 0 | 0 |
+  | 1 | 1 |
+
+Function: ValidateTableKeywordFunction
+# Validate table keywords
+  Include
+    table ValidateTableKeyword
+  Parameters
+  Results
+    number Result
+  Code
+    Result = ValidateTableKeyword.Count");
+
+            var result = script.Run();
+            result.Number("Result").ShouldBe(2);
+        }
     }
 }

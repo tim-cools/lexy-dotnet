@@ -69,6 +69,17 @@ namespace Lexy.Poc.Core.Parser
             return index >= 0 && index <= values.Length - 1 ? values[index] as ILiteralToken : null;
         }
 
+        public bool IsLiteralToken(int index)
+        {
+            return index >= 0 && index <= values.Length - 1 && values[index] is ILiteralToken;
+        }
+
+        public bool OperatorToken(int index, OperatorType type)
+        {
+            var operatorToken = Token<OperatorToken>(index);
+            return operatorToken != null && operatorToken.Type == type;
+        }
+
         public IEnumerator<Token> GetEnumerator()
         {
             return ((IEnumerable<Token>)values).GetEnumerator();
@@ -78,5 +89,6 @@ namespace Lexy.Poc.Core.Parser
         {
             return values.GetEnumerator();
         }
+
     }
 }

@@ -10,7 +10,7 @@ namespace Lexy.Poc.Core.Language
 
         public override string ComponentName => Name.Value;
 
-        public IList<AssignmentDefinition> Assignments { get; } = new List<AssignmentDefinition>();
+        public IList<EnumMember> Members { get; } = new List<EnumMember>();
 
         private EnumDefinition(string name)
         {
@@ -33,8 +33,8 @@ namespace Lexy.Poc.Core.Language
             }
             else
             {
-                var assignment = AssignmentDefinition.Parse(context);
-                Assignments.Add(assignment);
+                var assignment = EnumMember.Parse(context);
+                Members.Add(assignment);
             }
             return this;
         }

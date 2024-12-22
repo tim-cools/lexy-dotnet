@@ -5,11 +5,11 @@ namespace Lexy.Poc.Core.Language
 {
     public class VariableDefinition
     {
-        public Token Default { get; }
-        public string Type { get; }
+        public ILiteralToken Default { get; }
+        public VariableType Type { get; }
         public string Name { get; }
 
-        public VariableDefinition(string name, string type, Token @default = null)
+        private VariableDefinition(string name, VariableType type, ILiteralToken @default = null)
         {
             Type = type;
             Name = name;
@@ -33,9 +33,12 @@ namespace Lexy.Poc.Core.Language
             var name = tokens.TokenValue(1);
             var type = tokens.TokenValue(0);
 
+            var variableType = VariableType.Parse(type, context);
+            if (variableType == null) return null;
+
             if (tokens.Length == 2)
             {
-                return new VariableDefinition(name, type);
+                return new VariableDefinition(name, variableType);
             }
 
             if (tokens.Token<OperatorToken>(2).Type != OperatorType.Assignment)
@@ -49,8 +52,41 @@ namespace Lexy.Poc.Core.Language
                 return null;
             }
 
-            var @default = tokens.Token<Token>(3);
-            return new VariableDefinition(name, type, @default);
+            var @default = tokens.LiteralToken(3);
+            return new VariableDefinition(name, variableType, @default);
+        }
+    }
+
+    public abstract class VariableType
+    {
+        public static VariableType Parse(string type, IParserContext context)
+        {
+            if (TypeNames.Contains(type))
+            {
+                return new PrimitiveVariableType(type);
+            }
+
+            return new EnumVariableType(type);
+        }
+    }
+
+    public class PrimitiveVariableType : VariableType
+    {
+        public string Type { get; }
+
+        public PrimitiveVariableType(string type)
+        {
+            Type = type;
+        }
+    }
+
+    public class EnumVariableType : VariableType
+    {
+        public string EnumName { get; }
+
+        public EnumVariableType(string enumName)
+        {
+            EnumName = enumName;
         }
     }
 }

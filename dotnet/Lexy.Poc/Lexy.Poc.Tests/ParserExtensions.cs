@@ -19,6 +19,7 @@ namespace Lexy.Poc
         public static Function ParseFunction(this ILexyParser parser, string code) => parser.ParseComponent<Function>(code);
         public static Table ParseTable(this ILexyParser parser, string code) => parser.ParseComponent<Table>(code);
         public static Scenario ParseScenario(this ILexyParser parser, string code) => parser.ParseComponent<Scenario>(code);
+        public static EnumDefinition ParseEnum(this ILexyParser parser, string code) => parser.ParseComponent<EnumDefinition>(code);
 
         public static T ParseComponent<T>(this ILexyParser parser, string code) where T : RootComponent
         {

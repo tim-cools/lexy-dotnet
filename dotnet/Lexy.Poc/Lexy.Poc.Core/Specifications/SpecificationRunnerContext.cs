@@ -12,7 +12,7 @@ namespace Lexy.Poc.Core.Specifications
 
         private readonly ILogger<SpecificationRunnerContext> logger;
 
-        public IList<string> Messages { get; } = new List<string>();
+        //public IList<string> Messages { get; } = new List<string>();
 
         public int Failed { get; private set; }
 
@@ -29,27 +29,27 @@ namespace Lexy.Poc.Core.Specifications
 
             var log = $"- FAILED  - {scenario.Name}: {message}";
 
-            Messages.Add(log);
+            Console.WriteLine(log);
             logger.LogError(log);
         }
 
         public void LogGlobal(string message)
         {
-            Messages.Add(  Environment.NewLine + message + Environment.NewLine);
+            Console.WriteLine(  Environment.NewLine + message + Environment.NewLine);
             logger.LogInformation(message);
         }
 
         public void Log(string message)
         {
             var log = $"  {message}";
-            Messages.Add(log);
+            Console.WriteLine(log);
             logger.LogInformation(log);
         }
 
         public void Success(Scenario scenario)
         {
             var log = $"- SUCCESS - {scenario.Name}";
-            Messages.Add(log);
+            Console.WriteLine(log);
             logger.LogInformation(log);
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lexy.Poc.Core.Parser;
@@ -28,7 +27,7 @@ namespace Lexy.Poc.Core.Language
             return this;
         }
 
-        public string GetParameterType(string expectedName)
+        public VariableType GetParameterType(string expectedName)
         {
             return Variables.FirstOrDefault(variable => variable.Name == expectedName)?.Type;
         }

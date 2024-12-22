@@ -8,8 +8,6 @@ namespace Lexy.Poc.Core.Specifications
         int Failed { get; }
         IReadOnlyCollection<ISpecificationFileRunner> FileRunners { get; }
 
-        IList<string> Messages { get; }
-
         void Fail(Scenario scenario, string message);
         void LogGlobal(string message);
         void Log(string message);

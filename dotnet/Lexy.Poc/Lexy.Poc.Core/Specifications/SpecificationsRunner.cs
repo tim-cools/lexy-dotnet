@@ -16,38 +16,22 @@ namespace Lexy.Poc.Core.Specifications
             this.context = context;
         }
 
-
         public void Run(string file)
         {
             CreateFileRunner(file);
 
-            var runners = context.FileRunners;
-            var countScenarios = context.CountScenarios();
-            Console.WriteLine($"Specifications found: {countScenarios}");
-            if (runners.Count == 0)
-            {
-                throw new InvalidOperationException($"No specifications found");
-            }
-
-            runners.ForEach(runner => runner.Run());
-
-            context.LogGlobal($"Specifications succeed: {countScenarios - context.Failed} / {countScenarios}");
-
-            foreach (var message in context.Messages)
-            {
-                Console.WriteLine(message);
-            }
-
-            if (context.Failed > 0)
-            {
-                Failed(context);
-            }
+            RunScenarios();
         }
 
         public void RunAll(string folder)
         {
             GetRunners(folder);
 
+            RunScenarios();
+        }
+
+        private void RunScenarios()
+        {
             var runners = context.FileRunners;
             var countScenarios = context.CountScenarios();
             Console.WriteLine($"Specifications found: {countScenarios}");
@@ -59,11 +43,6 @@ namespace Lexy.Poc.Core.Specifications
             runners.ForEach(runner => runner.Run());
 
             context.LogGlobal($"Specifications succeed: {countScenarios - context.Failed} / {countScenarios}");
-
-            foreach (var message in context.Messages)
-            {
-                Console.WriteLine(message);
-            }
 
             if (context.Failed > 0)
             {

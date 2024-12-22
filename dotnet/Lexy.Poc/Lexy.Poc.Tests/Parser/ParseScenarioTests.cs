@@ -1,3 +1,4 @@
+using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.Parser;
 using NUnit.Framework;
 using Shouldly;
@@ -110,21 +111,25 @@ namespace Lexy.Poc.Parser
             scenario.Function.ShouldNotBeNull();
             scenario.Function.Parameters.Variables.Count.ShouldBe(2);
             scenario.Function.Parameters.Variables[0].Name.ShouldBe("Value1");
-            scenario.Function.Parameters.Variables[0].Type.ShouldBe("number");
+            scenario.Function.Parameters.Variables[0].Type.ShouldBeOfType<PrimitiveVariableType>();
+            (scenario.Function.Parameters.Variables[0].Type as PrimitiveVariableType).Type.ShouldBe("number");
             scenario.Function.Parameters.Variables[0].Default.ToString().ShouldBe("123");
             scenario.Function.Parameters.Variables[1].Name.ShouldBe("Value2");
-            scenario.Function.Parameters.Variables[1].Type.ShouldBe("number");
+            scenario.Function.Parameters.Variables[1].Type.ShouldBeOfType<PrimitiveVariableType>();
+            (scenario.Function.Parameters.Variables[1].Type as PrimitiveVariableType).Type.ShouldBe("number");
             scenario.Function.Parameters.Variables[1].Default.ToString().ShouldBe("456");
             scenario.Function.Results.Variables.Count.ShouldBe(2);
             scenario.Function.Results.Variables[0].Name.ShouldBe("Result1");
-            scenario.Function.Results.Variables[0].Type.ShouldBe("number");
+            scenario.Function.Results.Variables[0].Type.ShouldBeOfType<PrimitiveVariableType>();
+            (scenario.Function.Results.Variables[0].Type as PrimitiveVariableType).Type.ShouldBe("number");
             scenario.Function.Results.Variables[0].Default.ShouldBeNull();
             scenario.Function.Results.Variables[1].Name.ShouldBe("Result2");
-            scenario.Function.Results.Variables[1].Type.ShouldBe("number");
+            scenario.Function.Results.Variables[1].Type.ShouldBeOfType<PrimitiveVariableType>();
+            (scenario.Function.Results.Variables[1].Type as PrimitiveVariableType).Type.ShouldBe("number");
             scenario.Function.Results.Variables[1].Default.ShouldBeNull();
-            scenario.Function.Code.Lines.Count.ShouldBe(2);
-            scenario.Function.Code.Lines[0].ToString().ShouldBe("Result1=Value1");
-            scenario.Function.Code.Lines[1].ToString().ShouldBe("Result2=Value2");
+            scenario.Function.Code.Expressions.Count.ShouldBe(2);
+            scenario.Function.Code.Expressions[0].ToString().ShouldBe("Result1=Value1");
+            scenario.Function.Code.Expressions[1].ToString().ShouldBe("Result2=Value2");
 
             scenario.Parameters.Assignments.Count.ShouldBe(2);
             scenario.Parameters.Assignments[0].Name.ShouldBe("Value1");

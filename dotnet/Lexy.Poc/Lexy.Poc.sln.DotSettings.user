@@ -10,4 +10,26 @@
       &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Parser.ParseScenarioTests.TestValidScenarioWithInvalidInlineFunction&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=badaa58f_002De9d1_002D4508_002D96cc_002D76277ed60bf4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Or&gt;
+    &lt;And&gt;
+      &lt;Or&gt;
+        &lt;Not&gt;
+          &lt;TestAncestor&gt;
+            &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Parser.ParseScenarioTests.TestValidScenarioWithInvalidInlineFunction&lt;/TestId&gt;
+          &lt;/TestAncestor&gt;
+        &lt;/Not&gt;
+        &lt;TestAncestor&gt;
+          &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Parser.ParseScenarioTests.TestValidScenarioWithInvalidInlineFunction&lt;/TestId&gt;
+        &lt;/TestAncestor&gt;
+      &lt;/Or&gt;
+      &lt;TestAncestor&gt;
+        &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Specifications.ValidateLexySpecificationsTest.AllSpecifications&lt;/TestId&gt;
+      &lt;/TestAncestor&gt;
+    &lt;/And&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Compiler.LexyScriptTests.TestMemberAccessAssignment&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+  &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

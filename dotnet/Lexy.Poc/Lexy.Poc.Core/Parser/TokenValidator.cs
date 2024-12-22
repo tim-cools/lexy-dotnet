@@ -98,7 +98,7 @@ namespace Lexy.Poc.Core.Parser
             var token = tokens[index] as OperatorToken;
             if (token?.Type != operatorType)
             {
-                Fail($"Invalid operator token {index} value. Expected: '{operatorType}' Actual: '{token.Type}'");
+                Fail($"Invalid operator token {index} value. Expected: '{operatorType}' Actual: '{token?.Type}'");
                 IsValid = false;
             }
             return this;
@@ -127,10 +127,10 @@ namespace Lexy.Poc.Core.Parser
         }
 
 
-        public TokenValidator NumberLiteral(int index, decimal value)
+        public TokenValidator NumberLiteral(int index, decimal? value = null)
         {
             var token = ValidateType<NumberLiteralToken>(index);
-            if (token != null && token.NumberValue != value)
+            if (token != null && value != null && token.NumberValue != value)
             {
                 Fail($"Invalid token {index} value. Expected: '{value}' Actual: '{token.Value}'");
                 IsValid = false;

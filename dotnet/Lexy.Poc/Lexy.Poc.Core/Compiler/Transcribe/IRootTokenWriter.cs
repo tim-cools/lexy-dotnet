@@ -4,6 +4,6 @@ namespace Lexy.Poc.Core.Transcribe
 {
     internal interface IRootTokenWriter
     {
-        GeneratedClass CreateCode(ClassWriter classWriter, IRootComponent generateNode, Components components);
+        GeneratedClass CreateCode(IRootComponent generateNode, Components components);
     }
 }

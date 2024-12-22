@@ -1,3 +1,4 @@
+using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.Parser;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -22,9 +23,10 @@ namespace Lexy.Poc.Parser
             script.Name.Value.ShouldBe("TestSimpleReturn");
             script.Results.Variables.Count.ShouldBe(1);
             script.Results.Variables[0].Name.ShouldBe("Result");
-            script.Results.Variables[0].Type.ShouldBe("number");
-            script.Code.Lines.Count.ShouldBe(1);
-            script.Code.Lines[0].ToString().ShouldBe("Result=777");
+            script.Results.Variables[0].Type.ShouldBeOfType<PrimitiveVariableType>();
+            (script.Results.Variables[0].Type as PrimitiveVariableType).Type.ShouldBe("number");
+            script.Code.Expressions.Count.ShouldBe(1);
+            script.Code.Expressions[0].ToString().ShouldBe("Result=777");
         }
 
         [Test]

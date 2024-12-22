@@ -23,6 +23,7 @@ namespace Lexy.Poc.Core.Parser
         public const char TableSeparator = '|';
         public const char Quote = '\"';
         public const char Assignment = '=';
+        public const char MemberAccess = '.';
 
         public const char Addition = '+';
         public const char Subtraction= '-';
@@ -40,6 +41,7 @@ namespace Lexy.Poc.Core.Parser
 
         public const string Equal = "==";
         public const string NotEqual = "!=";
+
 
         public const char NotEqualStart = '!';
 

@@ -73,9 +73,9 @@ namespace Lexy.Poc.Core.Language
         {
             foreach (var parameter in variableDefinitions)
             {
-                if (!TypeNames.Contains(parameter.Type))
+                if (parameter.Type is EnumVariableType enumVariableType)
                 {
-                    var dependency = components.GetEnum(parameter.Type);
+                    var dependency = components.GetEnum(enumVariableType.EnumName);
                     if (dependency == null)
                     {
                         throw new InvalidOperationException("Type or enum not found: " + parameter.Type);
