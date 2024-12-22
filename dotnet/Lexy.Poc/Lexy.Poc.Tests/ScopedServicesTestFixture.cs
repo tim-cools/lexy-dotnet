@@ -36,6 +36,6 @@ namespace Lexy.Poc
             serviceScope = null;
         }
 
-        protected T GetService<T>() => ServiceProvider.GetRequiredService<T>();
+        public T GetService<T>() => ServiceProvider.GetRequiredService<T>();
     }
 }

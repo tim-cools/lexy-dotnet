@@ -58,7 +58,7 @@ namespace Lexy.Poc
                 return;
             }
             throw new InvalidOperationException(
-                $"No excpection thrown. Expected '{errorMessage}''");
+                $"No excepction thrown. Expected '{errorMessage}''");
         }
     }
 }

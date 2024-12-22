@@ -10,7 +10,20 @@ namespace Lexy.Poc.Core.Language.Expressions
         private static readonly IDictionary<OperatorType, ExpressionOperator> supportedOperators = new Dictionary<OperatorType, ExpressionOperator>
         {
             { OperatorType.Addition, ExpressionOperator.Addition },
-            { OperatorType.Multiplication, ExpressionOperator.Multiplication }
+            { OperatorType.Multiplication, ExpressionOperator.Multiplication },
+            { OperatorType.Division, ExpressionOperator.Division },
+            { OperatorType.Modulus, ExpressionOperator.Modulus },
+
+            { OperatorType.GreaterThan, ExpressionOperator.GreaterThan },
+            { OperatorType.GreaterThanOrEqual, ExpressionOperator.GreaterThanOrEqual },
+            { OperatorType.LessThan, ExpressionOperator.LessThan },
+            { OperatorType.LessThanOrEqual, ExpressionOperator.LessThanOrEqual },
+
+            { OperatorType.Equals, ExpressionOperator.Equals },
+            { OperatorType.NotEqual, ExpressionOperator.NotEqual },
+
+            { OperatorType.And, ExpressionOperator.And },
+            { OperatorType.Or, ExpressionOperator.Or },
         };
 
         public Expression Left { get; }

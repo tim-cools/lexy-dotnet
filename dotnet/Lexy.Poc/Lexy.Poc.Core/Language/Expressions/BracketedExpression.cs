@@ -4,12 +4,14 @@ using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language.Expressions
 {
-    public class ParenthesizedExpression : Expression
+    public class BracketedExpression : Expression
     {
+        public string FunctionName { get; }
         public Expression Expression { get; }
 
-        private ParenthesizedExpression(Expression expression, Line sourceLine, TokenList tokens) : base(sourceLine, tokens)
+        private BracketedExpression(string functionName, Expression expression, Line sourceLine, TokenList tokens) : base(sourceLine, tokens)
         {
+            FunctionName = functionName;
             Expression = expression;
         }
 
@@ -17,25 +19,32 @@ namespace Lexy.Poc.Core.Language.Expressions
         {
             if (!IsValid(tokens))
             {
-                return ParseExpressionResult.Invalid<ParenthesizedExpression>("Not valid.");
+                return ParseExpressionResult.Invalid<BracketedExpression>("Not valid.");
             }
 
-            var matchingClosingParenthesis = FindMatchingClosingParenthesis(tokens);
+            var matchingClosingParenthesis = FindMatchingClosingBracket(tokens);
             if (matchingClosingParenthesis == -1)
             {
-                return ParseExpressionResult.Invalid<ParenthesizedExpression>("No closing parentheses found.");
+                return ParseExpressionResult.Invalid<BracketedExpression>("No closing bracket found.");
             }
 
-            var innerExpressionTokens = tokens.TokensRange(1, matchingClosingParenthesis - 1);
+            var functionName = tokens.TokenValue(0);
+            var innerExpressionTokens = tokens.TokensRange(2, matchingClosingParenthesis - 1);
             var parseResult = ExpressionFactory.Parse(innerExpressionTokens, sourceLine);
 
             var innerExpression = parseResult;
 
-            var expression = new ParenthesizedExpression(innerExpression, sourceLine, tokens);
+            var expression = new BracketedExpression(functionName, innerExpression, sourceLine, tokens);
             return ParseExpressionResult.Success(expression);
         }
 
-        internal static int FindMatchingClosingParenthesis(TokenList tokens)
+        public static bool IsValid(TokenList tokens)
+        {
+            return tokens.IsTokenType<StringLiteralToken>(0)
+                   && tokens.OperatorToken(1, OperatorType.OpenBrackets);
+        }
+
+        internal static int FindMatchingClosingBracket(TokenList tokens)
         {
             if (tokens == null) throw new ArgumentNullException(nameof(tokens));
 
@@ -45,11 +54,11 @@ namespace Lexy.Poc.Core.Language.Expressions
                 var token = tokens[index];
                 if (!(token is OperatorToken operatorToken)) continue;
 
-                if (operatorToken.Type == OperatorType.OpenParentheses)
+                if (operatorToken.Type == OperatorType.OpenBrackets)
                 {
                     count++;
                 }
-                else if (operatorToken.Type == OperatorType.CloseParentheses)
+                else if (operatorToken.Type == OperatorType.CloseBrackets)
                 {
                     count--;
                     if (count == 0)
@@ -60,11 +69,6 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             return -1;
-        }
-
-        public static bool IsValid(TokenList tokens)
-        {
-            return tokens.OperatorToken(0, OperatorType.OpenParentheses);
         }
     }
 }
