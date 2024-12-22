@@ -10,11 +10,8 @@ namespace Lexy.Poc.Core.Language
 
         public IComponent Parse(IParserContext context)
         {
-            if (context.CurrentLine.IsComment())
-            {
-                return this;
-            }
-            if (context.CurrentLine.IsEmpty())
+            var line = context.CurrentLine;
+            if (line.IsComment() || line.IsEmpty())
             {
                 return this;
             }
@@ -25,7 +22,7 @@ namespace Lexy.Poc.Core.Language
 
             if (!valid) return null;
 
-            var expression = ExpressionFactory.Parse(context, context.CurrentLine.Tokens);
+            var expression = ExpressionFactory.Parse(line.Tokens, line);
 
             Expressions.Add(expression);
             return this;

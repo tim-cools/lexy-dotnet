@@ -45,7 +45,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
         {
         }
 
-        public override ParseTokenResult Parse(char value, ParserContext parserContext)
+        public override ParseTokenResult Parse(char value, IParserContext parserContext)
         {
             if (char.IsDigit(value))
             {
@@ -70,7 +70,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
                 : ParseTokenResult.Invalid($"Invalid number token character: {value}");
         }
 
-        public override ParseTokenResult Finalize(ParserContext parserContext)
+        public override ParseTokenResult Finalize(IParserContext parserContext)
         {
             return Finish();
         }

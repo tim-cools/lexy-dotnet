@@ -30,6 +30,9 @@
     &lt;/And&gt;
     &lt;TestAncestor&gt;
       &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Compiler.LexyScriptTests.TestMemberAccessAssignment&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Parser.ExpressionParseTests.TestInAndStringColumns&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::2166E7F5-376E-48C8-9819-E8C9F9437C3D::.NETCoreApp,Version=v3.1::Lexy.Poc.Parser.TokensListTests.TokensFrom&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
+    &lt;ProjectFile&gt;2166E7F5-376E-48C8-9819-E8C9F9437C3D/d:Parser/f:TokensListTests.cs&lt;/ProjectFile&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -63,7 +63,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             }
         }
 
-        public override ParseTokenResult Parse(char value, ParserContext context)
+        public override ParseTokenResult Parse(char value, IParserContext context)
         {
             if (Value.Length == 1)
             {
@@ -92,7 +92,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             return ParseTokenResult.Invalid($"Invalid token: {value}");
         }
 
-        public override ParseTokenResult Finalize(ParserContext parserContext)
+        public override ParseTokenResult Finalize(IParserContext parserContext)
         {
             if (Value == TokenValues.TableSeparator.ToString())
             {

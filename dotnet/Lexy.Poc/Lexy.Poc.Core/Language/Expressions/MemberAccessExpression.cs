@@ -12,17 +12,17 @@ namespace Lexy.Poc.Core.Language.Expressions
             Value = value;
         }
 
-        public static Expression Parse(IParserContext context, Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
         {
             if (!IsValid(tokens))
             {
-                context.Logger.Fail("Invalid MemberAccessExpression.");
-                return null;
+                return ParseExpressionResult.Invalid<MemberAccessExpression>("Invalid expression");
             }
 
             var variableName = tokens.TokenValue(0);
 
-            return new MemberAccessExpression(sourceLine, tokens, variableName);
+            var accessExpression = new MemberAccessExpression(sourceLine, tokens, variableName);
+            return ParseExpressionResult.Success(accessExpression);
         }
 
         public static bool IsValid(TokenList tokens)

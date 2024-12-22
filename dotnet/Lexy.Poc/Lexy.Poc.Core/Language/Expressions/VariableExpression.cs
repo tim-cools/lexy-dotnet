@@ -12,19 +12,19 @@ namespace Lexy.Poc.Core.Language.Expressions
             VariableName = variableName;
         }
 
-        public static Expression Parse(IParserContext context, Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
         {
             if (!IsValid(tokens))
             {
-                context.Logger.Fail("Invalid VariableExpression.");
-                return null;
+                return ParseExpressionResult.Invalid<VariableExpression>("Invalid expression");
             }
 
             var assignmentVariableName = tokens.TokenValue(2);
 
             var variableName = tokens.TokenValue(0);
 
-            return new VariableExpression(sourceLine, tokens, variableName);
+            var expression = new VariableExpression(sourceLine, tokens, variableName);
+            return ParseExpressionResult.Success( expression);
         }
 
         public static bool IsValid(TokenList tokens)

@@ -56,37 +56,4 @@ namespace Lexy.Poc.Core.Language
             return new VariableDefinition(name, variableType, @default);
         }
     }
-
-    public abstract class VariableType
-    {
-        public static VariableType Parse(string type, IParserContext context)
-        {
-            if (TypeNames.Contains(type))
-            {
-                return new PrimitiveVariableType(type);
-            }
-
-            return new EnumVariableType(type);
-        }
-    }
-
-    public class PrimitiveVariableType : VariableType
-    {
-        public string Type { get; }
-
-        public PrimitiveVariableType(string type)
-        {
-            Type = type;
-        }
-    }
-
-    public class EnumVariableType : VariableType
-    {
-        public string EnumName { get; }
-
-        public EnumVariableType(string enumName)
-        {
-            EnumName = enumName;
-        }
-    }
 }

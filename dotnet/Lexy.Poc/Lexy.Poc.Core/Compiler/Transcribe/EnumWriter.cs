@@ -6,8 +6,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static Lexy.Poc.Core.Transcribe.ExpressionSyntaxFactory;
-using static Lexy.Poc.Core.Transcribe.LexySyntaxFactory;
 
 namespace Lexy.Poc.Core.Transcribe
 {
@@ -54,13 +52,5 @@ namespace Lexy.Poc.Core.Transcribe
 
             return result.ToArray();
         }
-    }
-
-    internal class Modifiers
-    {
-        public static SyntaxToken Public => SyntaxFactory.Token(SyntaxKind.PublicKeyword);
-        public static SyntaxToken Static => SyntaxFactory.Token(SyntaxKind.StaticKeyword);
-        public static SyntaxTokenList PublicAsList => SyntaxTokenList.Create(Public);
-        public static SyntaxTokenList StaticAsList => SyntaxTokenList.Create(Static);
     }
 }

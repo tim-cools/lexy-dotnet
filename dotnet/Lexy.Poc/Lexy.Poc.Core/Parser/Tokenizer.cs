@@ -41,7 +41,7 @@ namespace Lexy.Poc.Core.Parser
                 { char.IsWhiteSpace, value => new WhitespaceToken(value)}
             };
 
-        public TokenList Tokenize(Line line, ParserContext parserContext, out bool errors)
+        public TokenList Tokenize(Line line, IParserContext parserContext, out bool errors)
         {
             if (line == null) throw new ArgumentNullException(nameof(line));
 
@@ -105,7 +105,7 @@ namespace Lexy.Poc.Core.Parser
             return new TokenList(tokens.Where(token => !(token is WhitespaceToken)).ToArray());
         }
 
-        private ParsableToken StartToken(char value, int index, ParserContext parserContext)
+        private ParsableToken StartToken(char value, int index, IParserContext parserContext)
         {
             if (knownTokens.ContainsKey(value))
             {

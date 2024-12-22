@@ -14,18 +14,19 @@ namespace Lexy.Poc.Core.Language.Expressions
             Assignment = assignment;
         }
 
-        public static Expression Parse(IParserContext context, Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
         {
             if (!IsValid(tokens))
             {
-                context.Logger.Fail("Invalid AssignmentExpression.");
-                return null;
+                return ParseExpressionResult.Invalid<ParseExpressionResult>("Invalid expression.");
             }
 
             var variableName = tokens.TokenValue(0);
-            var assignment = ExpressionFactory.Parse(context, tokens.TokensFrom(2));
+            var assignment = ExpressionFactory.Parse(tokens.TokensFrom(2), sourceLine);
 
-            return new AssignmentExpression(sourceLine, tokens, variableName, assignment);
+            var expression = new AssignmentExpression(sourceLine, tokens, variableName, assignment);
+
+            return ParseExpressionResult.Success(expression);
         }
 
         public static bool IsValid(TokenList tokens)

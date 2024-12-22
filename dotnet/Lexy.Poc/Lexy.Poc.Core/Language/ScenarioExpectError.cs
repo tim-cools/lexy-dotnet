@@ -1,4 +1,5 @@
 using Lexy.Poc.Core.Parser;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
@@ -21,7 +22,7 @@ namespace Lexy.Poc.Core.Language
 
             if (!valid) return this;
 
-            Message = line.Tokens.TokenValuesFrom(1);
+            Message = line.Tokens.Token<QuotedLiteralToken>(1).Value;
             return this;
         }
     }

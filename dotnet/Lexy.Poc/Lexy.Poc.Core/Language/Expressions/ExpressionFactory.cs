@@ -6,28 +6,35 @@ namespace Lexy.Poc.Core.Language.Expressions
 {
     public static class ExpressionFactory
     {
-        private static IDictionary<Func<TokenList, bool>, Func<IParserContext, Line, TokenList, Expression>> factories =
-            new Dictionary<Func<TokenList, bool>, Func<IParserContext, Line, TokenList, Expression>>()
+        private static IDictionary<Func<TokenList, bool>, Func<Line, TokenList, ParseExpressionResult>> factories =
+            new Dictionary<Func<TokenList, bool>, Func<Line, TokenList, ParseExpressionResult>>()
             {
                 { AssignmentExpression.IsValid, AssignmentExpression.Parse },
                 { VariableExpression.IsValid, VariableExpression.Parse },
                 { LiteralExpression.IsValid, LiteralExpression.Parse },
                 { MemberAccessExpression.IsValid, MemberAccessExpression.Parse },
-
+                { BinaryExpression.IsValid, BinaryExpression.Parse },
+                { ParenthesizedExpression.IsValid, ParenthesizedExpression.Parse },
             };
-        public static Expression Parse(IParserContext context, TokenList tokens)
-        {
-            var sourceLine = context.CurrentLine;
 
+        public static Expression Parse(TokenList tokens, Line currentLine)
+        {
             foreach (var factory in factories)
             {
                 if (factory.Key(tokens))
                 {
-                    return factory.Value(context, sourceLine, tokens);
+                    var expressionResult = factory.Value(currentLine, tokens);
+                    switch (expressionResult.Status)
+                    {
+                        case ParseExpressionStatus.Success:
+                            return expressionResult.Expression;
+                        case ParseExpressionStatus.Failed:
+                            throw new InvalidOperationException($"Invalid expression: {tokens}. {expressionResult.ErrorMessage}");
+                    }
                 }
             }
 
-            throw new InvalidOperationException("Invalid expression: " + context.CurrentLine);
+            throw new InvalidOperationException($"Invalid expression: {tokens}");
         }
     }
 }

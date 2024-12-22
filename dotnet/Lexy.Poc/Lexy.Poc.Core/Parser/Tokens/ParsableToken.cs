@@ -28,8 +28,8 @@ namespace Lexy.Poc.Core.Parser.Tokens
             valueBuilder.Append(value);
         }
 
-        public abstract ParseTokenResult Parse(char value, ParserContext context);
+        public abstract ParseTokenResult Parse(char value, IParserContext context);
 
-        public abstract ParseTokenResult Finalize(ParserContext parserContext);
+        public abstract ParseTokenResult Finalize(IParserContext parserContext);
     }
 }

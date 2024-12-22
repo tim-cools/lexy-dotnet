@@ -9,7 +9,7 @@ namespace Lexy.Poc.Core.Parser
         internal string Content { get; }
         private string TrimmedContent { get; }
 
-        internal TokenList Tokens { get; private set; }
+        public TokenList Tokens { get; private set; }
 
         public Line(int index, string line)
         {
@@ -54,7 +54,7 @@ namespace Lexy.Poc.Core.Parser
             return tabs > 0 ? tabs : spaces / 2;
         }
 
-        internal bool Tokenize(ITokenizer tokenizer, ParserContext parserContext)
+        public bool Tokenize(ITokenizer tokenizer, IParserContext parserContext)
         {
             Tokens = tokenizer.Tokenize(this, parserContext, out bool errors);
             return !errors;

@@ -12,17 +12,17 @@ namespace Lexy.Poc.Core.Language.Expressions
             Literal = literal;
         }
 
-        public static Expression Parse(IParserContext context, Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
         {
             if (!IsValid(tokens))
             {
-                context.Logger.Fail("Invalid LiteralExpression.");
-                return null;
+                return ParseExpressionResult.Invalid<LiteralExpression>("Invalid expression.");
             }
 
             var literalToken = tokens.LiteralToken(0);
 
-            return new LiteralExpression(sourceLine, tokens, literalToken);
+            var expression = new LiteralExpression(sourceLine, tokens, literalToken);
+            return ParseExpressionResult.Success(expression);
         }
 
         public static bool IsValid(TokenList tokens)

@@ -20,7 +20,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
         {
         }
 
-        public override ParseTokenResult Parse(char value, ParserContext parserContext)
+        public override ParseTokenResult Parse(char value, IParserContext parserContext)
         {
             if (terminatorValues.Contains(value))
             {
@@ -56,7 +56,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             return ParseTokenResult.Invalid($"Unexpected character: '{value}'");
         }
 
-        public override ParseTokenResult Finalize(ParserContext parserContext)
+        public override ParseTokenResult Finalize(IParserContext parserContext)
         {
             if (lastMemberAccessor)
             {

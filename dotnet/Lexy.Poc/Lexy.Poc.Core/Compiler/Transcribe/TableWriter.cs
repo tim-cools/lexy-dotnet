@@ -168,17 +168,4 @@ namespace Lexy.Poc.Core.Transcribe
                         Token(SyntaxKind.SemicolonToken));
         }
     }
-
-    internal static class Accessors
-    {
-        public static AccessorListSyntax GetSet => AccessorList(
-            List(
-                new[]
-                {
-                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
-                }));
-    }
 }

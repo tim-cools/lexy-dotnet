@@ -33,7 +33,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             };
         }
 
-        public override ParseTokenResult Parse(char value, ParserContext context)
+        public override ParseTokenResult Parse(char value, IParserContext context)
         {
             if (value == TokenValues.Quote)
             {
@@ -79,7 +79,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             return ParseTokenResult.InProgress();
         }
 
-        public override ParseTokenResult Finalize(ParserContext parserContext)
+        public override ParseTokenResult Finalize(IParserContext parserContext)
         {
             return ParseTokenResult.Invalid(
                 $@"Unexpected end of line. Closing quote expected. Format: d""2024/12/18 14:17:30""");
