@@ -8,7 +8,7 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public ILiteralToken Literal { get; }
 
-        private LiteralExpression(ILiteralToken literal, ExpressionSource source) : base(source)
+        private LiteralExpression(ILiteralToken literal, ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             Literal = literal;
         }
@@ -22,8 +22,9 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             var literalToken = tokens.LiteralToken(0);
+            var reference = source.CreateReference();
 
-            var expression = new LiteralExpression(literalToken, source);
+            var expression = new LiteralExpression(literalToken, source, reference);
             return ParseExpressionResult.Success(expression);
         }
 

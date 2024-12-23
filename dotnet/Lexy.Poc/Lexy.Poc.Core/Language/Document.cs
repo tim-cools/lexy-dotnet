@@ -9,7 +9,12 @@ namespace Lexy.Poc.Core.Language
 
         public override string NodeName => "Document";
 
-        public Comments Comments { get; } = new Comments();
+        public Comments Comments { get; }
+
+        public Document(SourceReference reference) : base(reference)
+        {
+            Comments = new Comments(Reference);
+        }
 
         public override IParsableNode Parse(IParserContext context)
         {
@@ -20,21 +25,22 @@ namespace Lexy.Poc.Core.Language
 
             if (line.Indent() > 0)
             {
-                context.Logger.Fail( $"Unexpected line: {line}");
+                context.Logger.Fail(context.DocumentReference(),$"Unexpected line: {line}");
                 return this;
             }
 
             var tokenName = Parser.NodeName.Parse(line, context);
             if (tokenName == null) return this;
 
+            var reference = context.LineStartReference();
             var rootNode = tokenName.Keyword switch
             {
                 null => null,
-                Keywords.FunctionKeyword => Function.Create(tokenName.Name),
-                Keywords.EnumKeyword => EnumDefinition.Parse(tokenName),
-                Keywords.ScenarioKeyword => Scenario.Parse(tokenName),
-                Keywords.TableKeyword => Table.Parse(tokenName),
-                _ => InvalidNode(tokenName, context)
+                Keywords.FunctionKeyword => Function.Create(tokenName.Name, reference),
+                Keywords.EnumKeyword => EnumDefinition.Parse(tokenName, reference),
+                Keywords.ScenarioKeyword => Scenario.Parse(tokenName, reference),
+                Keywords.TableKeyword => Table.Parse(tokenName, reference),
+                _ => InvalidNode(tokenName, context, reference)
             };
 
             if (rootNode == null) return this;
@@ -45,10 +51,9 @@ namespace Lexy.Poc.Core.Language
             return rootNode;
         }
 
-        private IRootNode InvalidNode(NodeName tokenName, IParserContext context)
+        private IRootNode InvalidNode(NodeName tokenName, IParserContext context, SourceReference reference)
         {
-            var message = $"Unknown keyword: {tokenName.Keyword}";
-            context.Logger.Fail(message);
+            context.Logger.Fail(reference, $"Unknown keyword: {tokenName.Keyword}");
             return this;
         }
 
@@ -56,6 +61,12 @@ namespace Lexy.Poc.Core.Language
 
         protected override void Validate(IValidationContext context)
         {
+            DuplicateChecker.ValidateNode(
+                context,
+                node => node.Reference,
+                node => node.NodeName,
+                node => $"Duplicated node name: '{node.NodeName}'",
+                nodes);
         }
     }
 }

@@ -10,7 +10,8 @@ namespace Lexy.Poc.Core.Language.Expressions
         public string FunctionName { get; }
         public Expression Expression { get; }
 
-        private BracketedExpression(string functionName, Expression expression, ExpressionSource source) : base(source)
+        private BracketedExpression(string functionName, Expression expression,
+            ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             FunctionName = functionName;
             Expression = expression;
@@ -32,11 +33,10 @@ namespace Lexy.Poc.Core.Language.Expressions
 
             var functionName = tokens.TokenValue(0);
             var innerExpressionTokens = tokens.TokensRange(2, matchingClosingParenthesis - 1);
-            var parseResult = ExpressionFactory.Parse(innerExpressionTokens, source.Line);
+            var innerExpression = ExpressionFactory.Parse(source.File, innerExpressionTokens, source.Line);
+            var reference = source.CreateReference();
 
-            var innerExpression = parseResult;
-
-            var expression = new BracketedExpression(functionName, innerExpression, source);
+            var expression = new BracketedExpression(functionName, innerExpression, source, reference);
             return ParseExpressionResult.Success(expression);
         }
 

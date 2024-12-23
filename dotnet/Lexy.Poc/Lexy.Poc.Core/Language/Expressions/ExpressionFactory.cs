@@ -20,13 +20,13 @@ namespace Lexy.Poc.Core.Language.Expressions
                 { FunctionCallExpression.IsValid, FunctionCallExpression.Parse },
             };
 
-        public static Expression Parse(TokenList tokens, Line currentLine)
+        public static Expression Parse(SourceFile file, TokenList tokens, Line currentLine)
         {
             foreach (var factory in factories)
             {
                 if (factory.Key(tokens))
                 {
-                    var source = new ExpressionSource(currentLine, tokens);
+                    var source = new ExpressionSource(file, currentLine, tokens);
                     var expressionResult = factory.Value(source);
                     switch (expressionResult.Status)
                     {

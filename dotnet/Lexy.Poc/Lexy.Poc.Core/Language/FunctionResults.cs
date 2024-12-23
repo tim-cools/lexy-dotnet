@@ -8,17 +8,18 @@ namespace Lexy.Poc.Core.Language
     {
         public IList<VariableDefinition> Variables { get; } = new List<VariableDefinition>();
 
+        public FunctionResults(SourceReference reference) : base(reference)
+        {
+        }
+
         public override IParsableNode Parse(IParserContext context)
         {
             var variableDefinition = VariableDefinition.Parse(context);
-            if (variableDefinition == null)
-            {
-                return this;
-            }
+            if (variableDefinition == null) return this;
 
             if (variableDefinition.Default != null)
             {
-                context.Logger.Fail(
+                context.Logger.Fail(Reference,
                     $"Result variable '{variableDefinition.Name}' should not have a default value.");
                 return null;
             }

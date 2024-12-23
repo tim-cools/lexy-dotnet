@@ -11,7 +11,8 @@ namespace Lexy.Poc.Core.Language
         public VariableType Type { get; }
         public string Name { get; }
 
-        private VariableDefinition(string name, VariableType type, ILiteralToken @default = null)
+        private VariableDefinition(string name, VariableType type,
+            SourceReference reference, ILiteralToken @default = null) : base(reference)
         {
             Type = type ?? throw new ArgumentNullException(nameof(type));
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -40,22 +41,22 @@ namespace Lexy.Poc.Core.Language
 
             if (tokens.Length == 2)
             {
-                return new VariableDefinition(name, variableType);
+                return new VariableDefinition(name, variableType, context.LineStartReference());
             }
 
             if (tokens.Token<OperatorToken>(2).Type != OperatorType.Assignment)
             {
-                context.Logger.Fail("Invalid variable declaration token. Expected '='.");
+                context.Logger.Fail(context.TokenReference(2), "Invalid variable declaration token. Expected '='.");
                 return null;
             }
             if (tokens.Length != 4)
             {
-                context.Logger.Fail("Invalid variable declaration token. Expected default literal token.");
+                context.Logger.Fail(context.LineEndReference(), "Invalid variable declaration token. Expected default literal token.");
                 return null;
             }
 
-            var @default = tokens.LiteralToken(3);
-            return new VariableDefinition(name, variableType, @default);
+            var defaultValue = tokens.LiteralToken(3);
+            return new VariableDefinition(name, variableType, context.LineStartReference(), defaultValue);
         }
 
         protected override IEnumerable<INode> GetChildren()
@@ -65,7 +66,7 @@ namespace Lexy.Poc.Core.Language
 
         protected override void Validate(IValidationContext context)
         {
-            context.FunctionCodeContext.EnsureVariableUnique(Name);
+            context.FunctionCodeContext.EnsureVariableUnique(this, Name);
 
             switch (Type)
             {
@@ -86,7 +87,7 @@ namespace Lexy.Poc.Core.Language
         {
             if (!context.Nodes.ContainsEnum(customVariableType.TypeName))
             {
-                context.Logger.Fail($"Unknown type: '{customVariableType.TypeName}'");
+                context.Logger.Fail(Reference, $"Unknown type: '{customVariableType.TypeName}'");
                 return;
             }
 
@@ -94,7 +95,7 @@ namespace Lexy.Poc.Core.Language
 
             if (!(Default is MemberAccessLiteral memberAccessLiteral))
             {
-                context.Logger.Fail($"Invalid default value '{Default}'. (type: '{customVariableType.TypeName}')");
+                context.Logger.Fail(Reference, $"Invalid default value '{Default}'. (type: '{customVariableType.TypeName}')");
             }
             else
             {
@@ -102,15 +103,15 @@ namespace Lexy.Poc.Core.Language
                 var enumDeclaration = context.Nodes.GetEnum(customVariableType.TypeName);
                 if (parts.Length != 2)
                 {
-                    context.Logger.Fail($"Invalid default value '{Default}'. (type: '{customVariableType.TypeName}')");
+                    context.Logger.Fail(Reference, $"Invalid default value '{Default}'. (type: '{customVariableType.TypeName}')");
                 }
                 if (parts[0] != customVariableType.TypeName)
                 {
-                    context.Logger.Fail($"Invalid default value '{Default}'. Invalid enum type. (type: '{customVariableType.TypeName}')");
+                    context.Logger.Fail(Reference, $"Invalid default value '{Default}'. Invalid enum type. (type: '{customVariableType.TypeName}')");
                 }
                 if (!enumDeclaration.ContainsMember(parts[1]))
                 {
-                    context.Logger.Fail($"Invalid default value '{Default}'. Invalid member. (type: '{customVariableType.TypeName}')");
+                    context.Logger.Fail(Reference, $"Invalid default value '{Default}'. Invalid member. (type: '{customVariableType.TypeName}')");
                 }
             }
         }
@@ -147,7 +148,7 @@ namespace Lexy.Poc.Core.Language
         {
             if (!(Default is T))
             {
-                context.Logger.Fail($"Invalid default value '{Default}'. (type: '{primitiveVariableType.Type}')");
+                context.Logger.Fail(Reference, $"Invalid default value '{Default}'. (type: '{primitiveVariableType.Type}')");
             }
         }
     }

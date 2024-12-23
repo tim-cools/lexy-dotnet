@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 
@@ -9,7 +8,7 @@ namespace Lexy.Poc.Core.Language
         public string Type { get; }
         public string Name { get; }
 
-        public FunctionInclude(string name, string type)
+        private FunctionInclude(string name, string type, SourceReference reference) : base(reference)
         {
             Type = type;
             Name = name;
@@ -29,8 +28,9 @@ namespace Lexy.Poc.Core.Language
 
             var name = tokens.TokenValue(1);
             var type = tokens.TokenValue(0);
+            var reference = context.LineStartReference();
 
-            return new FunctionInclude(name, type);
+            return new FunctionInclude(name, type, reference);
         }
 
         protected override IEnumerable<INode> GetChildren()

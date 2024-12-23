@@ -8,6 +8,10 @@ namespace Lexy.Poc.Core.Language
     {
         public string Value { get; private set; }
 
+        public EnumName(SourceReference sourceReference) : base(sourceReference)
+        {
+        }
+
         public void ParseName(string parameter)
         {
             Value = parameter;
@@ -22,11 +26,11 @@ namespace Lexy.Poc.Core.Language
         {
             if (string.IsNullOrEmpty(Value))
             {
-                context.Logger.Fail($"Invalid enum name: {Value}. Name should not be empty.");
+                context.Logger.Fail(Reference, $"Invalid enum name: {Value}. Name should not be empty.");
             }
             if (!SyntaxFacts.IsValidIdentifier(Value))
             {
-                context.Logger.Fail($"Invalid enum name: {Value}.");
+                context.Logger.Fail(Reference, $"Invalid enum name: {Value}.");
             }
         }
     }

@@ -7,41 +7,40 @@ namespace Lexy.Poc.Core.Parser.Tokens
 {
     public class DateTimeLiteral : ParsableToken, ILiteralToken
     {
-        private int index = 0;
-
         //format d"0123/56/89 12:45:78"
-        private static readonly int[] digitIndexes = { 0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17, 18 };
-        private static readonly int[] slashIndexes = { 4, 7 };
-        private static readonly int[] spaceIndexes = { 10 };
-        private static readonly int[] colonIndexes = { 13, 16 };
-        private static readonly int[] validLengths = { 19 };
+        private static readonly int[] DigitIndexes = { 0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17, 18 };
+        private static readonly int[] SlashIndexes = { 4, 7 };
+        private static readonly int[] SpaceIndexes = { 10 };
+        private static readonly int[] ColonIndexes = { 13, 16 };
+        private static readonly int[] ValidLengths = { 19 };
 
         private const string DateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
+        private int index;
         private readonly IList<Func<char, ParseTokenResult>> validators;
 
         public DateTime DateTimeValue { get; set; }
 
-        public DateTimeLiteral()
+        public DateTimeLiteral(TokenCharacter character) : base(null, character)
         {
             validators = new List<Func<char, ParseTokenResult>>
             {
-                value => Validate(value, char.IsDigit(value), digitIndexes),
-                value => Validate(value, TokenValues.Slash, slashIndexes),
-                value => Validate(value, TokenValues.Colon, colonIndexes),
-                value => Validate(value, TokenValues.Space, spaceIndexes)
+                value => Validate(value, char.IsDigit(value), DigitIndexes),
+                value => Validate(value, TokenValues.Slash, SlashIndexes),
+                value => Validate(value, TokenValues.Colon, ColonIndexes),
+                value => Validate(value, TokenValues.Space, SpaceIndexes)
             };
         }
 
-        public override ParseTokenResult Parse(char value, IParserContext context)
+        public override ParseTokenResult Parse(TokenCharacter character, IParserContext context)
         {
+            var value = character.Value;
             if (value == TokenValues.Quote)
             {
-                if (!validLengths.Contains(Value.Length))
+                if (!ValidLengths.Contains(Value.Length))
                 {
-                    var expectedLengths = string.Join(",", validLengths.Select(value => value.ToString()).ToArray());
                     return ParseTokenResult.Invalid(
-                        $"Invalid date time format length '{Value.Length}'. Expected: '{expectedLengths}'");
+                        $"Invalid date time format length '{Value.Length}'. Expected: '{ValidLengths.FormatLine(",")}'");
                 }
 
                 ParseValue();

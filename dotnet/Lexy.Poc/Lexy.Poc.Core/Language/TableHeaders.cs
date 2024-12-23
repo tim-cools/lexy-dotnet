@@ -9,7 +9,7 @@ namespace Lexy.Poc.Core.Language
     {
         public IList<TableHeader> Values { get; } = new List<TableHeader>();
 
-        private TableHeaders(TableHeader[] values)
+        private TableHeaders(TableHeader[] values, SourceReference reference) : base(reference)
         {
             Values = values;
         }
@@ -39,14 +39,15 @@ namespace Lexy.Poc.Core.Language
 
                 var typeName = tokens.TokenValue(index);
                 var name = tokens.TokenValue(++index);
+                var reference = context.TokenReference(index);
 
-                var header = TableHeader.Parse(name, typeName);
+                var header = TableHeader.Parse(name, typeName, reference);
                 headers.Add(header);
 
                 ++index;
             }
 
-            return new TableHeaders(headers.ToArray());
+            return new TableHeaders(headers.ToArray(), context.LineStartReference());
         }
 
         protected override IEnumerable<INode> GetChildren() => Values;

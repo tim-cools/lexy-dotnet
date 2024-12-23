@@ -8,17 +8,12 @@ namespace Lexy.Poc.Core.Parser.Tokens
 
         public override string Value => valueBuilder.ToString();
 
-        protected ParsableToken()
+        protected ParsableToken(TokenCharacter character) : base(character)
         {
-            valueBuilder = new StringBuilder();
+            valueBuilder = new StringBuilder(character.Value.ToString());
         }
 
-        protected ParsableToken(char value)
-        {
-            valueBuilder = new StringBuilder(value.ToString());
-        }
-
-        protected ParsableToken(string value)
+        protected ParsableToken(string value, TokenCharacter position) : base(position)
         {
             valueBuilder = new StringBuilder(value);
         }
@@ -28,8 +23,8 @@ namespace Lexy.Poc.Core.Parser.Tokens
             valueBuilder.Append(value);
         }
 
-        public abstract ParseTokenResult Parse(char value, IParserContext context);
+        public abstract ParseTokenResult Parse(TokenCharacter character, IParserContext context);
 
-        public abstract ParseTokenResult Finalize(IParserContext parserContext);
+        public abstract ParseTokenResult Finalize(IParserContext context);
     }
 }

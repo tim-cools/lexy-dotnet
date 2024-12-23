@@ -3,13 +3,14 @@ namespace Lexy.Poc.Core.Parser.Tokens
 {
     public class CommentToken : ParsableToken
     {
-        public CommentToken(char value) : base(value)
+        public CommentToken(TokenCharacter character) : base(character)
         {
         }
 
-        public override ParseTokenResult Parse(char value, IParserContext parserContext)
+        public override ParseTokenResult Parse(TokenCharacter character, IParserContext parserContext)
         {
-            AppendValue(value);
+            AppendValue(character.Value);
+
             return ParseTokenResult.InProgress();
         }
 

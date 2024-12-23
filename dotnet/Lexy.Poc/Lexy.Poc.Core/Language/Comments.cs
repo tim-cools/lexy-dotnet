@@ -8,6 +8,10 @@ namespace Lexy.Poc.Core.Language
     {
         private IList<string> lines = new List<string>();
 
+        public Comments(SourceReference sourceReference) : base(sourceReference)
+        {
+        }
+
         public override IParsableNode Parse(IParserContext context)
         {
             var valid = context.ValidateTokens<Comments>()

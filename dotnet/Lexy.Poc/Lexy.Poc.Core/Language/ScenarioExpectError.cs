@@ -9,6 +9,10 @@ namespace Lexy.Poc.Core.Language
         public string Message { get; private set; }
         public bool HasValue => Message != null;
 
+        public ScenarioExpectError(SourceReference reference) : base(reference)
+        {
+        }
+
         public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;

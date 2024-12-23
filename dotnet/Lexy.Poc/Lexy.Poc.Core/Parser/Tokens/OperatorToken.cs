@@ -19,7 +19,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             }
         }
 
-        private static readonly char[] terminatorValues = 
+        private static readonly char[] TerminatorValues =
         {
             TokenValues.Space,
             TokenValues.OpenParentheses,
@@ -52,8 +52,9 @@ namespace Lexy.Poc.Core.Parser.Tokens
 
         public OperatorType Type { get; private set; } = OperatorType.NotSet;
 
-        public OperatorToken(char operatorValue) : base(operatorValue)
+        public OperatorToken(TokenCharacter character) : base(character)
         {
+            var operatorValue = character.Value;
             foreach (var combination in operatorCombinations)
             {
                 if (!combination.SecondChar.HasValue && combination.FirstChar == operatorValue)
@@ -63,8 +64,9 @@ namespace Lexy.Poc.Core.Parser.Tokens
             }
         }
 
-        public override ParseTokenResult Parse(char value, IParserContext context)
+        public override ParseTokenResult Parse(TokenCharacter character, IParserContext context)
         {
+            var value = character.Value;
             if (Value.Length == 1)
             {
                 foreach (var combination in operatorCombinations)
@@ -80,11 +82,11 @@ namespace Lexy.Poc.Core.Parser.Tokens
             }
 
             if (char.IsLetterOrDigit(value)
-                || terminatorValues.Contains(value))
+                || TerminatorValues.Contains(value))
             {
                 if (Value.Length == 1 && Value[0] == TokenValues.TableSeparator)
                 {
-                    return ParseTokenResult.Finished(false, new TableSeparatorToken());
+                    return ParseTokenResult.Finished(false, new TableSeparatorToken(FirstCharacter));
                 }
                 return ParseTokenResult.Finished(false);
             }
@@ -96,7 +98,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
         {
             if (Value == TokenValues.TableSeparator.ToString())
             {
-                return ParseTokenResult.Finished(false, new TableSeparatorToken());
+                return ParseTokenResult.Finished(false, new TableSeparatorToken(FirstCharacter));
             }
 
             return ParseTokenResult.Finished(false);

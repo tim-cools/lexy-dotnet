@@ -59,7 +59,8 @@ namespace Lexy.Poc.Core.Language.Expressions
         public Expression Right { get; }
         public ExpressionOperator Operator { get; }
 
-        private BinaryExpression(Expression left, Expression right, ExpressionOperator operatorValue, ExpressionSource source) : base(source)
+        private BinaryExpression(Expression left, Expression right, ExpressionOperator operatorValue,
+            ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             Left = left;
             Right = right;
@@ -70,30 +71,31 @@ namespace Lexy.Poc.Core.Language.Expressions
         {
             var tokens = source.Tokens;
             var supportedTokens = GetCurrentLevelSupportedTokens(tokens);
-            var lowerPriorityOperation = GetLowestPriorityOperation(supportedTokens);
-            if (lowerPriorityOperation == null)
+            var lowestPriorityOperation = GetLowestPriorityOperation(supportedTokens);
+            if (lowestPriorityOperation == null)
             {
                 return ParseExpressionResult.Invalid<BinaryExpression>("No valid Operator token found.");
             }
 
-            var leftTokens = tokens.TokensRange(0, lowerPriorityOperation.Index - 1);
+            var leftTokens = tokens.TokensRange(0, lowestPriorityOperation.Index - 1);
             if (leftTokens.Length == 0)
             {
                 return ParseExpressionResult.Invalid<BinaryExpression>(
-                    $"No tokens left from: {lowerPriorityOperation.Index} ({tokens})");
+                    $"No tokens left from: {lowestPriorityOperation.Index} ({tokens})");
             }
-            var rightTokens = tokens.TokensFrom(lowerPriorityOperation.Index + 1);
+            var rightTokens = tokens.TokensFrom(lowestPriorityOperation.Index + 1);
             if (rightTokens.Length == 0)
             {
                 return ParseExpressionResult.Invalid<BinaryExpression>(
-                    $"No tokens right from: {lowerPriorityOperation.Index} ({tokens})");
+                    $"No tokens right from: {lowestPriorityOperation.Index} ({tokens})");
             }
 
-            var left = ExpressionFactory.Parse(leftTokens, source.Line);
-            var right = ExpressionFactory.Parse(rightTokens, source.Line);
-            var operatorValue = lowerPriorityOperation.ExpressionOperator;
+            var left = ExpressionFactory.Parse(source.File, leftTokens, source.Line);
+            var right = ExpressionFactory.Parse(source.File, rightTokens, source.Line);
+            var operatorValue = lowestPriorityOperation.ExpressionOperator;
+            var reference = source.CreateReference(lowestPriorityOperation.Index);
 
-            var binaryExpression = new BinaryExpression(left, right, operatorValue, source);
+            var binaryExpression = new BinaryExpression(left, right, operatorValue, source, reference);
             return ParseExpressionResult.Success(binaryExpression) ;
         }
 
@@ -170,60 +172,6 @@ namespace Lexy.Poc.Core.Language.Expressions
 
         protected override void Validate(IValidationContext context)
         {
-        }
-    }
-
-    public class VariableDeclarationExpression : Expression
-    {
-        public VariableType VariableType { get; }
-        public string VariableName { get; }
-        public Expression Assignment { get; }
-
-        private VariableDeclarationExpression(VariableType variableType, string variableName, Expression assignment, ExpressionSource source) : base(source)
-        {
-            VariableType = variableType ?? throw new ArgumentNullException(nameof(variableType));
-            VariableName = variableName ?? throw new ArgumentNullException(nameof(variableName));
-            Assignment = assignment;
-        }
-
-        public static ParseExpressionResult Parse(ExpressionSource source)
-        {
-            var tokens = source.Tokens;
-            if (!IsValid(tokens))
-            {
-                return ParseExpressionResult.Invalid<VariableDeclarationExpression>("Invalid expression.");
-            }
-
-            var type = VariableType.Parse(tokens.TokenValue(0));
-            var name = tokens.TokenValue(1);
-            var assignment = tokens.Length > 3 ? ExpressionFactory.Parse(tokens.TokensFrom(3), source.Line) : null;
-            var expression = new VariableDeclarationExpression(type, name, assignment, source);
-
-            return ParseExpressionResult.Success(expression);
-        }
-
-        public static bool IsValid(TokenList tokens)
-        {
-            return tokens.Length == 2
-                   && tokens.IsTokenType<StringLiteralToken>(0)
-                   && tokens.IsTokenType<StringLiteralToken>(1)
-                || tokens.Length >= 4
-                   && tokens.IsTokenType<StringLiteralToken>(0)
-                   && tokens.IsTokenType<StringLiteralToken>(1)
-                   && tokens.OperatorToken(2, OperatorType.Assignment);
-        }
-
-        protected override IEnumerable<INode> GetChildren()
-        {
-            if (Assignment != null)
-            {
-                yield return Assignment;
-            }
-        }
-
-        protected override void Validate(IValidationContext context)
-        {
-            context.FunctionCodeContext.EnsureVariableUnique(VariableName);
         }
     }
 }

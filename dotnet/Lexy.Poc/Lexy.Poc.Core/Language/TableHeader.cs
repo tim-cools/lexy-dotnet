@@ -9,15 +9,15 @@ namespace Lexy.Poc.Core.Language
         public string Name { get; }
         public string Type { get; }
 
-        public TableHeader(string name, string type)
+        public TableHeader(string name, string type, SourceReference reference) : base(reference)
         {
             Name = name;
             Type = type;
         }
 
-        public static TableHeader Parse(string name, string typeName)
+        public static TableHeader Parse(string name, string typeName, SourceReference reference)
         {
-            return new TableHeader(name, typeName);
+            return new TableHeader(name, typeName, reference);
         }
 
         protected override IEnumerable<INode> GetChildren()

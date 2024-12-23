@@ -41,12 +41,13 @@ namespace Lexy.Poc.Core.Parser.Tokens
             ? numberValue.Value.ToString(CultureInfo.InvariantCulture)
             : base.Value;
 
-        public NumberLiteralToken(char value) : base(value)
+        public NumberLiteralToken(TokenCharacter character) : base(character)
         {
         }
 
-        public override ParseTokenResult Parse(char value, IParserContext parserContext)
+        public override ParseTokenResult Parse(TokenCharacter character, IParserContext parserContext)
         {
+            var value = character.Value;
             if (char.IsDigit(value))
             {
                 AppendValue(value);

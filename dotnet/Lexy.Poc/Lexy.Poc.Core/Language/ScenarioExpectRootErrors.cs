@@ -12,6 +12,10 @@ namespace Lexy.Poc.Core.Language
 
         public bool HasValues => messages.Count > 0;
 
+        public ScenarioExpectRootErrors(SourceReference reference) : base(reference)
+        {
+        }
+
         public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;

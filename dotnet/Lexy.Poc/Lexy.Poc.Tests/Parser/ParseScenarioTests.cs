@@ -59,7 +59,7 @@ namespace Lexy.Poc.Parser
 
             var errors = context.Logger.NodeFailedMessages(scenario);
             errors.Length.ShouldBe(1);
-            errors[0].ShouldBe("2: ERROR - Invalid token 'Functtion'. Keyword expected.");
+            errors[0].ShouldBe("tests.lexy(2, 2): ERROR - Invalid token 'Functtion'. Keyword expected.");
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace Lexy.Poc.Parser
 
             var errors = context.Logger.NodeFailedMessages(scenario);
             errors.Length.ShouldBe(1, context.Logger.FormatMessages());
-            errors[0].ShouldBe("4: ERROR - Invalid token at 14: Invalid number token character: d");
+            errors[0].ShouldBe("tests.lexy(4, 15): ERROR - Invalid token at 14: Invalid number token character: d");
         }
 
         [Test]

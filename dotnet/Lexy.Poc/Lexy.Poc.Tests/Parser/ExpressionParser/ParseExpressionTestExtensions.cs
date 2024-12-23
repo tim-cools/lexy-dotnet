@@ -9,10 +9,12 @@ namespace Lexy.Poc.Parser.ExpressionParser
         {
             var context = fixture.GetService<IParserContext>();
             var tokenizer = fixture.GetService<ITokenizer>();
+            var sourceFile = new SourceFile("generated.lexy");
             var line = new Line(0, expression);
+
             line.Tokenize(tokenizer, context);
 
-            return ExpressionFactory.Parse(line.Tokens, line);
+            return ExpressionFactory.Parse (sourceFile, line.Tokens, line);
         }
 
         public static void ParseExpressionExpectException(this ScopedServicesTestFixture fixture,

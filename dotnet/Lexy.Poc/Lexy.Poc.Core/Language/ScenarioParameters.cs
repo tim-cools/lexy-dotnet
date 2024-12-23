@@ -7,6 +7,10 @@ namespace Lexy.Poc.Core.Language
     {
         public IList<AssignmentDefinition> Assignments { get; } = new List<AssignmentDefinition>();
 
+        public ScenarioParameters(SourceReference reference) : base(reference)
+        {
+        }
+
         public override IParsableNode Parse(IParserContext context)
         {
             var assignment = AssignmentDefinition.Parse(context);

@@ -11,22 +11,28 @@ namespace Lexy.Poc.Core.Language
         private static readonly LambdaComparer<IRootNode> NodeComparer =
             new LambdaComparer<IRootNode>((token1, token2) => token1.NodeName == token2.NodeName);
 
-        public FunctionName Name { get; } = new FunctionName();
-        public FunctionParameters Parameters { get; } = new FunctionParameters();
-        public FunctionResults Results { get; } = new FunctionResults();
-        public FunctionCode Code { get; } = new FunctionCode();
-        public FunctionIncludes Include { get; } = new FunctionIncludes();
+        public FunctionName Name { get; }
+        public FunctionParameters Parameters { get; }
+        public FunctionResults Results { get; }
+        public FunctionCode Code { get; }
+        public FunctionIncludes Include { get; }
 
         public override string NodeName => Name.Value;
 
-        private Function(string name)
+        private Function(string name, SourceReference reference) : base(reference)
         {
+            Name = new FunctionName(reference);
+            Parameters = new FunctionParameters(reference);
+            Results = new FunctionResults(reference);
+            Code = new FunctionCode(reference);
+            Include = new FunctionIncludes(reference);
+
             Name.ParseName(name);
         }
 
-        internal static Function Create(string name)
+        internal static Function Create(string name, SourceReference reference)
         {
-            return new Function(name);
+            return new Function(name, reference);
         }
 
         public override IParsableNode Parse(IParserContext context)
@@ -40,7 +46,7 @@ namespace Lexy.Poc.Core.Language
             var name = line.Tokens.TokenValue(0);
             if (!line.Tokens.IsTokenType<KeywordToken>(0))
             {
-                return InvalidToken(name, line, context);
+                return InvalidToken(name, context);
             }
 
             return name switch
@@ -49,13 +55,13 @@ namespace Lexy.Poc.Core.Language
                 Keywords.Results => Results,
                 Keywords.Code => Code,
                 Keywords.Include => Include,
-                 _ => InvalidToken(name, line, context)
+                 _ => InvalidToken(name, context)
             };
         }
 
-        private IParsableNode InvalidToken(string name, Line line, IParserContext parserContext)
+        private IParsableNode InvalidToken(string name, IParserContext parserContext)
         {
-            parserContext.Logger.Fail($"Invalid token '{name}'. {line}");
+            parserContext.Logger.Fail(Reference, $"Invalid token '{name}'.");
             return this;
         }
 

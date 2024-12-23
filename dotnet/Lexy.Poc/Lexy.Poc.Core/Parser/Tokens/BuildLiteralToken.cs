@@ -16,12 +16,14 @@ namespace Lexy.Poc.Core.Parser.Tokens
         private bool hasMemberAccessor;
         private bool lastMemberAccessor;
 
-        public BuildLiteralToken(char value) : base(value)
+        public BuildLiteralToken(TokenCharacter character) : base(character)
         {
         }
 
-        public override ParseTokenResult Parse(char value, IParserContext parserContext)
+        public override ParseTokenResult Parse(TokenCharacter character, IParserContext parserContext)
         {
+            var value = character.Value;
+
             if (terminatorValues.Contains(value))
             {
                 return ParseTokenResult.Finished(false, SealLiteral());
@@ -50,7 +52,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
 
             if (value == TokenValues.Quote && Value == TokenValues.DateTimeStarter)
             {
-                return ParseTokenResult.InProgress(new DateTimeLiteral());
+                return ParseTokenResult.InProgress(new DateTimeLiteral(FirstCharacter));
             }
 
             return ParseTokenResult.Invalid($"Unexpected character: '{value}'");
@@ -71,23 +73,19 @@ namespace Lexy.Poc.Core.Parser.Tokens
             var value = Value;
             if (Keywords.Contains(value))
             {
-                return new KeywordToken(value);
+                return new KeywordToken(value, FirstCharacter);
             }
-            /* if (TypeNames.Contains(value))
-            {
-                return TypeLiteralToken.Parse(value);
-            } */
             if (BooleanLiteral.IsValid(value))
             {
-                return BooleanLiteral.Parse(value);
+                return BooleanLiteral.Parse(value, FirstCharacter);
             }
 
             if (hasMemberAccessor)
             {
-                return new MemberAccessLiteral(value);
+                return new MemberAccessLiteral(value, FirstCharacter);
             }
 
-            return new StringLiteralToken(value);
+            return new StringLiteralToken(value, FirstCharacter);
         }
     }
 }

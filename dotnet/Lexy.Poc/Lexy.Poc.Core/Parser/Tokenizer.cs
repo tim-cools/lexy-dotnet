@@ -7,8 +7,8 @@ namespace Lexy.Poc.Core.Parser
 {
     public class Tokenizer : ITokenizer
     {
-        private readonly IDictionary<char, Func<char, ParsableToken>> knownTokens =
-            new Dictionary<char, Func<char, ParsableToken>>
+        private readonly IDictionary<char, Func<TokenCharacter, ParsableToken>> knownTokens =
+            new Dictionary<char, Func<TokenCharacter, ParsableToken>>
             {
                 { TokenValues.CommentChar, value => new CommentToken(value) },
                 { TokenValues.Quote, value => new QuotedLiteralToken(value) },
@@ -33,8 +33,8 @@ namespace Lexy.Poc.Core.Parser
                 { TokenValues.Or, value => new OperatorToken(value) },
             };
 
-        private readonly IDictionary<Func<char, bool>, Func<char, ParsableToken>> tokensValidators =
-            new Dictionary<Func<char, bool>, Func<char, ParsableToken>>
+        private readonly IDictionary<Func<char, bool>, Func<TokenCharacter, ParsableToken>> tokensValidators =
+            new Dictionary<Func<char, bool>, Func<TokenCharacter, ParsableToken>>
             {
                 { char.IsDigit, value => new NumberLiteralToken(value)},
                 { char.IsLetter, value => new BuildLiteralToken(value)},
@@ -52,13 +52,14 @@ namespace Lexy.Poc.Core.Parser
             for (var index = 0; index < line.Content.Length; index++)
             {
                 var value = line.Content[index];
+                var tokenCharacter = new TokenCharacter(value, index);
                 var valueProcessed = false;
                 if (current != null)
                 {
-                    var result = current.Parse(value, parserContext);
+                    var result = current.Parse(tokenCharacter, parserContext);
                     if (result.Status == TokenStatus.InvalidToken)
                     {
-                        parserContext.Logger.Fail($"Invalid token at {index}: {result.ValidationError}");
+                        parserContext.Logger.Fail(parserContext.LineReference(index), $"Invalid token at {index}: {result.ValidationError}");
                         errors = true;
                         break;
                     }
@@ -79,7 +80,7 @@ namespace Lexy.Poc.Core.Parser
 
                 if (current == null && !valueProcessed)
                 {
-                    current = StartToken(value, index, parserContext);
+                    current = StartToken(tokenCharacter, index, parserContext);
                 }
             }
 
@@ -88,7 +89,7 @@ namespace Lexy.Poc.Core.Parser
                 var result = current.Finalize(parserContext);
                 if (result.Status != TokenStatus.Finished)
                 {
-                    parserContext.Logger.Fail($"Invalid token at end of line. {result.ValidationError}");
+                    parserContext.Logger.Fail(parserContext.LineEndReference(), $"Invalid token at end of line. {result.ValidationError}");
                     errors = true;
                 }
                 else
@@ -105,22 +106,23 @@ namespace Lexy.Poc.Core.Parser
             return new TokenList(tokens.Where(token => !(token is WhitespaceToken)).ToArray());
         }
 
-        private ParsableToken StartToken(char value, int index, IParserContext parserContext)
+        private ParsableToken StartToken(TokenCharacter character, int index, IParserContext parserContext)
         {
+            var value = character.Value;
             if (knownTokens.ContainsKey(value))
             {
-                return knownTokens[value](value);
+                return knownTokens[value](character);
             }
 
             foreach (var validator in tokensValidators)
             {
                 if (validator.Key(value))
                 {
-                    return validator.Value(value);
+                    return validator.Value(character);
                 }
             }
 
-            parserContext.Logger.Fail($"Invalid character at {index} '{value}'");
+            parserContext.Logger.Fail(parserContext.LineReference(index), $"Invalid character at {index} '{value}'");
             return null;
         }
     }

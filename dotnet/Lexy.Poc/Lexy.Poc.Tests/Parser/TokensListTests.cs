@@ -15,9 +15,9 @@ namespace Lexy.Poc.Parser
         {
             var list = new TokenList(new []
             {
-                new StringLiteralToken("123"),
-                new StringLiteralToken("456"),
-                new StringLiteralToken("789"),
+                TokenFactory.String("123"),
+                TokenFactory.String("456"),
+                TokenFactory.String("789"),
             });
 
             var result = list.TokensFrom(1);
@@ -31,9 +31,9 @@ namespace Lexy.Poc.Parser
         {
             var list = new TokenList(new []
             {
-                new StringLiteralToken("123"),
-                new StringLiteralToken("456"),
-                new StringLiteralToken("789"),
+                TokenFactory.String("123"),
+                TokenFactory.String("456"),
+                TokenFactory.String("789"),
             });
 
             var result = list.TokensFromStart(2);
@@ -47,11 +47,11 @@ namespace Lexy.Poc.Parser
         {
             var list = new TokenList(new []
             {
-                new StringLiteralToken("1111"),
-                new StringLiteralToken("2222"),
-                new StringLiteralToken("3333"),
-                new StringLiteralToken("4444"),
-                new StringLiteralToken("5555"),
+                TokenFactory.String("1111"),
+                TokenFactory.String("2222"),
+                TokenFactory.String("3333"),
+                TokenFactory.String("4444"),
+                TokenFactory.String("5555"),
             });
 
             var result = list.TokensRange(1, 3);
@@ -60,5 +60,18 @@ namespace Lexy.Poc.Parser
             result[1].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("3333"));
             result[2].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("4444"));
         }
+    }
+
+    public static class TokenFactory
+    {
+        public static StringLiteralToken String(string value)
+        {
+            return new StringLiteralToken(value, TestTokenCharacter.Dummy);
+        }
+    }
+
+    public class TestTokenCharacter
+    {
+        public static TokenCharacter Dummy => new TokenCharacter('a', 0);
     }
 }

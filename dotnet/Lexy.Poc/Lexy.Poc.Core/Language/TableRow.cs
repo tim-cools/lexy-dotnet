@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
@@ -10,7 +8,7 @@ namespace Lexy.Poc.Core.Language
     {
         public IList<ILiteralToken> Values { get; } = new List<ILiteralToken>();
 
-        private TableRow(ILiteralToken[] values)
+        private TableRow(ILiteralToken[] values, SourceReference reference) : base(reference)
         {
             Values = values;
         }
@@ -41,7 +39,7 @@ namespace Lexy.Poc.Core.Language
                 tokens.Add(token);
             }
 
-            return new TableRow(tokens.ToArray());
+            return new TableRow(tokens.ToArray(), context.LineStartReference());
         }
 
         protected override IEnumerable<INode> GetChildren()

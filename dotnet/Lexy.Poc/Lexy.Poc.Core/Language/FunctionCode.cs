@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Lexy.Poc.Core.Language.Expressions;
 using Lexy.Poc.Core.Parser;
 
@@ -9,6 +7,10 @@ namespace Lexy.Poc.Core.Language
     public class FunctionCode : ParsableNode
     {
         public IList<Expression> Expressions { get; } = new List<Expression>();
+
+        public FunctionCode(SourceReference reference) : base(reference)
+        {
+        }
 
         public override IParsableNode Parse(IParserContext context)
         {
@@ -24,9 +26,11 @@ namespace Lexy.Poc.Core.Language
 
             if (!valid) return null;
 
-            var expression = ExpressionFactory.Parse(line.Tokens, line);
-
-            Expressions.Add(expression);
+            var expression = ExpressionFactory.Parse(context.SourceCode.File, line.Tokens, line);
+            if (expression != null)
+            {
+                Expressions.Add(expression);
+            }
             return this;
         }
 

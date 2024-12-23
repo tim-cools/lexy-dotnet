@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
-using Microsoft.Extensions.Configuration;
 
 namespace Lexy.Poc.Core.Language
 {
@@ -13,6 +12,10 @@ namespace Lexy.Poc.Core.Language
             var line = context.CurrentLine;
             Value = line.Tokens.TokenValue(1);
             return this;
+        }
+
+        public ScenarioFunctionName(SourceReference reference) : base(reference)
+        {
         }
 
         public override string ToString() => Value;

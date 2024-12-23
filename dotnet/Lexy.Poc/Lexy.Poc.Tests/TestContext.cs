@@ -16,7 +16,7 @@ namespace Lexy.Poc
             var code = new []{ value };
 
             var codeContext = serviceProvider.GetRequiredService<ISourceCodeDocument>();
-            codeContext.SetCode(code);
+            codeContext.SetCode(code, "tests.lexy");
 
             var context = serviceProvider.GetRequiredService<IParserContext>();
             var result = context.ProcessLine();

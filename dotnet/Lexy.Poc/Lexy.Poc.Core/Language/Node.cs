@@ -6,6 +6,13 @@ namespace Lexy.Poc.Core.Language
 {
     public abstract class Node : INode
     {
+        public SourceReference Reference { get; }
+
+        protected Node(SourceReference reference)
+        {
+            Reference = reference ?? throw new ArgumentNullException(nameof(reference));
+        }
+
         public virtual void ValidateTree(IValidationContext context)
         {
             Validate(context);

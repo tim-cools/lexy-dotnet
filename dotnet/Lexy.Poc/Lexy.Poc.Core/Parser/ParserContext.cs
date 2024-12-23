@@ -13,6 +13,7 @@ namespace Lexy.Poc.Core.Parser
         public Line CurrentLine => sourceCodeDocument.CurrentLine;
 
         public Nodes Nodes { get; } = new Nodes();
+        public ISourceCodeDocument SourceCode => sourceCodeDocument;
         public IParserLogger Logger => logger;
 
         public ParserContext(ITokenizer tokenizer, IParserLogger logger, ISourceCodeDocument sourceCodeDocument)
@@ -34,26 +35,56 @@ namespace Lexy.Poc.Core.Parser
         public bool ProcessLine()
         {
             var line = sourceCodeDocument.NextLine();
-            logger.Log($"'{line.Content}'");
+            logger.Log(LineStartReference(), $"'{line.Content}'");
 
             var success = CurrentLine.Tokenize(tokenizer, this);
             var tokenNames = string.Join(" ", CurrentLine.Tokens.Select(token => token.GetType().Name).ToArray());
 
-            logger.Log("  Tokens: " + tokenNames);
+            logger.Log(LineStartReference(), "  Tokens: " + tokenNames);
 
             return success;
         }
 
         public TokenValidator ValidateTokens<T>()
         {
-            logger.Log("  Parse: " + typeof(T).Name);
+            logger.Log(LineStartReference(), "  Parse: " + typeof(T).Name);
             return new TokenValidator(typeof(T).Name, this);
         }
 
         public TokenValidator ValidateTokens(string name)
         {
-            logger.Log("  Parse: " + name);
+            logger.Log(LineStartReference(), "  Parse: " + name);
             return new TokenValidator(name, this);
+        }
+
+        public SourceReference TokenReference(int tokenIndex)
+        {
+            return new SourceReference(
+                sourceCodeDocument.File,
+                sourceCodeDocument.CurrentLine?.Index,
+                sourceCodeDocument.CurrentLine?.Tokens.CharacterPosition(tokenIndex));
+        }
+
+        public SourceReference LineEndReference()
+        {
+            return new SourceReference(sourceCodeDocument.File, sourceCodeDocument.CurrentLine?.Index + 1,
+                sourceCodeDocument.CurrentLine.Content.Length);
+        }
+
+        public SourceReference LineStartReference()
+        {
+            var lineStart = sourceCodeDocument.CurrentLine?.FirstCharacter();
+            return new SourceReference(sourceCodeDocument.File, sourceCodeDocument.CurrentLine?.Index + 1, lineStart);
+        }
+
+        public SourceReference DocumentReference()
+        {
+            return new SourceReference(sourceCodeDocument.File, 1, 1);
+        }
+
+        public SourceReference LineReference(int characterIndex)
+        {
+            return new SourceReference(sourceCodeDocument.File, sourceCodeDocument.CurrentLine?.Index + 1, characterIndex + 1);
         }
     }
 }

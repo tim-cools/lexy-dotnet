@@ -36,11 +36,6 @@ namespace Lexy.Poc.Core.Parser
             if (!valid) return null;
 
             var parameter = tokens.TokenValue(1);
-            if (context.Nodes.Contains(parameter))
-            {
-                context.Logger.Fail($"Duplicated node name: '{parameter}'");
-                return null;
-            }
 
             return new NodeName(keyword, parameter);
         }

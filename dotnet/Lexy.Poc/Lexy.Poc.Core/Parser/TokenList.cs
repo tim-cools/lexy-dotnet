@@ -126,5 +126,15 @@ namespace Lexy.Poc.Core.Parser
                 throw new InvalidOperationException($"Invalid token index {index} (length: {values.Length})");
             }
         }
+
+        public int? CharacterPosition(int tokenIndex)
+        {
+            if (tokenIndex < 0 || tokenIndex >= values.Length)
+            {
+                return null;
+            }
+
+            return values[tokenIndex].FirstCharacter.Position;
+        }
     }
 }

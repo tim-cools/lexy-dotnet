@@ -10,7 +10,7 @@ namespace Lexy.Poc.Core.Language
         public Expression Expression { get; }
         public string Name { get; }
 
-        public AssignmentDefinition(string name, Expression expression)
+        public AssignmentDefinition(string name, Expression expression, SourceReference reference) : base(reference)
         {
             Expression = expression;
             Name = name;
@@ -28,8 +28,11 @@ namespace Lexy.Poc.Core.Language
 
             var line = context.CurrentLine;
             var name = line.Tokens.TokenValue(0);
-            var value = ExpressionFactory.Parse(line.Tokens.TokensFrom(2), line);
-            return value != null ? new AssignmentDefinition(name, value) : null;
+
+            var value = ExpressionFactory.Parse(context.SourceCode.File, line.Tokens.TokensFrom(2), line);
+            var reference = context.LineStartReference();
+
+            return value != null ? new AssignmentDefinition(name, value, reference) : null;
         }
 
         protected override IEnumerable<INode> GetChildren()

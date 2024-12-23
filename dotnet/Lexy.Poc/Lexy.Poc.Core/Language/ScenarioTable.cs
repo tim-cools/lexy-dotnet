@@ -8,6 +8,10 @@ namespace Lexy.Poc.Core.Language
         public TableHeaders Headers { get; private set; }
         public IList<TableRow> Rows { get; } = new List<TableRow>();
 
+        public ScenarioTable(SourceReference reference) : base(reference)
+        {
+        }
+
         public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;

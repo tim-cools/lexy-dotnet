@@ -5,7 +5,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
     {
         public override string Value { get; }
 
-        public StringLiteralToken(string value)
+        public StringLiteralToken(string value, TokenCharacter character) : base(character)
         {
             Value = value;
         }

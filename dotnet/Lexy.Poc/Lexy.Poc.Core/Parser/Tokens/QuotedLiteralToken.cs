@@ -6,16 +6,18 @@ namespace Lexy.Poc.Core.Parser.Tokens
     {
         private bool quoteClosed;
 
-        public QuotedLiteralToken(char value)
+        public QuotedLiteralToken(TokenCharacter character) : base(null, character)
         {
+            var value = character.Value;
             if (value != TokenValues.Quote)
             {
                 throw new InvalidOperationException("QuotedLiteralToken should start with a quote");
             }
         }
 
-        public override ParseTokenResult Parse(char value, IParserContext parserContext)
+        public override ParseTokenResult Parse(TokenCharacter character, IParserContext parserContext)
         {
+            var value = character.Value;
             if (quoteClosed)
             {
                 throw new InvalidOperationException("No characters allowed after closing quote.");
@@ -46,7 +48,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             var keyword = Value;
             if (Keywords.Contains(keyword))
             {
-                return new KeywordToken(keyword);
+                return new KeywordToken(keyword, FirstCharacter);
             }
 
             return this;

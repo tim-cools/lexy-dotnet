@@ -5,8 +5,10 @@ namespace Lexy.Poc.Core.Parser
     public interface IParserLogger
     {
         void LogInfo(string message);
-        void Log(string message);
-        void Fail(string message);
+
+        void Log(SourceReference reference, string message);
+        void Fail(SourceReference reference, string message);
+        void Fail(INode node, SourceReference reference, string message);
 
         bool HasErrors();
         bool HasRootErrors();
@@ -22,6 +24,8 @@ namespace Lexy.Poc.Core.Parser
         string[] FailedMessages();
 
         void AssertNoErrors();
+
         void SetCurrentNode(IRootNode node);
+        void Reset();
     }
 }

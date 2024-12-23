@@ -13,6 +13,10 @@ namespace Lexy.Poc.Core.Language
             Value = parameter;
         }
 
+        public ScenarioName(SourceReference reference) : base(reference)
+        {
+        }
+
         public override string ToString() => Value;
 
         protected override IEnumerable<INode> GetChildren()

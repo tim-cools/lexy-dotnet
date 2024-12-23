@@ -1,4 +1,5 @@
 using Lexy.Poc.Core.Language;
+using Lexy.Poc.Core.Language.Expressions;
 
 namespace Lexy.Poc.Core.Parser
 {
@@ -9,6 +10,7 @@ namespace Lexy.Poc.Core.Parser
         Line CurrentLine { get; }
 
         Nodes Nodes { get; }
+        ISourceCodeDocument SourceCode { get; }
 
         void ProcessNode(IRootNode node);
 
@@ -16,5 +18,11 @@ namespace Lexy.Poc.Core.Parser
 
         TokenValidator ValidateTokens<T>();
         TokenValidator ValidateTokens(string name);
+
+        SourceReference TokenReference(int tokenIndex);
+        SourceReference LineEndReference();
+        SourceReference LineStartReference();
+        SourceReference DocumentReference();
+        SourceReference LineReference(int characterPosition);
     }
 }

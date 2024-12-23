@@ -8,7 +8,7 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public string Value { get; }
 
-        private MemberAccessExpression(string value, ExpressionSource source) : base(source)
+        private MemberAccessExpression(string value, ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             Value = value;
         }
@@ -22,8 +22,9 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             var variableName = tokens.TokenValue(0);
+            var reference = source.CreateReference();
 
-            var accessExpression = new MemberAccessExpression(variableName, source);
+            var accessExpression = new MemberAccessExpression(variableName, source, reference);
             return ParseExpressionResult.Success(accessExpression);
         }
 

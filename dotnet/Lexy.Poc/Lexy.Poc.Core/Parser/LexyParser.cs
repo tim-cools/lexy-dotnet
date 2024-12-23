@@ -24,17 +24,17 @@ namespace Lexy.Poc.Core.Parser
 
             var code = File.ReadAllLines(fileName);
 
-            return Parse(code, throwException);
+            return Parse(code, Path.GetFileName(fileName), throwException);
         }
 
-        public ParserResult Parse(string[] code, bool throwException = true)
+        public ParserResult Parse(string[] code, string fileName, bool throwException = true)
         {
             if (code == null) throw new ArgumentNullException(nameof(code));
 
-            sourceCodeDocument.SetCode(code);
+            sourceCodeDocument.SetCode(code, fileName);
 
             var currentIndent = 0;
-            var document = new Document();
+            var document = new Document(context.DocumentReference());
             var nodes = new ParsableNodeArray(document);
 
             while (sourceCodeDocument.HasMoreLines())
@@ -54,7 +54,7 @@ namespace Lexy.Poc.Core.Parser
                 var indent = line.Indent();
                 if (indent > currentIndent)
                 {
-                    context.Logger.Fail($"Invalid indent: {indent}");
+                    context.Logger.Fail(context.LineStartReference(), $"Invalid indent: {indent}");
                     continue;
                 }
 
@@ -67,6 +67,7 @@ namespace Lexy.Poc.Core.Parser
             }
 
             sourceCodeDocument.Reset();
+            logger.Reset();
 
             var validationContext = new ValidationContext(context);
             document.ValidateTree(validationContext);
@@ -135,11 +136,11 @@ namespace Lexy.Poc.Core.Parser
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public bool EnsureVariableUnique(string name)
+        public bool EnsureVariableUnique(INode node, string name)
         {
             if (variables.Contains(name))
             {
-                logger.Fail($"Duplicated variable name: '{name}'");
+                logger.Fail(node.Reference, $"Duplicated variable name: '{name}'");
                 return false;
             }
 
@@ -147,11 +148,11 @@ namespace Lexy.Poc.Core.Parser
             return true;
         }
 
-        public void EnsureVariableExists(string variableName)
+        public void EnsureVariableExists(INode node, string variableName)
         {
             if (!variables.Contains(variableName))
             {
-                logger.Fail($"Unknown variable name: '{variableName}'");
+                logger.Fail(node.Reference, $"Unknown variable name: '{variableName}'");
             }
         }
     }
@@ -168,8 +169,8 @@ namespace Lexy.Poc.Core.Parser
 
     public interface IFunctionCodeContext
     {
-        bool EnsureVariableUnique(string variableName);
-        void EnsureVariableExists(string variableName);
+        bool EnsureVariableUnique(INode node, string variableName);
+        void EnsureVariableExists(INode node, string variableName);
     }
 
     public class ParsableNodeArray

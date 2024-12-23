@@ -68,5 +68,18 @@ namespace Lexy.Poc.Core.Parser
         public bool IsEmpty() => Content.Length == 0;
 
         public bool IsComment() => Tokens.IsComment();
+
+        public int? FirstCharacter()
+        {
+            for (var index = 0; index < Content.Length; index++)
+            {
+                if (Content[index] != ' ' && Content[index] != '\\')
+                {
+                    return index;
+                }
+            }
+
+            return null;
+        }
     }
 }

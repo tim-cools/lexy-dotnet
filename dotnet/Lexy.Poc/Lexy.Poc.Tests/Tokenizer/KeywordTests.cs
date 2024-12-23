@@ -46,7 +46,7 @@ namespace Lexy.Poc.Tokenizer
             ServiceProvider
                 .TestLine(@"  ExpectError ""Invalid token 'Paraeters'"".")
                 .ValidateTokens()
-                .ExpectError(@"1: ERROR - Invalid character at 41 '.'")
+                .ExpectError(@"ERROR - Invalid character at 41 '.'")
                 .Assert();
         }
 
@@ -69,7 +69,7 @@ namespace Lexy.Poc.Tokenizer
             ServiceProvider
                 .TestLine(@"  Value = ValidateEnumKeyword..Second", false)
                 .ValidateTokens()
-                .ExpectError("1: ERROR - Invalid token at 30: Unexpected character: '.'. Member accessor should be followed by member name.")
+                .ExpectError("ERROR - Invalid token at 30: Unexpected character: '.'. Member accessor should be followed by member name.")
                 .Assert();
         }
 
@@ -79,7 +79,7 @@ namespace Lexy.Poc.Tokenizer
             ServiceProvider
                 .TestLine(@"  Value = ValidateEnumKeyword.", false)
                 .ValidateTokens()
-                .ExpectError("1: ERROR - Invalid token at end of line. Unexpected end of line. Member accessor should be followed by member name.")
+                .ExpectError("ERROR - Invalid token at end of line. Unexpected end of line. Member accessor should be followed by member name.")
                 .Assert();
         }
     }

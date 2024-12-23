@@ -2,11 +2,11 @@ namespace Lexy.Poc.Core.Parser.Tokens
 {
     public class TableSeparatorToken : ParsableToken
     {
-        public TableSeparatorToken() : base(TokenValues.TableSeparator)
+        public TableSeparatorToken(TokenCharacter character) : base(character)
         {
         }
 
-        public override ParseTokenResult Parse(char value, IParserContext context)
+        public override ParseTokenResult Parse(TokenCharacter character, IParserContext context)
         {
             return ParseTokenResult.Finished(true);
         }

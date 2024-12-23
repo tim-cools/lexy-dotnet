@@ -124,7 +124,6 @@ namespace Lexy.Poc.Core.Parser
             return this;
         }
 
-
         public TokenValidator NumberLiteral(int index, decimal? value = null)
         {
             var token = ValidateType<NumberLiteralToken>(index);
@@ -214,7 +213,8 @@ namespace Lexy.Poc.Core.Parser
             errorsExpected = true;
             if (!parserContext.Logger.HasErrorMessage(expectedError))
             {
-                Fail($"Error expected but not found: {expectedError}");
+                Fail($"Error expected but not found: {Environment.NewLine}" +
+                     $"  Expected: {expectedError}");
                 IsValid = false;
             }
 
@@ -233,7 +233,7 @@ namespace Lexy.Poc.Core.Parser
 
         private void Fail(string error)
         {
-            parserContext.Logger.Fail($"({parserName}) {error}");
+            parserContext.Logger.Fail(parserContext.LineStartReference(), $"({parserName}) {error}");
         }
 
         public void Assert()

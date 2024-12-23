@@ -11,14 +11,14 @@ namespace Lexy.Poc.Core.Language
         public IList<TableRow> Rows { get; } = new List<TableRow>();
         public override string NodeName => Name.Value;
 
-        private Table(string name)
+        private Table(string name, SourceReference reference) : base(reference)
         {
             Name.ParseName(name);
         }
 
-        internal static Table Parse(NodeName name)
+        internal static Table Parse(NodeName name, SourceReference reference)
         {
-            return new Table(name.Name);
+            return new Table(name.Name, reference);
         }
 
         public override IParsableNode Parse(IParserContext context)

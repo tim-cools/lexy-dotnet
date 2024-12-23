@@ -9,7 +9,7 @@ namespace Lexy.Poc.Core.Language.Expressions
         public string VariableName { get; }
         public Expression Assignment { get; }
 
-        private AssignmentExpression(string variableName, Expression assignment, ExpressionSource source) : base(source)
+        private AssignmentExpression(string variableName, Expression assignment, ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             VariableName = variableName;
             Assignment = assignment;
@@ -24,9 +24,10 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             var variableName = tokens.TokenValue(0);
-            var assignment = ExpressionFactory.Parse(tokens.TokensFrom(2), source.Line);
+            var assignment = ExpressionFactory.Parse(source.File, tokens.TokensFrom(2), source.Line);
+            var reference = source.CreateReference();
 
-            var expression = new AssignmentExpression(variableName, assignment, source);
+            var expression = new AssignmentExpression(variableName, assignment, source, reference);
 
             return ParseExpressionResult.Success(expression);
         }

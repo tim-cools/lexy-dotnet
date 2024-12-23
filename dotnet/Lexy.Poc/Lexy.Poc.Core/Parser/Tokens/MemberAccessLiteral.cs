@@ -6,7 +6,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
     {
         public override string Value { get; }
 
-        public MemberAccessLiteral(string value)
+        public MemberAccessLiteral(string value, TokenCharacter character) : base(character)
         {
             Value = value ?? throw new ArgumentNullException(nameof(value));
         }

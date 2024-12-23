@@ -8,25 +8,19 @@ namespace Lexy.Poc.Core.Parser.Tokens
 
         public override string Value => BooleanValue ? TokenValues.BooleanTrue : TokenValues.BooleanFalse;
 
-        public BooleanLiteral(bool value)
+        public BooleanLiteral(bool value, TokenCharacter character) : base(character)
         {
             BooleanValue = value;
         }
 
-        public static BooleanLiteral Parse(string value)
+        public static BooleanLiteral Parse(string value, TokenCharacter character)
         {
-            if (value == TokenValues.BooleanTrue)
+            return value switch
             {
-                return new BooleanLiteral(true);
-            }
-
-            if (value == TokenValues.BooleanFalse)
-            {
-                return new BooleanLiteral(false);
-
-            }
-
-            throw new InvalidOperationException("Couldn't parse boolean: " + value);
+                TokenValues.BooleanTrue => new BooleanLiteral(true, character),
+                TokenValues.BooleanFalse => new BooleanLiteral(false, character),
+                _ => throw new InvalidOperationException($"Couldn't parse boolean: {value}")
+            };
         }
 
         public static bool IsValid(string value)

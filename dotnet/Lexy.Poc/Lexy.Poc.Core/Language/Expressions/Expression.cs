@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Lexy.Poc.Core.Parser;
 
@@ -9,7 +8,7 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public ExpressionSource Source { get; }
 
-        protected Expression(ExpressionSource source)
+        protected Expression(ExpressionSource source, SourceReference reference) : base(reference)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
         }
@@ -22,18 +21,6 @@ namespace Lexy.Poc.Core.Language.Expressions
                 writer.Write(token.Value);
             }
             return writer.ToString();
-        }
-    }
-
-    public class ExpressionSource
-    {
-        public Line Line { get; }
-        public TokenList Tokens { get; }
-
-        public ExpressionSource(Line line, TokenList tokens)
-        {
-            Line = line;
-            Tokens = tokens;
         }
     }
 }

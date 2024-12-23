@@ -9,7 +9,7 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public Expression Expression { get; }
 
-        private ParenthesizedExpression(Expression expression, ExpressionSource source) : base(source)
+        private ParenthesizedExpression(Expression expression, ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             Expression = expression;
         }
@@ -29,11 +29,10 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             var innerExpressionTokens = tokens.TokensRange(1, matchingClosingParenthesis - 1);
-            var parseResult = ExpressionFactory.Parse(innerExpressionTokens, source.Line);
+            var innerExpression = ExpressionFactory.Parse(source.File, innerExpressionTokens, source.Line);
+            var reference = source.CreateReference();
 
-            var innerExpression = parseResult;
-
-            var expression = new ParenthesizedExpression(innerExpression, source);
+            var expression = new ParenthesizedExpression(innerExpression, source, reference);
             return ParseExpressionResult.Success(expression);
         }
 

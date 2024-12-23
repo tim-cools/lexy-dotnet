@@ -25,7 +25,6 @@ namespace Lexy.Poc.Core.Parser
         }
 
         private readonly ILogger<ParserLogger> logger;
-        private readonly ISourceCodeDocument sourceCodeDocument;
         private readonly IList<LogEntry> logEntries = new List<LogEntry>();
         private int failedMessages;
         private IRootNode currentNode;
@@ -33,44 +32,42 @@ namespace Lexy.Poc.Core.Parser
         public bool HasErrors() => failedMessages > 0;
         public bool HasRootErrors() => logEntries.Any(entry => entry.IsError && entry.Node == null);
 
-        public ParserLogger(ILogger<ParserLogger> logger, ISourceCodeDocument sourceCodeDocument)
+        public ParserLogger(ILogger<ParserLogger> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.sourceCodeDocument = sourceCodeDocument ?? throw new ArgumentNullException(nameof(sourceCodeDocument));
         }
 
         public void LogInfo(string message) => logger.LogInformation(message);
 
-        public void Log(string message)
+        public void Log(SourceReference reference, string message)
         {
-            if (sourceCodeDocument.CurrentLine != null)
-            {
-                var lineIndex = sourceCodeDocument.CurrentLine?.Index + 1;
-                logger.LogDebug("{LineIndex}: {Message}", lineIndex, message);
-                logEntries.Add(new LogEntry(currentNode, false, $"{lineIndex}: {message}"));
-            }
-            else
-            {
-                logger.LogDebug("{CurrentNode}: {Message}", currentNode?.NodeName, message);
-                logEntries.Add(new LogEntry(currentNode, false, $"{currentNode?.NodeName}: {message}"));
-            }
+            if (reference == null) throw new ArgumentNullException(nameof(reference));
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
+            logger.LogDebug("{Reference}: {Message}", reference, message);
+            logEntries.Add(new LogEntry(currentNode, false, $"{reference}: {message}"));
         }
 
-        public void Fail(string message)
+        public void Fail(SourceReference reference, string message)
         {
+            if (reference == null) throw new ArgumentNullException(nameof(reference));
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
             failedMessages++;
 
-            if (sourceCodeDocument.CurrentLine != null)
-            {
-                var lineIndex = sourceCodeDocument.CurrentLine?.Index + 1;
-                logger.LogError("{LineIndex}: ERROR - {Message}", lineIndex, message);
-                logEntries.Add(new LogEntry(currentNode, true, $"{lineIndex}: ERROR - {message}"));
-            }
-            else
-            {
-                logger.LogError("{CurrentNode}: ERROR - {Message}", currentNode?.NodeName, message);
-                logEntries.Add(new LogEntry(currentNode, true, $"{currentNode?.NodeName}: ERROR - {message}"));
-            }
+            logger.LogError("{Reference}: ERROR - {Message}", reference, message);
+            logEntries.Add(new LogEntry(currentNode, true, $"{reference}: ERROR - {message}"));
+        }
+
+        public void Fail(INode node, SourceReference reference, string message)
+        {
+            if (reference == null) throw new ArgumentNullException(nameof(reference));
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
+            failedMessages++;
+
+            logger.LogError("{Reference}: ERROR - {Message}", reference, message);
+            logEntries.Add(new LogEntry(node, true, $"{reference}: ERROR - {message}"));
         }
 
         public bool HasErrorMessage(string expectedError)
@@ -88,6 +85,8 @@ namespace Lexy.Poc.Core.Parser
         {
             currentNode = node ?? throw new ArgumentNullException(nameof(node));
         }
+
+        public void Reset() => currentNode = null;
 
         public bool NodeHasErrors(IRootNode node)
         {
@@ -124,5 +123,22 @@ namespace Lexy.Poc.Core.Parser
                 throw new InvalidOperationException($"Parsing failed: {FormatMessages()}");
             }
         }
+    }
+
+    public class SourceReference
+    {
+        private readonly int? lineNumber;
+        private readonly int? characterNumber;
+
+        public SourceFile File { get; }
+
+        public SourceReference(SourceFile file, int? lineNumber, int? characterNumber)
+        {
+            File = file ?? throw new ArgumentNullException(nameof(file));
+            this.characterNumber = characterNumber;
+            this.lineNumber = lineNumber;
+        }
+
+        public override string ToString() => $"{File.FileName}({lineNumber}, {characterNumber})";
     }
 }

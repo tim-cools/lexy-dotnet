@@ -8,7 +8,7 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public string VariableName { get; }
 
-        private VariableExpression(string variableName, ExpressionSource source) : base(source)
+        private VariableExpression(string variableName, ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             VariableName = variableName;
         }
@@ -22,7 +22,9 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             var variableName = tokens.TokenValue(0);
-            var expression = new VariableExpression(variableName, source);
+            var reference = source.CreateReference(0);
+
+            var expression = new VariableExpression(variableName, source, reference);
 
             return ParseExpressionResult.Success(expression);
         }
@@ -40,7 +42,7 @@ namespace Lexy.Poc.Core.Language.Expressions
 
         protected override void Validate(IValidationContext context)
         {
-            context.FunctionCodeContext.EnsureVariableExists(VariableName);
+            context.FunctionCodeContext.EnsureVariableExists(this, VariableName);
         }
     }
 }

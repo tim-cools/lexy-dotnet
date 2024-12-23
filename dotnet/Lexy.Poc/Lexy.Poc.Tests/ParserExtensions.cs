@@ -11,7 +11,7 @@ namespace Lexy.Poc
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
             var codeLines = code.Split(Environment.NewLine);
-            var context = parser.Parse(codeLines, false);
+            var context = parser.Parse(codeLines, "tests.lexy", false);
 
             return context.Nodes;
         }

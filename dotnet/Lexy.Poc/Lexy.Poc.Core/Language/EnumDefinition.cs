@@ -7,20 +7,21 @@ namespace Lexy.Poc.Core.Language
 {
     public class EnumDefinition : RootNode
     {
-        public EnumName Name { get; } = new EnumName();
+        public EnumName Name { get; }
 
         public override string NodeName => Name.Value;
 
         public IList<EnumMember> Members { get; } = new List<EnumMember>();
 
-        private EnumDefinition(string name)
+        private EnumDefinition(string name, SourceReference reference) : base(reference)
         {
+            Name = new EnumName(reference);
             Name.ParseName(name);
         }
 
-        internal static EnumDefinition Parse(NodeName name)
+        internal static EnumDefinition Parse(NodeName name, SourceReference reference)
         {
-            return new EnumDefinition(name.Name);
+            return new EnumDefinition(name.Name, reference);
         }
 
         public override IParsableNode Parse(IParserContext context)
@@ -55,6 +56,7 @@ namespace Lexy.Poc.Core.Language
         {
             DuplicateChecker.Validate(
                 context,
+                member => member.Reference,
                 member => member.Name,
                 member => $"Enum member name should be unique. Duplicate name: '{member.Name}'",
                 Members);

@@ -34,5 +34,20 @@ namespace Lexy.Poc.Core
             return builder.ToString();
         }
 
+        public static string FormatLine<TItem>(this IEnumerable<TItem> enumerable, string separator)
+        {
+            if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
+
+            var builder = new StringBuilder();
+            foreach (var item in enumerable)
+            {
+                if (builder.Length > 0) builder.Append(separator);
+
+                builder.Append(item);
+            }
+
+            return builder.ToString();
+        }
+
     }
 }
