@@ -17,10 +17,13 @@ namespace Lexy.Poc.Core.Language
             if (Headers == null)
             {
                 Headers = TableHeaders.Parse(context);
+                return this;
             }
-            else
+
+            var row = TableRow.Parse(context);
+            if (row != null)
             {
-                Rows.Add(TableRow.Parse(context));
+                Rows.Add(row);
             }
 
             return this;

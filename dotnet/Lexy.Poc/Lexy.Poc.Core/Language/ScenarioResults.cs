@@ -13,7 +13,10 @@ namespace Lexy.Poc.Core.Language
             if (line.IsEmpty()) return this;
 
             var assignment = AssignmentDefinition.Parse(context);
-            Assignments.Add(assignment);
+            if (assignment != null)
+            {
+                Assignments.Add(assignment);
+            }
             return this;
         }
 

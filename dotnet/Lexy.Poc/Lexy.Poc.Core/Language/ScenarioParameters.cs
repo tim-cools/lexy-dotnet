@@ -10,7 +10,10 @@ namespace Lexy.Poc.Core.Language
         public override IParsableNode Parse(IParserContext context)
         {
             var assignment = AssignmentDefinition.Parse(context);
-            Assignments.Add(assignment);
+            if (assignment != null)
+            {
+                Assignments.Add(assignment);
+            }
             return this;
         }
 
