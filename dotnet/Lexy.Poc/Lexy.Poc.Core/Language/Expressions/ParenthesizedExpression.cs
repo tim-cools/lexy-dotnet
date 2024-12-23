@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
@@ -65,6 +66,15 @@ namespace Lexy.Poc.Core.Language.Expressions
         public static bool IsValid(TokenList tokens)
         {
             return tokens.OperatorToken(0, OperatorType.OpenParentheses);
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield return Expression;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

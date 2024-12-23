@@ -1,13 +1,14 @@
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 using Microsoft.Extensions.Configuration;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class ScenarioFunctionName : IComponent
+    public class ScenarioFunctionName : Node
     {
         public string Value { get; private set; }
 
-        public IComponent Parse(IParserContext context)
+        public INode Parse(IParserContext context)
         {
             var line = context.CurrentLine;
             Value = line.Tokens.TokenValue(1);
@@ -15,5 +16,14 @@ namespace Lexy.Poc.Core.Language
         }
 
         public override string ToString() => Value;
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+        }
     }
 }

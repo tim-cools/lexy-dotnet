@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
@@ -29,6 +30,15 @@ namespace Lexy.Poc.Core.Language.Expressions
         {
             return tokens.Length == 1
                    && tokens.IsTokenType<MemberAccessLiteral>(0);
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

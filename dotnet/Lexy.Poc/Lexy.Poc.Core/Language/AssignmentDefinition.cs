@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using Lexy.Poc.Core.Language.Expressions;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class AssignmentDefinition
+    public class AssignmentDefinition : Node
     {
         public Expression Expression { get; }
         public string Name { get; }
@@ -29,6 +30,15 @@ namespace Lexy.Poc.Core.Language
             var name = line.Tokens.TokenValue(0);
             var value = ExpressionFactory.Parse(line.Tokens.TokensFrom(2), line);
             return value != null ? new AssignmentDefinition(name, value) : null;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield return Expression;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

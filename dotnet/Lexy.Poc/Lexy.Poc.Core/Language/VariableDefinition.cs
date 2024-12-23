@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class VariableDefinition
+    public class VariableDefinition : Node
     {
         public ILiteralToken Default { get; }
         public VariableType Type { get; }
@@ -54,6 +55,15 @@ namespace Lexy.Poc.Core.Language
 
             var @default = tokens.LiteralToken(3);
             return new VariableDefinition(name, variableType, @default);
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

@@ -28,30 +28,30 @@ namespace Lexy.Poc.Core.Compiler
 
             foreach (var generatedClass in generatedTypes)
             {
-                switch (generatedClass.Component)
+                switch (generatedClass.Node)
                 {
                     case Function _:
                     {
                         var instance = assembly.CreateInstance(generatedClass.FullClassName);
                         var executable = new ExecutableFunction(instance, executionContext);
 
-                        executables.Add(generatedClass.Component.ComponentName, executable);
+                        executables.Add(generatedClass.Node.NodeName, executable);
                         break;
                     }
                     case EnumDefinition _:
                     {
                         var enumType = assembly.GetType(generatedClass.FullClassName);
-                        enums.Add(generatedClass.Component.ComponentName, enumType);
+                        enums.Add(generatedClass.Node.NodeName, enumType);
                         break;
                     }
                     case Table _:
                     {
                         var table = assembly.GetType(generatedClass.FullClassName);
-                        tables.Add(generatedClass.Component.ComponentName, table);
+                        tables.Add(generatedClass.Node.NodeName, table);
                         break;
                     }
                     default:
-                        throw new InvalidOperationException("Unknown generated type: " + generatedClass.Component.GetType());
+                        throw new InvalidOperationException("Unknown generated type: " + generatedClass.Node.GetType());
                 }
             }
         }

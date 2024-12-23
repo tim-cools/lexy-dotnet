@@ -11,9 +11,9 @@ namespace Lexy.Poc.Core.Transcribe
 {
     public class EnumWriter : IRootTokenWriter
     {
-        public GeneratedClass CreateCode(IRootComponent component, Components components)
+        public GeneratedClass CreateCode(IRootNode node, Nodes nodes)
         {
-            if (!(component is EnumDefinition enumDefinition))
+            if (!(node is EnumDefinition enumDefinition))
             {
                 throw new InvalidOperationException("Root token not Function");
             }

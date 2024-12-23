@@ -4,11 +4,11 @@ using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class EnumDefinition : RootComponent
+    public class EnumDefinition : RootNode
     {
         public EnumName Name { get; } = new EnumName();
 
-        public override string ComponentName => Name.Value;
+        public override string NodeName => Name.Value;
 
         public IList<EnumMember> Members { get; } = new List<EnumMember>();
 
@@ -17,12 +17,12 @@ namespace Lexy.Poc.Core.Language
             Name.ParseName(name);
         }
 
-        internal static EnumDefinition Parse(ComponentName name)
+        internal static EnumDefinition Parse(NodeName name)
         {
             return new EnumDefinition(name.Name);
         }
 
-        public override IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;
             if (line.IsEmpty()) return this;
@@ -32,9 +32,38 @@ namespace Lexy.Poc.Core.Language
                 throw new InvalidOperationException("No comments expected. Comment should be parsed by Document only.");
             }
 
-            var assignment = EnumMember.Parse(context);
-            Members.Add(assignment);
+            var member = EnumMember.Parse(context);
+            if (member != null)
+            {
+                Members.Add(member);
+            }
             return this;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield return Name;
+
+            foreach (var member in Members)
+            {
+                yield return member;
+            }
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+            var found = new List<string>();
+            foreach (var member in Members)
+            {
+                if (found.Contains(member.Name))
+                {
+                    context.Logger.Fail($"Enum member name should be unique. Duplicate name: '{member.Name}'");
+                }
+                else
+                {
+                    found.Add(member.Name);
+                }
+            }
         }
     }
 }

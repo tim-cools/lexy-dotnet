@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using System.IO;
 using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language.Expressions
 {
-    public class Expression
+    public abstract class Expression : Node
     {
         public Line SourceLine { get; }
         public TokenList Tokens { get; }

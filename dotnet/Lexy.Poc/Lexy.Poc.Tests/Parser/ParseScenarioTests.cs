@@ -55,9 +55,9 @@ namespace Lexy.Poc.Parser
             var scenario = parser.ParseScenario(code);
 
             var context = GetService<IParserContext>();
-            context.Logger.ComponentHasErrors(scenario).ShouldBeTrue();
+            context.Logger.NodeHasErrors(scenario).ShouldBeTrue();
 
-            var errors = context.Logger.ComponentFailedMessages(scenario);
+            var errors = context.Logger.NodeFailedMessages(scenario);
             errors.Length.ShouldBe(1);
             errors[0].ShouldBe("2: ERROR - Invalid token 'Functtion'. Keyword expected.");
         }
@@ -76,9 +76,9 @@ namespace Lexy.Poc.Parser
             var scenario = parser.ParseScenario(code);
 
             var context = GetService<IParserContext>();
-            context.Logger.ComponentHasErrors(scenario).ShouldBeTrue();
+            context.Logger.NodeHasErrors(scenario).ShouldBeTrue();
 
-            var errors = context.Logger.ComponentFailedMessages(scenario);
+            var errors = context.Logger.NodeFailedMessages(scenario);
             errors.Length.ShouldBe(1, context.Logger.FormatMessages());
             errors[0].ShouldBe("4: ERROR - Invalid token at 14: Invalid number token character: d");
         }
@@ -176,8 +176,8 @@ namespace Lexy.Poc.Parser
 
             var logger = GetService<IParserLogger>();
 
-            logger.ComponentHasErrors(scenario).ShouldBeFalse();
-            logger.ComponentHasErrors(scenario.Function).ShouldBeTrue();
+            logger.NodeHasErrors(scenario).ShouldBeFalse();
+            logger.NodeHasErrors(scenario.Function).ShouldBeTrue();
 
             scenario.Function.ShouldNotBeNull();
             scenario.ExpectError.ShouldNotBeNull();

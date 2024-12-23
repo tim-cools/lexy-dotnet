@@ -13,11 +13,11 @@ namespace Lexy.Poc.Compiler
             if (code == null) throw new ArgumentNullException(nameof(code));
 
             var parser = serviceScope.ServiceProvider.GetRequiredService<ILexyParser>();
-            var components = parser.ParseComponents(code);
-            var function = components.GetSingleFunction();
+            var nodes = parser.ParseNodes(code);
+            var function = nodes.GetSingleFunction();
 
             var compiler = serviceScope.ServiceProvider.GetRequiredService<ILexyCompiler>();
-            var environment = compiler.Compile(components, function);
+            var environment = compiler.Compile(nodes, function);
             return environment.GetFunction(function);
         }
     }

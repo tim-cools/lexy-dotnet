@@ -5,7 +5,7 @@ using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class TableHeaders
+    public class TableHeaders : Node
     {
         public IList<TableHeader> Values { get; } = new List<TableHeader>();
 
@@ -47,6 +47,12 @@ namespace Lexy.Poc.Core.Language
             }
 
             return new TableHeaders(headers.ToArray());
+        }
+
+        protected override IEnumerable<INode> GetChildren() => Values;
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

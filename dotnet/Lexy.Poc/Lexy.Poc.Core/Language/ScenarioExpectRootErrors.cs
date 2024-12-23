@@ -4,7 +4,7 @@ using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class ScenarioExpectRootErrors : IComponent
+    public class ScenarioExpectRootErrors : ParsableNode
     {
         private readonly IList<string> messages = new List<string>();
 
@@ -12,7 +12,7 @@ namespace Lexy.Poc.Core.Language
 
         public bool HasValues => messages.Count > 0;
 
-        public IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;
 
@@ -27,6 +27,15 @@ namespace Lexy.Poc.Core.Language
 
             messages.Add(line.Tokens.Token<QuotedLiteralToken>(0).Value);
             return this;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

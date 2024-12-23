@@ -6,7 +6,7 @@ using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class TableRow
+    public class TableRow : Node
     {
         public IList<ILiteralToken> Values { get; } = new List<ILiteralToken>();
 
@@ -42,6 +42,15 @@ namespace Lexy.Poc.Core.Language
             }
 
             return new TableRow(tokens.ToArray());
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

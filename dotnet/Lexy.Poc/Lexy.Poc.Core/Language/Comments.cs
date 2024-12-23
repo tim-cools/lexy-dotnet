@@ -4,11 +4,11 @@ using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class Comments : IComponent
+    public class Comments : ParsableNode
     {
-        public IList<string> Lines { get; } = new List<string>();
+        private IList<string> lines = new List<string>();
 
-        public IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var valid = context.ValidateTokens<Comments>()
                 .Count(1)
@@ -18,8 +18,17 @@ namespace Lexy.Poc.Core.Language
             if (!valid) return null;
 
             var comment = context.CurrentLine.Tokens.Token<CommentToken>(0);
-            Lines.Add(comment.Value);
+            lines.Add(comment.Value);
             return this;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Lexy.Poc.Core.Transcribe
 {
     public class FunctionWriter : IRootTokenWriter
     {
-        public GeneratedClass CreateCode(IRootComponent component, Components components)
+        public GeneratedClass CreateCode(IRootNode node, Nodes nodes)
         {
-            if (!(component is Function function))
+            if (!(node is Function function))
             {
                 throw new InvalidOperationException("Root token not Function");
             }

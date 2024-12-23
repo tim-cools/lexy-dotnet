@@ -4,24 +4,25 @@ using NUnit.Framework;
 
 namespace Lexy.Poc.Specifications
 {
-    public class ValidateLexySpecificationsTest : ScopedServicesTestFixture
+    public class RunLexySpecifications : ScopedServicesTestFixture
     {
         [Test]
         public void AllSpecifications()
         {
             LoggingConfiguration.LogFileNames();
 
-            var runner = ServiceProvider.GetRequiredService<ISpecificationsRunner>();
+            var runner = GetService<ISpecificationsRunner>();
             runner.RunAll("../../../../../../laws/Specifications");
         }
 
         [Test]
-        public void AllSpecificFile()
+        public void SpecificFile() // used for debugging a specific file from IDE
         {
             LoggingConfiguration.LogFileNames();
 
-            var runner = ServiceProvider.GetRequiredService<ISpecificationsRunner>();
-            runner.Run("../../../../../../laws/Specifications/Language/00006-Indentation.lexy");
+            var runner = GetService<ISpecificationsRunner>();
+            runner.Run("../../../../../../laws/Specifications/Language/00000-Keywords.lexy");
+            //runner.Run("../../../../../../laws/Specifications/Enum/00000-Validation.lexy");
         }
     }
 }

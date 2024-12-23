@@ -19,7 +19,7 @@ namespace Lexy.Poc.Core.Specifications
         private string fileName;
         private Scenario scenario;
         private Function function;
-        private Components components;
+        private Nodes nodes;
         private IParserLogger parserLogger;
         private IServiceScope serviceScope;
 
@@ -31,7 +31,7 @@ namespace Lexy.Poc.Core.Specifications
             this.lexyCompiler = lexyCompiler;
         }
 
-        public void Initialize(string fileName, Components components, Scenario scenario,
+        public void Initialize(string fileName, Nodes nodes, Scenario scenario,
             ISpecificationRunnerContext context, IServiceScope serviceScope, IParserLogger parserLogger)
         {
             //parserContext and runnerContext are managed by a parent ServiceProvider scope,
@@ -45,12 +45,12 @@ namespace Lexy.Poc.Core.Specifications
             this.fileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
             this.context = context;
 
-            this.components = components ?? throw new ArgumentNullException(nameof(components));
+            this.nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
             this.scenario = scenario ?? throw new ArgumentNullException(nameof(scenario));
             this.parserLogger = parserLogger ?? throw new ArgumentNullException(nameof(parserLogger));
             this.serviceScope = serviceScope ?? throw new ArgumentNullException(nameof(serviceScope));
 
-            function = scenario.Function ?? components.GetFunction(scenario.FunctionName.Value);
+            function = scenario.Function ?? nodes.GetFunction(scenario.FunctionName.Value);
         }
 
         public static IScenarioRunner Create(string fileName, Scenario scenario,
@@ -61,29 +61,23 @@ namespace Lexy.Poc.Core.Specifications
 
             var serviceScope = serviceProvider.CreateScope();
             var scenarioRunner = serviceScope.ServiceProvider.GetRequiredService<IScenarioRunner>();
-            scenarioRunner.Initialize(fileName, parserContext.Components, scenario, context, serviceScope, parserContext.Logger);
+            scenarioRunner.Initialize(fileName, parserContext.Nodes, scenario, context, serviceScope, parserContext.Logger);
 
             return scenarioRunner;
         }
 
         public void Run()
         {
-            if (parserLogger.ComponentHasErrors(scenario))
+            if (parserLogger.NodeHasErrors(scenario))
             {
                 Fail($"  Parsing scenario failed: {scenario.FunctionName}");
-                parserLogger.ComponentFailedMessages(scenario).ForEach(context.Log);
-                return;
-            }
-
-            if (function == null && !scenario.ExpectRootErrors.HasValues)
-            {
-                Fail($"  Function not found: {scenario.FunctionName}");
+                parserLogger.NodeFailedMessages(scenario).ForEach(context.Log);
                 return;
             }
 
             if (!ValidateErrors(context)) return;
 
-            var compilerResult = lexyCompiler.Compile(components, function);
+            var compilerResult = lexyCompiler.Compile(nodes, function);
             var executable = compilerResult.GetFunction(function);
             var values = GetValues(scenario.Parameters, function.Parameters, compilerResult);
 
@@ -127,11 +121,10 @@ namespace Lexy.Poc.Core.Specifications
 
         private bool ValidateErrors(ISpecificationRunnerContext context)
         {
-            if (scenario.ExpectRootErrors.HasValues)
-            {
-                return ValidateRootErrors(context);
-            }
-            var failedMessages = parserLogger.ComponentFailedMessages(function);
+            if (scenario.ExpectRootErrors.HasValues) return ValidateRootErrors(context);
+
+            var node = function ?? scenario.Function ?? scenario.Enum ?? (IRootNode) scenario.Table;
+            var failedMessages = parserLogger.NodeFailedMessages(node);
 
             if (failedMessages.Length > 0 && !scenario.ExpectError.HasValue)
             {
@@ -148,13 +141,15 @@ namespace Lexy.Poc.Core.Specifications
                 return false;
             }
 
-            Fail($"Wrong exception {Environment.NewLine}  Expected: {scenario.ExpectError.Message}{Environment.NewLine}  Actual: {failedMessages.Format(4)}");
+            Fail($"Wrong exception {Environment.NewLine}" +
+                 $"  Expected: {scenario.ExpectError.Message}{Environment.NewLine}" +
+                 $"  Actual: {failedMessages.Format(4)}");
             return false;
         }
 
         private bool ValidateRootErrors(ISpecificationRunnerContext specificationRunnerContext)
         {
-            var failedMessages = parserLogger.FailedMessages().ToList();
+            var failedMessages = parserLogger.FailedRootMessages().ToList();
 
             var failed = false;
             foreach (var rootMessage in scenario.ExpectRootErrors.Messages)
@@ -181,7 +176,9 @@ namespace Lexy.Poc.Core.Specifications
                 return false;
             }
 
-            Fail($"Wrong exception {Environment.NewLine}  Expected: {scenario.ExpectRootErrors.Messages.Format(4)}{Environment.NewLine}  Actual: {parserLogger.FailedMessages().Format(4)}");
+            Fail($"Wrong exception {Environment.NewLine}" +
+                 $"  Expected: {scenario.ExpectRootErrors.Messages.Format(4)}{Environment.NewLine}" +
+                 $"  Actual: {parserLogger.FailedRootMessages().Format(4)}");
             return false;
         }
 
@@ -194,7 +191,7 @@ namespace Lexy.Poc.Core.Specifications
                 var type = functionParameters.Variables.FirstOrDefault(variable => variable.Name == parameter.Name);
                 if (type == null)
                 {
-                    throw new InvalidOperationException($"Function '{function.ComponentName}' parameter '{parameter.Name}' not found.");
+                    throw new InvalidOperationException($"Function '{function.NodeName}' parameter '{parameter.Name}' not found.");
                 }
                 var value = GetValue(compilerResult, parameter.Expression.ToString(), type);
                 result.Add(parameter.Name, value);

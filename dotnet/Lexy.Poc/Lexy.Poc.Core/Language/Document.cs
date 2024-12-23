@@ -1,14 +1,17 @@
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class Document : RootComponent
+    public class Document : RootNode
     {
-        public override string ComponentName => "Document";
+        private readonly IList<IRootNode> nodes = new List<IRootNode>();
+
+        public override string NodeName => "Document";
 
         public Comments Comments { get; } = new Comments();
 
-        public override IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;
 
@@ -21,30 +24,45 @@ namespace Lexy.Poc.Core.Language
                 return this;
             }
 
-            var tokenName = Parser.ComponentName.Parse(line, context);
-            var rootComponent = tokenName?.Keyword switch
+            var tokenName = Parser.NodeName.Parse(line, context);
+            var rootNode = tokenName?.Keyword switch
             {
                 null => null,
-                TokenValues.FunctionComponent => Function.Parse(tokenName),
-                TokenValues.EnumComponent => EnumDefinition.Parse(tokenName),
-                TokenValues.ScenarioComponent => Scenario.Parse(tokenName),
-                TokenValues.TableComponent => Table.Parse(tokenName),
-                _ => InvalidComponent(tokenName, context)
+                Keywords.FunctionKeyword => Function.Parse(tokenName),
+                Keywords.EnumKeyword => EnumDefinition.Parse(tokenName),
+                Keywords.ScenarioKeyword => Scenario.Parse(tokenName),
+                Keywords.TableKeyword => Table.Parse(tokenName),
+                _ => InvalidNode(tokenName, context)
             };
 
-            if (rootComponent != null)
-            {
-                context.ProcessComponent(rootComponent);
-            }
+            if (rootNode == null) return this;
 
-            return rootComponent ?? this;
+            nodes.Add(rootNode);
+            context.ProcessNode(rootNode);
+
+            return rootNode;
         }
 
-        private IRootComponent InvalidComponent(ComponentName tokenName, IParserContext context)
+        private IRootNode InvalidNode(NodeName tokenName, IParserContext context)
         {
             var message = $"Unknown keyword: {tokenName.Keyword}";
             context.Logger.Fail(message);
             return this;
+        }
+
+        public override void ValidateTree(IParserContext context)
+        {
+            foreach (var child in nodes)
+            {
+                context.Logger.SetCurrentNode(child);
+                child.ValidateTree(context);
+            }
+        }
+
+        protected override IEnumerable<INode> GetChildren() => nodes;
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

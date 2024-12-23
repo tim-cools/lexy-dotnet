@@ -160,5 +160,16 @@ namespace Lexy.Poc.Core.Language.Expressions
 
         private static OperatorEntry IsSupported(OperatorType operatorTokenType) =>
             supportedOperatorsByPriority.FirstOrDefault(entry => entry.OperatorType == operatorTokenType);
+
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield return Left;
+            yield return Right;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+        }
     }
 }

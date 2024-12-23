@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class Components
+    public class Nodes
     {
-        private readonly IList<IRootComponent> values = new Collection<IRootComponent>();
+        private readonly IList<IRootNode> values = new Collection<IRootNode>();
 
         public int Count => values.Count;
 
@@ -18,16 +18,16 @@ namespace Lexy.Poc.Core.Language
                 .Any(definition => definition.Name.Value == enumName);
         }
 
-        public IRootComponent GetComponent(string name)
+        public IRootNode GetNode(string name)
         {
             return values
-                .SingleOrDefault(definition => definition.ComponentName == name);
+                .SingleOrDefault(definition => definition.NodeName == name);
         }
 
         public bool Contains(string name)
         {
             return values
-                .Any(definition => definition.ComponentName == name);
+                .Any(definition => definition.NodeName == name);
         }
 
         public Function GetFunction(string name)
@@ -37,7 +37,7 @@ namespace Lexy.Poc.Core.Language
                 .FirstOrDefault(function => function.Name.Value == name);
         }
 
-        public IRootComponent GetTable(string name)
+        public IRootNode GetTable(string name)
         {
             return values
                 .OfType<Table>()
@@ -53,22 +53,22 @@ namespace Lexy.Poc.Core.Language
 
         public IEnumerable<Scenario> GetScenarios() => values.OfType<Scenario>();
 
-        public IRootComponent GetEnum(string name)
+        public IRootNode GetEnum(string name)
         {
             return values
                 .OfType<EnumDefinition>()
                 .FirstOrDefault(enumDefinition => enumDefinition.Name.Value == name);
         }
 
-        public void AddIfNew(IRootComponent component)
+        public void AddIfNew(IRootNode node)
         {
-            if (!values.Contains(component))
+            if (!values.Contains(node))
             {
-                values.Add(component);
+                values.Add(node);
             }
         }
 
-        public IComponent First() => values.FirstOrDefault();
+        public INode First() => values.FirstOrDefault();
 
         public string MapType(string variableType)
         {

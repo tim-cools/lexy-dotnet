@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
+using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class ScenarioName
+    public class ScenarioName : Node
     {
         public string Value { get; private set; } = Guid.NewGuid().ToString("D");
 
@@ -12,5 +14,14 @@ namespace Lexy.Poc.Core.Language
         }
 
         public override string ToString() => Value;
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+        }
     }
 }

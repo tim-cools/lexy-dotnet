@@ -1,14 +1,15 @@
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class ScenarioExpectError : IComponent
+    public class ScenarioExpectError : ParsableNode
     {
         public string Message { get; private set; }
         public bool HasValue => Message != null;
 
-        public IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;
 
@@ -24,6 +25,15 @@ namespace Lexy.Poc.Core.Language
 
             Message = line.Tokens.Token<QuotedLiteralToken>(1).Value;
             return this;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

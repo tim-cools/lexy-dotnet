@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 
@@ -70,6 +71,15 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             return -1;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield return Expression;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

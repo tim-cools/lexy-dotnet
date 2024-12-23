@@ -19,9 +19,12 @@ namespace Lexy.Poc
             codeContext.SetCode(code);
 
             var context = serviceProvider.GetRequiredService<IParserContext>();
-            if (context.ProcessLine() != expectSuccess)
+            var result = context.ProcessLine();
+            if (result != expectSuccess)
             {
-                throw new InvalidOperationException("Process line failed");
+                throw new InvalidOperationException(  result
+                    ? "Process didn't fail, but should have: " + context.Logger.FormatMessages()
+                    : "Process line failed: " + context.Logger.FormatMessages());
             }
 
             return context;

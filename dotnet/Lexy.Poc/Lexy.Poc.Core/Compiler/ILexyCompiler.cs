@@ -4,6 +4,6 @@ namespace Lexy.Poc.Core.Compiler
 {
     public interface ILexyCompiler
     {
-        CompilerResult Compile(Components components, Function function);
+        CompilerResult Compile(Nodes nodes, Function function);
     }
 }

@@ -82,7 +82,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             if (char.IsLetterOrDigit(value)
                 || terminatorValues.Contains(value))
             {
-                if (Value == TokenValues.TableSeparator.ToString())
+                if (Value.Length == 1 && Value[0] == TokenValues.TableSeparator)
                 {
                     return ParseTokenResult.Finished(false, new TableSeparatorToken());
                 }

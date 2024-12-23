@@ -29,24 +29,24 @@ namespace Lexy.Poc.Core.Compiler
             this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
 
-        public CompilerResult Compile(Components components, Function function)
+        public CompilerResult Compile(Nodes nodes, Function function)
         {
-            if (components == null) throw new ArgumentNullException(nameof(components));
+            if (nodes == null) throw new ArgumentNullException(nameof(nodes));
             if (function == null) throw new ArgumentNullException(nameof(function));
 
-            var generateNodes = FunctionComponentAndDependencies(components, function);
+            var generateNodes = FunctionAndDependencies(nodes, function);
 
-            var syntaxNode = GenerateSyntaxNode(components, generateNodes);
+            var syntaxNode = GenerateSyntaxNode(nodes, generateNodes);
             var assembly = CreateAssembly(syntaxNode);
 
             environment.CreateExecutables(assembly);
             return environment.Result();
         }
 
-        private List<IRootComponent> FunctionComponentAndDependencies(Components components, Function function)
+        private List<IRootNode> FunctionAndDependencies(Nodes nodes, Function function)
         {
-            var generateNodes = new List<IRootComponent> { function };
-            generateNodes.AddRange(function.GetDependencies(components));
+            var generateNodes = new List<IRootNode> { function };
+            generateNodes.AddRange(function.GetDependencies(nodes));
             return generateNodes;
         }
 
@@ -115,12 +115,12 @@ namespace Lexy.Poc.Core.Compiler
             return references;
         }
 
-        private SyntaxNode GenerateSyntaxNode(Components components, List<IRootComponent> generateComponents)
+        private SyntaxNode GenerateSyntaxNode(Nodes nodes, List<IRootNode> generateNodes)
         {
-            var members = generateComponents.Select(component =>
+            var members = generateNodes.Select(node =>
             {
-                var writer = GetWriter(component);
-                var generatedType = writer.CreateCode(component, components);
+                var writer = GetWriter(node);
+                var generatedType = writer.CreateCode(node, nodes);
 
                 environment.AddType(generatedType);
 
@@ -147,15 +147,15 @@ namespace Lexy.Poc.Core.Compiler
             return usingDirective;
         }
 
-        private static IRootTokenWriter GetWriter(IRootComponent rootComponent)
+        private static IRootTokenWriter GetWriter(IRootNode rootNode)
         {
-            return rootComponent switch
+            return rootNode switch
             {
                 Function _ => new FunctionWriter(),
                 EnumDefinition _ => new EnumWriter(),
                 Table _ => new TableWriter(),
                 Scenario _ => null,
-                _ => throw new InvalidOperationException("No writer defined: " + rootComponent.GetType())
+                _ => throw new InvalidOperationException("No writer defined: " + rootNode.GetType())
             };
         }
 

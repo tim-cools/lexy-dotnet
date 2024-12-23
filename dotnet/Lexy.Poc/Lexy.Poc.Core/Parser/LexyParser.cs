@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Lexy.Poc.Core.Language;
 
@@ -34,8 +33,10 @@ namespace Lexy.Poc.Core.Parser
             sourceCodeDocument.SetCode(code);
 
             var currentIndent = 0;
-            IComponent currentComponent = new Document();
-            var components = new ComponentArray(currentComponent);
+            var document = new Document();
+            var nodes = new ParsableNodeArray(document);
+
+            IParsableNode currentNode = document;
 
             while (sourceCodeDocument.HasMoreLines())
             {
@@ -58,59 +59,51 @@ namespace Lexy.Poc.Core.Parser
                     continue;
                 }
 
-                currentComponent = components.Get(indent);
+                currentNode = nodes.Get(indent);
 
-                var component = ParseLine(currentComponent);
+                var node = ParseLine(currentNode);
 
-                currentComponent = component;
+                currentNode = node;
                 currentIndent = indent + 1;
-                components.Set(currentIndent, currentComponent);
+                nodes.Set(currentIndent, currentNode);
             }
+
+            sourceCodeDocument.Reset();
+
+            document.ValidateTree(context);
 
             if (throwException)
             {
                 logger.AssertNoErrors();
             }
 
-            return new ParserResult(context.Components);
+            return new ParserResult(context.Nodes);
         }
 
-        private IComponent ParseLine(IComponent currentComponent)
+        private IParsableNode ParseLine(IParsableNode currentNode)
         {
-            var component = currentComponent.Parse(context);
-            if (component == null)
+            var node = currentNode.Parse(context);
+            if (node == null)
             {
                 throw new InvalidOperationException(
-                    $"({currentComponent}) Parse should return child component or itself.");
+                    $"({currentNode}) Parse should return child node or itself.");
             }
-            return component;
-        }
-
-        private static IComponent WalkBackOnCallStackByIndent(int indent, int currentIndent, Stack<IComponent> componentStack,
-            IComponent currentComponent)
-        {
-            var indentDifference = currentIndent - indent;
-            for (var stackWalkBack = 0; stackWalkBack < indentDifference; stackWalkBack++)
-            {
-                currentComponent = componentStack.Pop();
-            }
-
-            return currentComponent;
+            return node;
         }
     }
 
-    public class ComponentArray
+    public class ParsableNodeArray
     {
-        private IComponent[] values = new IComponent[8];
+        private IParsableNode[] values = new IParsableNode[8];
 
-        public ComponentArray(IComponent rootComponent)
+        public ParsableNodeArray(IParsableNode rootNode)
         {
-            values[0] = rootComponent;
+            values[0] = rootNode;
         }
 
-        public IComponent Get(int indent)
+        public IParsableNode Get(int indent)
         {
-            var component = values[indent];
+            var node = values[indent];
             for (var index = indent + 1; index < values.Length; index++)
             {
                 if (values[index] == null) break;
@@ -118,17 +111,17 @@ namespace Lexy.Poc.Core.Parser
                 values[index] = null;
             }
 
-            return component;
+            return node;
         }
 
-        public void Set(int indent, IComponent component)
+        public void Set(int indent, IParsableNode node)
         {
             if (indent >= values.Length)
             {
                 Array.Resize(ref values, values.Length * 2);
             }
 
-            values[indent] = component;
+            values[indent] = node;
         }
     }
 }

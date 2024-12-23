@@ -5,14 +5,14 @@ namespace Lexy.Poc.Core.Transcribe
 {
     public class GeneratedClass
     {
-        public IRootComponent Component { get; }
+        public IRootNode Node { get; }
         public string ClassName { get; }
         public string FullClassName => $"{WriterCode.Namespace}.{ClassName}";
         public MemberDeclarationSyntax Syntax { get; }
 
-        public GeneratedClass(IRootComponent component, string className, MemberDeclarationSyntax syntax)
+        public GeneratedClass(IRootNode node, string className, MemberDeclarationSyntax syntax)
         {
-            Component = component;
+            Node = node;
             ClassName = className;
             Syntax = syntax;
         }

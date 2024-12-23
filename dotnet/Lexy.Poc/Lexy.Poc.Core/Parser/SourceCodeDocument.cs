@@ -11,11 +11,10 @@ namespace Lexy.Poc.Core.Parser
 
         public Line CurrentLine { get; private set; }
 
-        public IEnumerable<Line> Code => code;
 
         public void SetCode(string[] lines)
         {
-            if (Code != null)
+            if (code != null)
             {
                 throw new InvalidOperationException(
                     "Source code already set. Each LexyParser should only be used once. " +
@@ -41,6 +40,11 @@ namespace Lexy.Poc.Core.Parser
 
             CurrentLine = code[++index];
             return CurrentLine;
+        }
+
+        public void Reset()
+        {
+            CurrentLine = null;
         }
     }
 }

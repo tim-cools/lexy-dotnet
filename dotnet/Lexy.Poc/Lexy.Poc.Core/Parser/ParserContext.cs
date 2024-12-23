@@ -12,7 +12,7 @@ namespace Lexy.Poc.Core.Parser
 
         public Line CurrentLine => sourceCodeDocument.CurrentLine;
 
-        public Components Components { get; } = new Components();
+        public Nodes Nodes { get; } = new Nodes();
         public IParserLogger Logger => logger;
 
         public ParserContext(ITokenizer tokenizer, IParserLogger logger, ISourceCodeDocument sourceCodeDocument)
@@ -22,13 +22,13 @@ namespace Lexy.Poc.Core.Parser
             this.sourceCodeDocument = sourceCodeDocument ?? throw new ArgumentNullException(nameof(sourceCodeDocument));
         }
 
-        public void ProcessComponent(IRootComponent component)
+        public void ProcessNode(IRootNode node)
         {
-            if (component == null) throw new ArgumentNullException(nameof(component));
+            if (node == null) throw new ArgumentNullException(nameof(node));
 
-            Components.AddIfNew(component);
+            Nodes.AddIfNew(node);
 
-            logger.SetCurrentComponent(component);
+            logger.SetCurrentNode(node);
         }
 
         public bool ProcessLine()

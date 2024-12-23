@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class EnumMember
+    public class EnumMember : Node
     {
         public NumberLiteralToken Value { get; }
         public string Name { get; }
@@ -23,26 +25,66 @@ namespace Lexy.Poc.Core.Language
 
             if (!valid) return null;
 
-            var line = context.CurrentLine;
-            var name = line.Tokens.TokenValue(0);
-            if (context.CurrentLine.Tokens.Length == 1)
+            var tokens = context.CurrentLine.Tokens;
+            var name = tokens.TokenValue(0);
+            if (tokens.Length == 1)
             {
                 return new EnumMember(name);
             }
-            if (context.CurrentLine.Tokens.Length == 3)
-            {
-                valid = context.ValidateTokens<AssignmentDefinition>()
-                    .Operator(1, OperatorType.Assignment)
-                    .IsValid;
-                if (!valid) return null;
 
-                var value = line.Tokens.Token<NumberLiteralToken>(2);
-                return new EnumMember(name, value);
+            if (tokens.Length != 3)
+            {
+                context.Logger.Fail(
+                    $"Invalid number of tokens: {tokens.Length}. Should be 1 or 3.");
+                return null;
             }
 
-            context.Logger.Fail("Invalid number of tokens: " + context.CurrentLine.Tokens.Length  + ". Should be 1 or 3.");
+            valid = context.ValidateTokens<AssignmentDefinition>()
+                .Operator(1, OperatorType.Assignment)
+                .NumberLiteral(2)
+                .IsValid;
+            if (!valid) return null;
 
-            return null;
+            var value = tokens.Token<NumberLiteralToken>(2);
+            return new EnumMember(name, value);
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+            ValidateMemberName(context);
+            ValidateMemberValues(context);
+        }
+
+        private void ValidateMemberName(IParserContext context)
+        {
+            if (string.IsNullOrEmpty(Name))
+            {
+                context.Logger.Fail("Enum member name should not be null or empty.");
+            }
+            else if (!SyntaxFacts.IsValidIdentifier(Name))
+            {
+                context.Logger.Fail($"Invalid enum member name: {Name}.");
+            }
+        }
+
+        private void ValidateMemberValues(IParserContext context)
+        {
+            if (Value == null) return;
+
+            if (Value.NumberValue < 0)
+            {
+                context.Logger.Fail("Enum member value should not be < 0: " + Value);
+            }
+
+            if (Value.IsDecimal())
+            {
+                context.Logger.Fail("Enum member value should not be decimal: " + Value);
+            }
         }
     }
 }

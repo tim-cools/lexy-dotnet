@@ -3,11 +3,11 @@ using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class ScenarioResults : IComponent
+    public class ScenarioResults : ParsableNode
     {
         public IList<AssignmentDefinition> Assignments { get; } = new List<AssignmentDefinition>();
 
-        public IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;
             if (line.IsEmpty()) return this;
@@ -15,6 +15,12 @@ namespace Lexy.Poc.Core.Language
             var assignment = AssignmentDefinition.Parse(context);
             Assignments.Add(assignment);
             return this;
+        }
+
+        protected override IEnumerable<INode> GetChildren() => Assignments;
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

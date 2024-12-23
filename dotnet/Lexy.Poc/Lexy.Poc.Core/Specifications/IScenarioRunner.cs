@@ -9,7 +9,7 @@ namespace Lexy.Poc.Core.Specifications
         bool Failed { get; }
         Scenario Scenario { get; }
 
-        void Initialize(string fileName, Components components, Scenario scenario,
+        void Initialize(string fileName, Nodes nodes, Scenario scenario,
             ISpecificationRunnerContext context, IServiceScope serviceScope, IParserLogger parserLogger);
 
         void Run();

@@ -1,14 +1,33 @@
-using System;
+using System.Collections.Generic;
+using Lexy.Poc.Core.Parser;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class EnumName
+    public class EnumName : Node
     {
-        public string Value { get; private set; } = Guid.NewGuid().ToString("D");
+        public string Value { get; private set; }
 
         public void ParseName(string parameter)
         {
             Value = parameter;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+            if (string.IsNullOrEmpty(Value))
+            {
+                context.Logger.Fail($"Invalid enum name: {Value}. Name should not be empty.");
+            }
+            if (!SyntaxFacts.IsValidIdentifier(Value))
+            {
+                context.Logger.Fail($"Invalid enum name: {Value}.");
+            }
         }
     }
 }

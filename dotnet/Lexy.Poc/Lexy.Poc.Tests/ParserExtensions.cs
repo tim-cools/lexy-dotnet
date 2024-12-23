@@ -6,39 +6,38 @@ namespace Lexy.Poc
 {
     public static class ParserExtensions
     {
-        public static Components ParseComponents(this ILexyParser parser, string code)
+        public static Nodes ParseNodes(this ILexyParser parser, string code)
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
             var codeLines = code.Split(Environment.NewLine);
             var context = parser.Parse(codeLines, false);
 
-            return context.Components;
+            return context.Nodes;
         }
 
-        public static Function ParseFunction(this ILexyParser parser, string code) => parser.ParseComponent<Function>(code);
-        public static Table ParseTable(this ILexyParser parser, string code) => parser.ParseComponent<Table>(code);
-        public static Scenario ParseScenario(this ILexyParser parser, string code) => parser.ParseComponent<Scenario>(code);
-        public static EnumDefinition ParseEnum(this ILexyParser parser, string code) => parser.ParseComponent<EnumDefinition>(code);
+        public static Function ParseFunction(this ILexyParser parser, string code) => parser.ParseNode<Function>(code);
+        public static Table ParseTable(this ILexyParser parser, string code) => parser.ParseNode<Table>(code);
+        public static Scenario ParseScenario(this ILexyParser parser, string code) => parser.ParseNode<Scenario>(code);
+        public static EnumDefinition ParseEnum(this ILexyParser parser, string code) => parser.ParseNode<EnumDefinition>(code);
 
-        public static T ParseComponent<T>(this ILexyParser parser, string code) where T : RootComponent
+        public static T ParseNode<T>(this ILexyParser parser, string code) where T : RootNode
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            var components = parser.ParseComponents(code);
-
-            if (components.Count != 1)
+            var nodes = parser.ParseNodes(code);
+            if (nodes.Count != 1)
             {
-                throw new InvalidOperationException("Only 1 component expected. Actual: " + components.Count);
+                throw new InvalidOperationException("Only 1 node expected. Actual: " + nodes.Count);
             }
 
-            var first = components.First();
-            if (!(first is T component))
+            var first = nodes.First();
+            if (!(first is T node))
             {
-                throw new InvalidOperationException($"Component not a {typeof(T).Name}. Actual: {first?.GetType()}");
+                throw new InvalidOperationException($"Node not a {typeof(T).Name}. Actual: {first?.GetType()}");
             }
 
-            return component;
+            return node;
         }
     }
 }

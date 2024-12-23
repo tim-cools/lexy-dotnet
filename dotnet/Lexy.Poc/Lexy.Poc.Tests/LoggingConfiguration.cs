@@ -32,7 +32,7 @@ namespace Lexy.Poc
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Logger(lc => lc
-                    .Filter.ByIncludingOnly(Matching.FromSource<ParserContext>())
+                    .Filter.ByIncludingOnly(Matching.FromSource<ParserLogger>())
                     .WriteTo.File(FullLogFile(ParserLogFile)))
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.FromSource<CompilerContext>())
@@ -41,7 +41,7 @@ namespace Lexy.Poc
                     .Filter.ByIncludingOnly(Matching.FromSource<ExecutionContext>())
                     .WriteTo.File(FullLogFile(ExecutionLogFile)))
                 .WriteTo.Logger(lc => lc
-                    .Filter.ByExcluding(Matching.FromSource<ParserContext>())
+                    .Filter.ByExcluding(Matching.FromSource<ParserLogger>())
                     .Filter.ByExcluding(Matching.FromSource<CompilerContext>())
                     .Filter.ByExcluding(Matching.FromSource<ExecutionContext>())
                     .WriteTo.File(FullLogFile(TestsLogFile)))

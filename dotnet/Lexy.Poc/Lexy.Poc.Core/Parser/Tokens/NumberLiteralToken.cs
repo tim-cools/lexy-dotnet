@@ -81,6 +81,11 @@ namespace Lexy.Poc.Core.Parser.Tokens
             return ParseTokenResult.Finished(false);
         }
 
+        public bool IsDecimal()
+        {
+            return numberValue.HasValue && numberValue % 1 != 0;
+        }
+
         public override string ToString() => Value;
     }
 }

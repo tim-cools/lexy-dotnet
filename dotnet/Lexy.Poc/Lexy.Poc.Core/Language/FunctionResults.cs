@@ -4,11 +4,11 @@ using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class FunctionResults : IComponent
+    public class FunctionResults : ParsableNode
     {
         public IList<VariableDefinition> Variables { get; } = new List<VariableDefinition>();
 
-        public IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var variableDefinition = VariableDefinition.Parse(context);
             if (variableDefinition == null)
@@ -30,6 +30,12 @@ namespace Lexy.Poc.Core.Language
         public VariableType GetParameterType(string expectedName)
         {
             return Variables.FirstOrDefault(variable => variable.Name == expectedName)?.Type;
+        }
+
+        protected override IEnumerable<INode> GetChildren() => Variables;
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

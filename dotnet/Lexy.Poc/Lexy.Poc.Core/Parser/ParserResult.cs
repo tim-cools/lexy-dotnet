@@ -4,11 +4,11 @@ namespace Lexy.Poc.Core.Parser
 {
     public class ParserResult
     {
-        public Components Components { get; }
+        public Nodes Nodes { get; }
 
-        public ParserResult(Components components)
+        public ParserResult(Nodes nodes)
         {
-            Components = components;
+            Nodes = nodes;
         }
     }
 }

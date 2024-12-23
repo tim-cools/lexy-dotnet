@@ -4,24 +4,24 @@ using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class Table : RootComponent
+    public class Table : RootNode
     {
         public TableName Name { get; } = new TableName();
         public TableHeaders Headers { get; private set; }
         public IList<TableRow> Rows { get; } = new List<TableRow>();
-        public override string ComponentName => Name.Value;
+        public override string NodeName => Name.Value;
 
         private Table(string name)
         {
             Name.ParseName(name);
         }
 
-        internal static Table Parse(ComponentName name)
+        internal static Table Parse(NodeName name)
         {
             return new Table(name.Name);
         }
 
-        public override IComponent Parse(IParserContext context)
+        public override IParsableNode Parse(IParserContext context)
         {
             var line = context.CurrentLine;
             if (line.IsEmpty()) return this;
@@ -46,6 +46,20 @@ namespace Lexy.Poc.Core.Language
         private bool IsFirstLine()
         {
             return Headers == null;
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield return Headers;
+
+            foreach (var row in Rows)
+            {
+                yield return row;
+            }
+        }
+
+        protected override void Validate(IParserContext context)
+        {
         }
     }
 }

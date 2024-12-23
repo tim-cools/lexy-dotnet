@@ -1,16 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Lexy.Poc.Core.Parser;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Lexy.Poc.Core.Language
 {
-    public class FunctionName
+    public class FunctionName : Node
     {
         public string Value { get; private set; }
 
         public void ParseName(string parameter = null)
         {
-            Value = parameter ?? Guid.NewGuid().ToString("D");
+            Value = parameter ?? "Function" + Guid.NewGuid().ToString("N");
         }
 
         public string ClassName()
@@ -21,6 +24,23 @@ namespace Lexy.Poc.Core.Language
                 nameBuilder.Append(@char);
             }
             return nameBuilder.ToString();
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield break;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+            if (string.IsNullOrEmpty(Value))
+            {
+                context.Logger.Fail($"Invalid function name: {Value}. Name should not be empty.");
+            }
+            if (!SyntaxFacts.IsValidIdentifier(Value))
+            {
+                context.Logger.Fail($"Invalid function name: {Value}.");
+            }
         }
     }
 }

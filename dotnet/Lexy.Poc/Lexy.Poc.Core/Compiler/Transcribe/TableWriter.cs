@@ -12,9 +12,9 @@ namespace Lexy.Poc.Core.Transcribe
 {
     internal class TableWriter : IRootTokenWriter
     {
-        public GeneratedClass CreateCode(IRootComponent component, Components components)
+        public GeneratedClass CreateCode(IRootNode node, Nodes nodes)
         {
-            if (!(component is Table table))
+            if (!(node is Table table))
             {
                 throw new InvalidOperationException("Root token not table");
             }
@@ -23,7 +23,7 @@ namespace Lexy.Poc.Core.Transcribe
             var rowName = $"{className}Row";
 
             var members = new List<MemberDeclarationSyntax>();
-            members.Add(GenerateRowClass(components, rowName, table));
+            members.Add(GenerateRowClass(nodes, rowName, table));
             members.Add(GenerateFields(rowName));
             members.Add(GenerateStaticConstructor(className, table, rowName));
             members.AddRange(GenerateProperties(rowName));
@@ -32,10 +32,10 @@ namespace Lexy.Poc.Core.Transcribe
                 .WithModifiers(Modifiers.PublicAsList)
                 .WithMembers(List(members));
 
-            return new GeneratedClass(component, className, classDeclaration);
+            return new GeneratedClass(node, className, classDeclaration);
         }
 
-        private static ClassDeclarationSyntax GenerateRowClass(Components components, string rowName, Table table)
+        private static ClassDeclarationSyntax GenerateRowClass(Nodes nodes, string rowName, Table table)
         {
             var properties = table.Headers.Values
                 .Select(header =>

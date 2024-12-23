@@ -31,10 +31,10 @@ Function: ValidateTableKeyword
     Result = ValidateTableKeyword.Count";
 
             var parser = GetService<ILexyParser>();
-            parser.ParseComponents(code);
+            parser.ParseNodes(code);
 
             var logger = GetService<IParserLogger>();
-            logger.HasErrorMessage("Duplicated component name: 'ValidateTableKeyword'").ShouldBeTrue(logger.FormatMessages());
+            logger.HasErrorMessage("Duplicated node name: 'ValidateTableKeyword'").ShouldBeTrue(logger.FormatMessages());
         }
     }
 }

@@ -2,24 +2,6 @@ namespace Lexy.Poc.Core.Parser
 {
     public class TokenValues
     {
-        public const string FunctionComponent = "Function:";
-        public const string EnumComponent = "Enum:";
-        public const string TableComponent = "Table:";
-        public const string ScenarioComponent = "Scenario:";
-
-        public const string Function = "Function";
-        public const string Table = "Table";
-
-        public const string Include = "Include";
-        public const string Parameters = "Parameters";
-        public const string Results = "Results";
-        public const string Code = "Code";
-        public const string ExpectError = "ExpectError";
-        public const string ExpectRootErrors = "ExpectRootErrors";
-
-        public const string Comment = "#";
-        public const char CommentChar = '#';
-
         public const char TableSeparator = '|';
         public const char Quote = '\"';
         public const char Assignment = '=';
@@ -42,7 +24,6 @@ namespace Lexy.Poc.Core.Parser
         public const string Equal = "==";
         public const string NotEqual = "!=";
 
-
         public const char NotEqualStart = '!';
 
         public const char And = '&';
@@ -57,5 +38,7 @@ namespace Lexy.Poc.Core.Parser
         public const char Slash = '/';
         public const char Colon = ':';
         public const char Space = ' ';
+
+        public const char CommentChar = '#';
     }
 }

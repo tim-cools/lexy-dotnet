@@ -15,13 +15,12 @@ namespace Lexy.Poc.Core.Parser
 
         public string FormatMessages();
 
-        bool ComponentHasErrors(IRootComponent component);
+        bool NodeHasErrors(IRootNode node);
 
-        string[] ComponentFailedMessages(IRootComponent component);
+        string[] NodeFailedMessages(IRootNode node);
         string[] FailedRootMessages();
-        string[] FailedMessages();
 
         void AssertNoErrors();
-        void SetCurrentComponent(IRootComponent component);
+        void SetCurrentNode(IRootNode node);
     }
 }

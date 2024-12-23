@@ -17,7 +17,7 @@ namespace Lexy.Poc.Core.Compiler
 
         public ExecutableFunction GetFunction(Function function)
         {
-            return executables[function.ComponentName];
+            return executables[function.NodeName];
         }
 
         public bool ContainsEnum(string type)

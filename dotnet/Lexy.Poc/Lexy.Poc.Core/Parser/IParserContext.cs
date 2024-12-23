@@ -8,9 +8,9 @@ namespace Lexy.Poc.Core.Parser
 
         Line CurrentLine { get; }
 
-        Components Components { get; }
+        Nodes Nodes { get; }
 
-        void ProcessComponent(IRootComponent component);
+        void ProcessNode(IRootNode node);
 
         bool ProcessLine();
 

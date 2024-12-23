@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Lexy.Poc.Core.Language;
 using Microsoft.Extensions.Logging;
 
@@ -11,13 +10,13 @@ namespace Lexy.Poc.Core.Parser
     {
         private class LogEntry
         {
-            public IComponent Component { get; }
+            public INode Node { get; }
             public bool IsError { get; }
             public string Message { get; }
 
-            public LogEntry(IComponent component, bool isError, string message)
+            public LogEntry(INode node, bool isError, string message)
             {
-                Component = component;
+                Node = node;
                 IsError = isError;
                 Message = message;
             }
@@ -25,41 +24,53 @@ namespace Lexy.Poc.Core.Parser
             public override string ToString() => Message;
         }
 
-        private readonly ILogger<ParserContext> logger;
+        private readonly ILogger<ParserLogger> logger;
         private readonly ISourceCodeDocument sourceCodeDocument;
         private readonly IList<LogEntry> logEntries = new List<LogEntry>();
-        private int failedMessages = 0;
-        private IRootComponent currentComponent;
+        private int failedMessages;
+        private IRootNode currentNode;
 
         public bool HasErrors() => failedMessages > 0;
-        public bool HasRootErrors() => logEntries.Any(entry => entry.IsError && entry.Component == null);
+        public bool HasRootErrors() => logEntries.Any(entry => entry.IsError && entry.Node == null);
 
-        public ParserLogger(ILogger<ParserContext> logger, ISourceCodeDocument sourceCodeDocument)
+        public ParserLogger(ILogger<ParserLogger> logger, ISourceCodeDocument sourceCodeDocument)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.sourceCodeDocument = sourceCodeDocument ?? throw new ArgumentNullException(nameof(sourceCodeDocument));
         }
 
-        public void LogInfo(string message)
-        {
-            logger.LogInformation(message);
-        }
+        public void LogInfo(string message) => logger.LogInformation(message);
 
         public void Log(string message)
         {
-            var item = $"{sourceCodeDocument.CurrentLine?.Index + 1}: {message}";
-
-            logger.LogDebug(item);
-            logEntries.Add(new LogEntry(currentComponent, false, item));
+            if (sourceCodeDocument.CurrentLine != null)
+            {
+                var lineIndex = sourceCodeDocument.CurrentLine?.Index + 1;
+                logger.LogDebug("{LineIndex}: {Message}", lineIndex, message);
+                logEntries.Add(new LogEntry(currentNode, false, $"{lineIndex}: {message}"));
+            }
+            else
+            {
+                logger.LogDebug("{CurrentNode}: {Message}", currentNode?.NodeName, message);
+                logEntries.Add(new LogEntry(currentNode, false, $"{currentNode?.NodeName}: {message}"));
+            }
         }
 
         public void Fail(string message)
         {
             failedMessages++;
-            var item = $"{sourceCodeDocument.CurrentLine?.Index + 1}: ERROR - {message}";
 
-            logger.LogError(item);
-            logEntries.Add(new LogEntry(currentComponent, true, item));
+            if (sourceCodeDocument.CurrentLine != null)
+            {
+                var lineIndex = sourceCodeDocument.CurrentLine?.Index + 1;
+                logger.LogError("{LineIndex}: ERROR - {Message}", lineIndex, message);
+                logEntries.Add(new LogEntry(currentNode, true, $"{lineIndex}: ERROR - {message}"));
+            }
+            else
+            {
+                logger.LogError("{CurrentNode}: ERROR - {Message}", currentNode?.NodeName, message);
+                logEntries.Add(new LogEntry(currentNode, true, $"{currentNode?.NodeName}: ERROR - {message}"));
+            }
         }
 
         public bool HasErrorMessage(string expectedError)
@@ -73,35 +84,28 @@ namespace Lexy.Poc.Core.Parser
                 $"{string.Join(Environment.NewLine, logEntries)}{Environment.NewLine}";
         }
 
-        public void SetCurrentComponent(IRootComponent component)
+        public void SetCurrentNode(IRootNode node)
         {
-            currentComponent = component ?? throw new ArgumentNullException(nameof(component));
+            currentNode = node ?? throw new ArgumentNullException(nameof(node));
         }
 
-        public bool ComponentHasErrors(IRootComponent component)
+        public bool NodeHasErrors(IRootNode node)
         {
-            if (component == null) throw new ArgumentNullException(nameof(component));
+            if (node == null) throw new ArgumentNullException(nameof(node));
 
-            return logEntries.Any(message => message.IsError && message.Component == component);
+            return logEntries.Any(message => message.IsError && message.Node == node);
         }
 
-        public string[] ComponentFailedMessages(IRootComponent component)
+        public string[] NodeFailedMessages(IRootNode node)
         {
-            return logEntries.Where(entry => entry.IsError && entry.Component == component)
+            return logEntries.Where(entry => entry.IsError && entry.Node == node)
                 .Select(entry => entry.Message)
                 .ToArray();
         }
 
         public string[] FailedRootMessages()
         {
-            return logEntries.Where(entry => entry.IsError && entry.Component == null)
-                .Select(entry => entry.Message)
-                .ToArray();
-        }
-
-        public string[] FailedMessages()
-        {
-            return logEntries.Where(entry => entry.IsError)
+            return logEntries.Where(entry => entry.IsError && entry.Node == null)
                 .Select(entry => entry.Message)
                 .ToArray();
         }

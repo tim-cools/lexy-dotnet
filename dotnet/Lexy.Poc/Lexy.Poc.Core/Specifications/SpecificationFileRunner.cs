@@ -42,21 +42,25 @@ namespace Lexy.Poc.Core.Specifications
             parser.ParseFile(fileName, false);
 
             scenarioRunners = parserContext
-                .Components
+                .Nodes
                 .GetScenarios()
                 .Select(scenario => ScenarioRunner.Create(fileName, scenario, parserContext, runnerContext, this.serviceScope.ServiceProvider))
                 .ToList();
 
-            if (parserContext.Logger.HasRootErrors())
-            {
-                var rootScenarioRunner =
-                    scenarioRunners.FirstOrDefault(runner => runner.Scenario.ExpectRootErrors.HasValues);
+            ValidateHasScenarioCheckingRootErrors(fileName);
+        }
 
-                if (rootScenarioRunner == null)
-                {
-                    throw new InvalidOperationException(
-                        $"{fileName} has root errors but no scenario that verifies expected root errors. Errors: {parserContext.Logger.FailedRootMessages().Format(2)}");
-                }
+        private void ValidateHasScenarioCheckingRootErrors(string fileName)
+        {
+            if (!parserContext.Logger.HasRootErrors()) return;
+
+            var rootScenarioRunner =
+                scenarioRunners.FirstOrDefault(runner => runner.Scenario.ExpectRootErrors.HasValues);
+
+            if (rootScenarioRunner == null)
+            {
+                throw new InvalidOperationException(
+                    $"{fileName} has root errors but no scenario that verifies expected root errors. Errors: {parserContext.Logger.FailedRootMessages().Format(2)}");
             }
         }
 
