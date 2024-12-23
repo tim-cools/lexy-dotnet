@@ -6,7 +6,7 @@ namespace Lexy.Poc.Core.Language
 {
     public static class DuplicateChecker
     {
-        public static void Validate<T>(IParserContext context, Func<T, string> getName, Func<T, string> getErrorMessage, params IList<T>[] lists)
+        public static void Validate<T>(IValidationContext context, Func<T, string> getName, Func<T, string> getErrorMessage, params IList<T>[] lists)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (getName == null) throw new ArgumentNullException(nameof(getName));

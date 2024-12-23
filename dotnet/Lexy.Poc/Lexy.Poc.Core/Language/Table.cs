@@ -58,7 +58,7 @@ namespace Lexy.Poc.Core.Language
             }
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
         }
     }

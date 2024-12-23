@@ -51,7 +51,7 @@ namespace Lexy.Poc.Core.Language
 
         protected override IEnumerable<INode> GetChildren() => Values;
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
         }
     }

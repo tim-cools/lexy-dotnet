@@ -79,7 +79,7 @@ namespace Lexy.Poc.Core.Language.Expressions
             yield return Expression;
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
         }
     }

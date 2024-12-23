@@ -4,6 +4,6 @@ namespace Lexy.Poc.Core.Language
 {
     public interface INode
     {
-        void ValidateTree(IParserContext context);
+        void ValidateTree(IValidationContext context);
     }
 }

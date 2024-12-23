@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Lexy.Poc.Core.Language;
 
@@ -36,8 +37,6 @@ namespace Lexy.Poc.Core.Parser
             var document = new Document();
             var nodes = new ParsableNodeArray(document);
 
-            IParsableNode currentNode = document;
-
             while (sourceCodeDocument.HasMoreLines())
             {
                 if (!context.ProcessLine())
@@ -59,18 +58,18 @@ namespace Lexy.Poc.Core.Parser
                     continue;
                 }
 
-                currentNode = nodes.Get(indent);
+                var node = nodes.Get(indent);
+                node = ParseLine(node);
 
-                var node = ParseLine(currentNode);
-
-                currentNode = node;
                 currentIndent = indent + 1;
-                nodes.Set(currentIndent, currentNode);
+
+                nodes.Set(currentIndent, node);
             }
 
             sourceCodeDocument.Reset();
 
-            document.ValidateTree(context);
+            var validationContext = new ValidationContext(context);
+            document.ValidateTree(validationContext);
 
             if (throwException)
             {
@@ -90,6 +89,87 @@ namespace Lexy.Poc.Core.Parser
             }
             return node;
         }
+    }
+
+    public class ValidationContext : IValidationContext
+    {
+        private class CodeContextScope : IDisposable
+        {
+            private readonly Func<IFunctionCodeContext> func;
+
+            public CodeContextScope(Func<IFunctionCodeContext> func) => this.func = func;
+
+            public void Dispose() => func();
+        }
+
+        public IParserContext ParserContext { get; }
+        public IFunctionCodeContext FunctionCodeContext { get; private set; }
+        public IParserLogger Logger => ParserContext.Logger;
+        public Nodes Nodes => ParserContext.Nodes;
+
+        public ValidationContext(IParserContext context)
+        {
+            ParserContext = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public IDisposable CreateCodeContextScope()
+        {
+            if (FunctionCodeContext != null)
+            {
+                throw new InvalidOperationException("Already in a code scope. Only can enter scope once.");
+            }
+
+            FunctionCodeContext = new FunctionCodeContext(Logger);
+            return new CodeContextScope(() => FunctionCodeContext = null);
+        }
+    }
+
+
+    public class FunctionCodeContext : IFunctionCodeContext
+    {
+        private readonly IParserLogger logger;
+        private readonly IList<string> variables = new List<string>();
+
+        public FunctionCodeContext(IParserLogger logger)
+        {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public bool EnsureVariableUnique(string name)
+        {
+            if (variables.Contains(name))
+            {
+                logger.Fail($"Duplicated variable name: '{name}'");
+                return false;
+            }
+
+            variables.Add(name);
+            return true;
+        }
+
+        public void EnsureVariableExists(string variableName)
+        {
+            if (!variables.Contains(variableName))
+            {
+                logger.Fail($"Unknown variable name: '{variableName}'");
+            }
+        }
+    }
+
+    public interface IValidationContext
+    {
+        IParserContext ParserContext { get; }
+        IParserLogger Logger { get; }
+        IFunctionCodeContext FunctionCodeContext { get; }
+        Nodes Nodes { get; }
+
+        IDisposable CreateCodeContextScope();
+    }
+
+    public interface IFunctionCodeContext
+    {
+        bool EnsureVariableUnique(string variableName);
+        void EnsureVariableExists(string variableName);
     }
 
     public class ParsableNodeArray

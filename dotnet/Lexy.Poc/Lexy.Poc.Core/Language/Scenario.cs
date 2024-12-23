@@ -128,23 +128,6 @@ namespace Lexy.Poc.Core.Language
             return this;
         }
 
-        public override void ValidateTree(IParserContext context)
-        {
-            Validate(context);
-
-            var children = GetChildren();
-            foreach (var child in children)
-            {
-                if (child == null) throw new InvalidOperationException($"({GetType().Name}) Child is null");
-
-                if (child is IRootNode node) context.Logger.SetCurrentNode(node);
-
-                child.ValidateTree(context);
-
-                context.Logger.SetCurrentNode(this);
-            }
-        }
-
         protected override IEnumerable<INode> GetChildren()
         {
             yield return Name;
@@ -161,7 +144,7 @@ namespace Lexy.Poc.Core.Language
             yield return ExpectRootErrors;
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
         }
     }

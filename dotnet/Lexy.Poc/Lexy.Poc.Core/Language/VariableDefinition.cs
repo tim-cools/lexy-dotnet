@@ -63,8 +63,10 @@ namespace Lexy.Poc.Core.Language
             yield break;
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
+            context.FunctionCodeContext.EnsureVariableUnique(Name);
+
             switch (Type)
             {
                 case CustomVariableType customVariableType:
@@ -80,7 +82,7 @@ namespace Lexy.Poc.Core.Language
             }
         }
 
-        private void ValidateCustomVariableType(IParserContext context, CustomVariableType customVariableType)
+        private void ValidateCustomVariableType(IValidationContext context, CustomVariableType customVariableType)
         {
             if (!context.Nodes.ContainsEnum(customVariableType.TypeName))
             {
@@ -113,7 +115,7 @@ namespace Lexy.Poc.Core.Language
             }
         }
 
-        private void ValidatePrimitiveVariableType(IParserContext context, PrimitiveVariableType primitiveVariableType)
+        private void ValidatePrimitiveVariableType(IValidationContext context, PrimitiveVariableType primitiveVariableType)
         {
             if (Default == null) return;
 
@@ -140,7 +142,7 @@ namespace Lexy.Poc.Core.Language
             }
         }
 
-        private void ValidateDefaultLiteral<T>(IParserContext context, PrimitiveVariableType primitiveVariableType)
+        private void ValidateDefaultLiteral<T>(IValidationContext context, PrimitiveVariableType primitiveVariableType)
             where T : ILiteralToken
         {
             if (!(Default is T))

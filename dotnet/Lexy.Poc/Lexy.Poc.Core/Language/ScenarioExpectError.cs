@@ -32,7 +32,7 @@ namespace Lexy.Poc.Core.Language
             yield break;
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
         }
     }

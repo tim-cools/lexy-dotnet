@@ -168,7 +168,7 @@ namespace Lexy.Poc.Core.Language.Expressions
             yield return Right;
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
         }
     }
@@ -215,11 +215,15 @@ namespace Lexy.Poc.Core.Language.Expressions
 
         protected override IEnumerable<INode> GetChildren()
         {
-            yield return Assignment;
+            if (Assignment != null)
+            {
+                yield return Assignment;
+            }
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
+            context.FunctionCodeContext.EnsureVariableUnique(VariableName);
         }
     }
 }

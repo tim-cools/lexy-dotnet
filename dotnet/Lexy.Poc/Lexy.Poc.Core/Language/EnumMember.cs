@@ -54,13 +54,13 @@ namespace Lexy.Poc.Core.Language
             yield break;
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
             ValidateMemberName(context);
             ValidateMemberValues(context);
         }
 
-        private void ValidateMemberName(IParserContext context)
+        private void ValidateMemberName(IValidationContext context)
         {
             if (string.IsNullOrEmpty(Name))
             {
@@ -72,7 +72,7 @@ namespace Lexy.Poc.Core.Language
             }
         }
 
-        private void ValidateMemberValues(IParserContext context)
+        private void ValidateMemberValues(IValidationContext context)
         {
             if (Value == null) return;
 

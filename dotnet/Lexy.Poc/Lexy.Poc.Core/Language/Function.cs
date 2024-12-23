@@ -101,6 +101,14 @@ namespace Lexy.Poc.Core.Language
             }
         }
 
+        public override void ValidateTree(IValidationContext context)
+        {
+            using (context.CreateCodeContextScope())
+            {
+                base.ValidateTree(context);
+            }
+        }
+
         protected override IEnumerable<INode> GetChildren()
         {
             yield return Name;
@@ -110,12 +118,13 @@ namespace Lexy.Poc.Core.Language
             yield return Include;
         }
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
+            /*
             ValidateDuplicatedVariablesNames(context);
         }
 
-        private void ValidateDuplicatedVariablesNames(IParserContext context)
+        private void ValidateDuplicatedVariablesNames(IValidationContext context)
         {
             //var variableDeclarations = Code.GetVariableDeclarations();
             DuplicateChecker.Validate(
@@ -123,7 +132,7 @@ namespace Lexy.Poc.Core.Language
                 member => member.Name,
                 member => $"Duplicated variable name: '{member.Name}'",
                 Parameters.Variables,
-                Results.Variables);
+                Results.Variables); */
         }
     }
 }

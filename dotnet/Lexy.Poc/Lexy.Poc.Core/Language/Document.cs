@@ -52,18 +52,9 @@ namespace Lexy.Poc.Core.Language
             return this;
         }
 
-        public override void ValidateTree(IParserContext context)
-        {
-            foreach (var child in nodes)
-            {
-                context.Logger.SetCurrentNode(child);
-                child.ValidateTree(context);
-            }
-        }
-
         protected override IEnumerable<INode> GetChildren() => nodes;
 
-        protected override void Validate(IParserContext context)
+        protected override void Validate(IValidationContext context)
         {
         }
     }

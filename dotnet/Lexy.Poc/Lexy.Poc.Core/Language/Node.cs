@@ -6,23 +6,31 @@ namespace Lexy.Poc.Core.Language
 {
     public abstract class Node : INode
     {
-        public virtual void ValidateTree(IParserContext context)
+        public virtual void ValidateTree(IValidationContext context)
         {
             Validate(context);
 
             var children = GetChildren();
             foreach (var child in children)
             {
-                if (child == null)
+                if (child == null) throw new InvalidOperationException($"({GetType().Name}) Child is null");
+
+                if (child is IRootNode node)
                 {
-                    throw new InvalidOperationException($"({GetType().Name}) Child is null");
+                    context.Logger.SetCurrentNode(node);
                 }
+
                 child.ValidateTree(context);
+
+                if (this is IRootNode)
+                {
+                    context.Logger.SetCurrentNode(this as IRootNode);
+                }
             }
         }
 
         protected abstract IEnumerable<INode> GetChildren();
 
-        protected abstract void Validate(IParserContext context);
+        protected abstract void Validate(IValidationContext context);
     }
 }
