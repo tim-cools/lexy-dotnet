@@ -19,6 +19,7 @@ namespace Lexy.Poc.Core.Parser
 
         string[] ComponentFailedMessages(IRootComponent component);
         string[] FailedRootMessages();
+        string[] FailedMessages();
 
         void AssertNoErrors();
         void SetCurrentComponent(IRootComponent component);

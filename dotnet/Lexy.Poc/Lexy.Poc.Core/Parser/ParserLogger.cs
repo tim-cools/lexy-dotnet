@@ -99,6 +99,13 @@ namespace Lexy.Poc.Core.Parser
                 .ToArray();
         }
 
+        public string[] FailedMessages()
+        {
+            return logEntries.Where(entry => entry.IsError)
+                .Select(entry => entry.Message)
+                .ToArray();
+        }
+
         public void AssertNoErrors()
         {
             if (HasErrors())
