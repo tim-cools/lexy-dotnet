@@ -19,6 +19,7 @@ namespace Lexy.Poc.Core.Parser
 
         string[] NodeFailedMessages(IRootNode node);
         string[] FailedRootMessages();
+        string[] FailedMessages();
 
         void AssertNoErrors();
         void SetCurrentNode(IRootNode node);

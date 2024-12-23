@@ -21,7 +21,7 @@ namespace Lexy.Poc.Specifications
             LoggingConfiguration.LogFileNames();
 
             var runner = GetService<ISpecificationsRunner>();
-            runner.Run("../../../../../../laws/Specifications/Language/00000-Keywords.lexy");
+            runner.Run("../../../../../../laws/Specifications/Language/00001-DuplicatedNames.lexy");
             //runner.Run("../../../../../../laws/Specifications/Enum/00000-Validation.lexy");
         }
     }

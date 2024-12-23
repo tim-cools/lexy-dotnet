@@ -149,7 +149,14 @@ namespace Lexy.Poc.Core.Specifications
 
         private bool ValidateRootErrors(ISpecificationRunnerContext specificationRunnerContext)
         {
-            var failedMessages = parserLogger.FailedRootMessages().ToList();
+            var failedMessages = parserLogger.FailedMessages().ToList();
+            if (!failedMessages.Any())
+            {
+                Fail($"No exceptions {Environment.NewLine}" +
+                     $"  Expected: {scenario.ExpectRootErrors.Messages.Format(4)}{Environment.NewLine}" +
+                     $"  Actual: none");
+                return false;
+            }
 
             var failed = false;
             foreach (var rootMessage in scenario.ExpectRootErrors.Messages)
@@ -172,13 +179,11 @@ namespace Lexy.Poc.Core.Specifications
                     context.Success(scenario);
                     return false; // don't compile and run rest of scenario
                 }
-
-                return false;
             }
 
             Fail($"Wrong exception {Environment.NewLine}" +
                  $"  Expected: {scenario.ExpectRootErrors.Messages.Format(4)}{Environment.NewLine}" +
-                 $"  Actual: {parserLogger.FailedRootMessages().Format(4)}");
+                 $"  Actual: {parserLogger.FailedMessages().Format(4)}");
             return false;
         }
 
