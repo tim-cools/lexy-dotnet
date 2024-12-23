@@ -15,7 +15,7 @@ namespace Lexy.Poc.Parser.ExpressionParser
             if (specificValue == null)
             {
                 throw new InvalidOperationException(
-                    $"Values '{value.GetType().Name}' should be of type ‘{typeof(T).Name}'");
+                    $"Value '{value.GetType().Name}' should be of type ‘{typeof(T).Name}'");
             }
 
             validate(specificValue);
@@ -33,6 +33,42 @@ namespace Lexy.Poc.Parser.ExpressionParser
             {
                 literal.Literal.ValidateOfType<NumberLiteralToken>(number =>
                     number.NumberValue.ShouldBe(value));
+            });
+        }
+
+        public static void ValidateQuotedLiteralExpression(this Expression expression, string value)
+        {
+            expression.ValidateOfType<LiteralExpression>(literal =>
+            {
+                literal.Literal.ValidateOfType<QuotedLiteralToken>(number =>
+                    number.Value.ShouldBe(value));
+            });
+        }
+
+        public static void ValidateBooleanLiteralExpression(this Expression expression, bool value)
+        {
+            expression.ValidateOfType<LiteralExpression>(literal =>
+            {
+                literal.Literal.ValidateOfType<BooleanLiteral>(number =>
+                    number.BooleanValue.ShouldBe(value));
+            });
+        }
+
+        public static void ValidateDateTimeLiteralExpression(this Expression expression, DateTime value)
+        {
+            expression.ValidateOfType<LiteralExpression>(literal =>
+            {
+                literal.Literal.ValidateOfType<DateTimeLiteral>(number =>
+                    number.DateTimeValue.ShouldBe(value));
+            });
+        }
+
+        public static void ValidateMemberAccessExpression(this Expression expression, string value)
+        {
+            expression.ValidateOfType<LiteralExpression>(literal =>
+            {
+                literal.Literal.ValidateOfType<MemberAccessLiteral>(memberAccess =>
+                    memberAccess.Value.ShouldBe(value));
             });
         }
     }

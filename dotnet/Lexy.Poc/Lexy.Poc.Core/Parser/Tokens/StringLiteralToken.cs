@@ -9,5 +9,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
         {
             Value = value;
         }
+
+        public override string ToString() => Value;
     }
 }

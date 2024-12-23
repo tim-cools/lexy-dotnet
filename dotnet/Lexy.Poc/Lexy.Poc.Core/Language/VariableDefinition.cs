@@ -35,7 +35,7 @@ namespace Lexy.Poc.Core.Language
             var name = tokens.TokenValue(1);
             var type = tokens.TokenValue(0);
 
-            var variableType = VariableType.Parse(type, context);
+            var variableType = VariableType.Parse(type);
             if (variableType == null) return null;
 
             if (tokens.Length == 2)
@@ -65,12 +65,87 @@ namespace Lexy.Poc.Core.Language
 
         protected override void Validate(IParserContext context)
         {
-            if (Type is CustomVariableType customVariableType)
+            switch (Type)
             {
-                if (!context.Nodes.ContainsEnum(customVariableType.EnumName))
+                case CustomVariableType customVariableType:
+                    ValidateCustomVariableType(context, customVariableType);
+                    break;
+
+                case PrimitiveVariableType primitiveVariableType:
+                    ValidatePrimitiveVariableType(context, primitiveVariableType);
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Invalid Type: " + Type.GetType());
+            }
+        }
+
+        private void ValidateCustomVariableType(IParserContext context, CustomVariableType customVariableType)
+        {
+            if (!context.Nodes.ContainsEnum(customVariableType.TypeName))
+            {
+                context.Logger.Fail($"Unknown type: '{customVariableType.TypeName}'");
+                return;
+            }
+
+            if (Default == null) return;
+
+            if (!(Default is MemberAccessLiteral memberAccessLiteral))
+            {
+                context.Logger.Fail($"Invalid default value '{Default}'. (type: '{customVariableType.TypeName}')");
+            }
+            else
+            {
+                var parts = memberAccessLiteral.GetParts();
+                var enumDeclaration = context.Nodes.GetEnum(customVariableType.TypeName);
+                if (parts.Length != 2)
                 {
-                    context.Logger.Fail($"Unknown type: '{customVariableType.EnumName}'");
+                    context.Logger.Fail($"Invalid default value '{Default}'. (type: '{customVariableType.TypeName}')");
                 }
+                if (parts[0] != customVariableType.TypeName)
+                {
+                    context.Logger.Fail($"Invalid default value '{Default}'. Invalid enum type. (type: '{customVariableType.TypeName}')");
+                }
+                if (!enumDeclaration.ContainsMember(parts[1]))
+                {
+                    context.Logger.Fail($"Invalid default value '{Default}'. Invalid member. (type: '{customVariableType.TypeName}')");
+                }
+            }
+        }
+
+        private void ValidatePrimitiveVariableType(IParserContext context, PrimitiveVariableType primitiveVariableType)
+        {
+            if (Default == null) return;
+
+            switch (primitiveVariableType.Type)
+            {
+                case TypeNames.Number:
+                    ValidateDefaultLiteral<NumberLiteralToken>(context, primitiveVariableType);
+                    break;
+
+                case TypeNames.String:
+                    ValidateDefaultLiteral<QuotedLiteralToken>(context, primitiveVariableType);
+                    break;
+
+                case TypeNames.Boolean:
+                    ValidateDefaultLiteral<BooleanLiteral>(context, primitiveVariableType);
+                    break;
+
+                case TypeNames.DateTime:
+                    ValidateDefaultLiteral<DateTimeLiteral>(context, primitiveVariableType);
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"Unexpected type: {primitiveVariableType.Type}");
+            }
+        }
+
+        private void ValidateDefaultLiteral<T>(IParserContext context, PrimitiveVariableType primitiveVariableType)
+            where T : ILiteralToken
+        {
+            if (!(Default is T))
+            {
+                context.Logger.Fail($"Invalid default value '{Default}'. (type: '{primitiveVariableType.Type}')");
             }
         }
     }

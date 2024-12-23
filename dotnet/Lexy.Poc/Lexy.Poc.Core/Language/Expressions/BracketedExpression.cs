@@ -10,14 +10,15 @@ namespace Lexy.Poc.Core.Language.Expressions
         public string FunctionName { get; }
         public Expression Expression { get; }
 
-        private BracketedExpression(string functionName, Expression expression, Line sourceLine, TokenList tokens) : base(sourceLine, tokens)
+        private BracketedExpression(string functionName, Expression expression, ExpressionSource source) : base(source)
         {
             FunctionName = functionName;
             Expression = expression;
         }
 
-        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(ExpressionSource source)
         {
+            var tokens = source.Tokens;
             if (!IsValid(tokens))
             {
                 return ParseExpressionResult.Invalid<BracketedExpression>("Not valid.");
@@ -31,11 +32,11 @@ namespace Lexy.Poc.Core.Language.Expressions
 
             var functionName = tokens.TokenValue(0);
             var innerExpressionTokens = tokens.TokensRange(2, matchingClosingParenthesis - 1);
-            var parseResult = ExpressionFactory.Parse(innerExpressionTokens, sourceLine);
+            var parseResult = ExpressionFactory.Parse(innerExpressionTokens, source.Line);
 
             var innerExpression = parseResult;
 
-            var expression = new BracketedExpression(functionName, innerExpression, sourceLine, tokens);
+            var expression = new BracketedExpression(functionName, innerExpression, source);
             return ParseExpressionResult.Success(expression);
         }
 

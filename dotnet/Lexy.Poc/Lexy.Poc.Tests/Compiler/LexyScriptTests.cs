@@ -74,5 +74,36 @@ Function: ValidateTableKeywordFunction
             var result = script.Run();
             result.Number("Result").ShouldBe(2);
         }
+
+        [Test]
+        public void VariableDeclarationInCode()
+        {
+          var script = ServiceScope.CompileFunction(@"Function: TestSimpleReturn
+  Parameters
+    number Value = 5 
+  Results
+    number Result
+  Code
+    number temp = 5
+    temp = Value 
+    Result = temp");
+
+          var result = script.Run();
+          result.Number("Result").ShouldBe(5);
+        }
+
+        [Test]
+        public void VariableDeclarationWithDefaultInCode()
+        {
+          var script = ServiceScope.CompileFunction(@"Function: TestSimpleReturn
+  Results
+    number Result
+  Code
+    number temp = 5
+    Result = temp
+");
+          var result = script.Run();
+          result.Number("Result").ShouldBe(5);
+        }
     }
 }

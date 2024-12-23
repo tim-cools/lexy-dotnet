@@ -25,10 +25,12 @@ namespace Lexy.Poc.Core.Language
             }
 
             var tokenName = Parser.NodeName.Parse(line, context);
-            var rootNode = tokenName?.Keyword switch
+            if (tokenName == null) return this;
+
+            var rootNode = tokenName.Keyword switch
             {
                 null => null,
-                Keywords.FunctionKeyword => Function.Parse(tokenName),
+                Keywords.FunctionKeyword => Function.Create(tokenName.Name),
                 Keywords.EnumKeyword => EnumDefinition.Parse(tokenName),
                 Keywords.ScenarioKeyword => Scenario.Parse(tokenName),
                 Keywords.TableKeyword => Table.Parse(tokenName),

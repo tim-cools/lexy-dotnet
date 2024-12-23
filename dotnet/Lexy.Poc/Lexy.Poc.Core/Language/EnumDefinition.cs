@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
@@ -57,6 +58,11 @@ namespace Lexy.Poc.Core.Language
                 member => member.Name,
                 member => $"Enum member name should be unique. Duplicate name: '{member.Name}'",
                 Members);
+        }
+
+        public bool ContainsMember(string name)
+        {
+            return Members.Any(member => member.Name == name);
         }
     }
 }

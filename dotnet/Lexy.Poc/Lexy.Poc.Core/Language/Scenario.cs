@@ -87,7 +87,7 @@ namespace Lexy.Poc.Core.Language
 
             var tokenName = Parser.NodeName.Parse(context.CurrentLine, context);
 
-            Function = Function.Parse(tokenName);
+            Function = Function.Create(tokenName?.Name ?? $"{Name.Value}Function");
             context.Logger.SetCurrentNode(Function);
             return Function;
         }

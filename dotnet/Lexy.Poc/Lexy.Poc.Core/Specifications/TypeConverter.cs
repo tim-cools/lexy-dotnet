@@ -10,12 +10,12 @@ namespace Lexy.Poc.Core.Specifications
         {
             if (type is CustomVariableType enumVariableType)
             {
-                if (!compilerResult.ContainsEnum(enumVariableType.EnumName)) throw new InvalidOperationException("Known enum: " + enumVariableType.EnumName);
+                if (!compilerResult.ContainsEnum(enumVariableType.TypeName)) throw new InvalidOperationException("Known enum: " + enumVariableType.TypeName);
 
                 var indexOfSeparator = value.IndexOf(".");
                 var enumValue = value[(indexOfSeparator + 1)..];
 
-                return Enum.Parse(compilerResult.GetEnumType(enumVariableType.EnumName), enumValue);
+                return Enum.Parse(compilerResult.GetEnumType(enumVariableType.TypeName), enumValue);
             }
 
             if (type is PrimitiveVariableType primitiveVariableType)

@@ -9,13 +9,14 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public Expression Expression { get; }
 
-        private ParenthesizedExpression(Expression expression, Line sourceLine, TokenList tokens) : base(sourceLine, tokens)
+        private ParenthesizedExpression(Expression expression, ExpressionSource source) : base(source)
         {
             Expression = expression;
         }
 
-        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(ExpressionSource source)
         {
+            var tokens = source.Tokens;
             if (!IsValid(tokens))
             {
                 return ParseExpressionResult.Invalid<ParenthesizedExpression>("Not valid.");
@@ -28,11 +29,11 @@ namespace Lexy.Poc.Core.Language.Expressions
             }
 
             var innerExpressionTokens = tokens.TokensRange(1, matchingClosingParenthesis - 1);
-            var parseResult = ExpressionFactory.Parse(innerExpressionTokens, sourceLine);
+            var parseResult = ExpressionFactory.Parse(innerExpressionTokens, source.Line);
 
             var innerExpression = parseResult;
 
-            var expression = new ParenthesizedExpression(innerExpression, sourceLine, tokens);
+            var expression = new ParenthesizedExpression(innerExpression, source);
             return ParseExpressionResult.Success(expression);
         }
 

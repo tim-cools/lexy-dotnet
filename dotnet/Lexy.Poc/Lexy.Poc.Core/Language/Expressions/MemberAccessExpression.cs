@@ -8,13 +8,14 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public string Value { get; }
 
-        private MemberAccessExpression(Line sourceLine, TokenList tokens, string value) : base(sourceLine, tokens)
+        private MemberAccessExpression(string value, ExpressionSource source) : base(source)
         {
             Value = value;
         }
 
-        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(ExpressionSource source)
         {
+            var tokens = source.Tokens;
             if (!IsValid(tokens))
             {
                 return ParseExpressionResult.Invalid<MemberAccessExpression>("Invalid expression");
@@ -22,7 +23,7 @@ namespace Lexy.Poc.Core.Language.Expressions
 
             var variableName = tokens.TokenValue(0);
 
-            var accessExpression = new MemberAccessExpression(sourceLine, tokens, variableName);
+            var accessExpression = new MemberAccessExpression(variableName, source);
             return ParseExpressionResult.Success(accessExpression);
         }
 

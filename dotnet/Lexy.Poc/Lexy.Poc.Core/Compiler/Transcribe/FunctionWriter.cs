@@ -4,13 +4,14 @@ using System.Linq;
 using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.RunTime;
+using Lexy.Poc.Core.Transcribe;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Lexy.Poc.Core.Transcribe.ExpressionSyntaxFactory;
 using static Lexy.Poc.Core.Transcribe.LexySyntaxFactory;
 
-namespace Lexy.Poc.Core.Transcribe
+namespace Lexy.Poc.Core.Compiler.Transcribe
 {
     public class FunctionWriter : IRootTokenWriter
     {
@@ -147,7 +148,7 @@ namespace Lexy.Poc.Core.Transcribe
 
         private MethodDeclarationSyntax WriteRunMethod(Function function)
         {
-            var statements = function.Code.Expressions.SelectMany(line =>
+            var statements = function.Code.Expressions.SelectMany(expression =>
                 new []{
                     ExpressionStatement(
                         InvocationExpression(
@@ -161,8 +162,8 @@ namespace Lexy.Poc.Core.Transcribe
                                         Argument(
                                             LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                Literal(line.SourceLine.ToString()))))))),
-                    ExpressionStatementSyntax(line)
+                                                Literal(expression.Source.Line.ToString()))))))),
+                    ExpressionStatementSyntax(expression)
                 });
 
             var functionSyntax = MethodDeclaration(

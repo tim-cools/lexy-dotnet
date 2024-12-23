@@ -53,7 +53,7 @@ namespace Lexy.Poc.Core.Language
 
         public IEnumerable<Scenario> GetScenarios() => values.OfType<Scenario>();
 
-        public IRootNode GetEnum(string name)
+        public EnumDefinition GetEnum(string name)
         {
             return values
                 .OfType<EnumDefinition>()

@@ -6,9 +6,10 @@ namespace Lexy.Poc.Core.Language.Expressions
 {
     public static class ExpressionFactory
     {
-        private static readonly IDictionary<Func<TokenList, bool>, Func<Line, TokenList, ParseExpressionResult>> factories =
-            new Dictionary<Func<TokenList, bool>, Func<Line, TokenList, ParseExpressionResult>>()
+        private static readonly IDictionary<Func<TokenList, bool>, Func<ExpressionSource, ParseExpressionResult>> factories =
+            new Dictionary<Func<TokenList, bool>, Func<ExpressionSource, ParseExpressionResult>>()
             {
+                { VariableDeclarationExpression.IsValid, VariableDeclarationExpression.Parse },
                 { AssignmentExpression.IsValid, AssignmentExpression.Parse },
                 { ParenthesizedExpression.IsValid, ParenthesizedExpression.Parse },
                 { BracketedExpression.IsValid, BracketedExpression.Parse },
@@ -25,7 +26,8 @@ namespace Lexy.Poc.Core.Language.Expressions
             {
                 if (factory.Key(tokens))
                 {
-                    var expressionResult = factory.Value(currentLine, tokens);
+                    var source = new ExpressionSource(currentLine, tokens);
+                    var expressionResult = factory.Value(source);
                     switch (expressionResult.Status)
                     {
                         case ParseExpressionStatus.Success:

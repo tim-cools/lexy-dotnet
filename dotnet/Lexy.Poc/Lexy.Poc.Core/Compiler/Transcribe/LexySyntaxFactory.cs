@@ -1,5 +1,6 @@
 using System;
 using Lexy.Poc.Core.Language;
+using Lexy.Poc.Core.Parser;
 using Lexy.Poc.Core.Parser.Tokens;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -20,8 +21,20 @@ namespace Lexy.Poc.Core.Transcribe
                 NumberLiteralToken number => LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal($"{number.NumberValue}m", number.NumberValue)),
                 DateTimeLiteral dateTimeLiteral => TranslateDateTime(dateTimeLiteral),
                 BooleanLiteral boolean => LiteralExpression(boolean.BooleanValue ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression),
+                MemberAccessLiteral memberAccess => TranslateMemberAccessLiteral(memberAccess),
                 _ => throw new InvalidOperationException("Couldn't map type: " + token.GetType())
             };
+        }
+
+        private static ExpressionSyntax TranslateMemberAccessLiteral(MemberAccessLiteral memberAccess)
+        {
+            var parts = memberAccess.GetParts();
+            if (parts.Length != 2) throw new InvalidOperationException("Only 2 parts expected.");
+
+            return MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                IdentifierName(parts[0]),
+                IdentifierName(parts[1]));
         }
 
         private static ExpressionSyntax TranslateDateTime(DateTimeLiteral dateTimeLiteral)
@@ -68,20 +81,9 @@ namespace Lexy.Poc.Core.Transcribe
             return type switch
             {
                 PrimitiveVariableType primitive => MapType(primitive.Type),
-                CustomVariableType enumType => SyntaxFactory.IdentifierName(enumType.EnumName),
+                CustomVariableType enumType => SyntaxFactory.IdentifierName(enumType.TypeName),
                 _ => throw new InvalidOperationException("Couldn't map type: " + type)
             };
-        }
-    }
-
-    internal static class Arguments
-    {
-        public static SyntaxNode Numeric(int value)
-        {
-            return Argument(
-                LiteralExpression(
-                    SyntaxKind.NumericLiteralExpression,
-                    Literal(value)));
         }
     }
 }

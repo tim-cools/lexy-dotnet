@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Lexy.Poc.Core.Compiler.Transcribe;
 using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.RunTime;
 using Lexy.Poc.Core.Transcribe;

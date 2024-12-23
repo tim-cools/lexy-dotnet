@@ -51,5 +51,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
 
             return this;
         }
+
+        public override string ToString() => Value;
     }
 }

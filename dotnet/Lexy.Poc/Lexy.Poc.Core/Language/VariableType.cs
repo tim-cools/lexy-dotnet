@@ -1,10 +1,9 @@
-using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
     public abstract class VariableType
     {
-        public static VariableType Parse(string type, IParserContext context)
+        public static VariableType Parse(string type)
         {
             if (TypeNames.Contains(type))
             {

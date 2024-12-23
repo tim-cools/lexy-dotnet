@@ -8,24 +8,23 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public string VariableName { get; }
 
-        private VariableExpression(Line sourceLine, TokenList tokens, string variableName) : base(sourceLine, tokens)
+        private VariableExpression(string variableName, ExpressionSource source) : base(source)
         {
             VariableName = variableName;
         }
 
-        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(ExpressionSource source)
         {
+            var tokens = source.Tokens;
             if (!IsValid(tokens))
             {
                 return ParseExpressionResult.Invalid<VariableExpression>("Invalid expression");
             }
 
-            var assignmentVariableName = tokens.TokenValue(2);
-
             var variableName = tokens.TokenValue(0);
+            var expression = new VariableExpression(variableName, source);
 
-            var expression = new VariableExpression(sourceLine, tokens, variableName);
-            return ParseExpressionResult.Success( expression);
+            return ParseExpressionResult.Success(expression);
         }
 
         public static bool IsValid(TokenList tokens)

@@ -33,6 +33,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
         {
             return value == TokenValues.BooleanTrue || value == TokenValues.BooleanFalse;
         }
-    }
 
+        public override string ToString() => Value;
+    }
 }

@@ -4,6 +4,7 @@ using Lexy.Poc.Core.Language.Expressions;
 using Lexy.Poc.Core.Parser;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Lexy.Poc.Core.Transcribe
 {
@@ -33,15 +34,40 @@ namespace Lexy.Poc.Core.Transcribe
         {
             return line switch
             {
-                AssignmentExpression assignment =>
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName(assignment.VariableName),
-                            ExpressionSyntax(assignment.Assignment))),
-
+                AssignmentExpression assignment => TranslateAssignmentExpression(assignment),
+                VariableDeclarationExpression variableDeclarationExpression => TranslateVariableDeclarationExpression(variableDeclarationExpression),
                 _ => throw new InvalidOperationException($"Wrong expression type {line.GetType()}: {line}")
             };
+        }
+
+        private static ExpressionStatementSyntax TranslateAssignmentExpression(AssignmentExpression assignment)
+        {
+            return ExpressionStatement(
+                AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                    IdentifierName(assignment.VariableName),
+                    ExpressionSyntax(assignment.Assignment)));
+        }
+
+        private static StatementSyntax TranslateVariableDeclarationExpression(VariableDeclarationExpression expression)
+        {
+            var variable = VariableDeclarator(
+                Identifier(expression.VariableName));
+
+            if (expression.Assignment != null)
+            {
+                variable = variable
+                    .WithInitializer(
+                        EqualsValueClause(
+                            ExpressionSyntax(expression.Assignment)));
+            }
+
+            return LocalDeclarationStatement(
+                VariableDeclaration(
+                        LexySyntaxFactory.MapType(expression.VariableType))
+                    .WithVariables(
+                        SingletonSeparatedList(
+                            variable)));
         }
 
         public static ExpressionSyntax ExpressionSyntax(Expression line)

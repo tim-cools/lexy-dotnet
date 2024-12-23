@@ -8,13 +8,14 @@ namespace Lexy.Poc.Core.Language.Expressions
     {
         public ILiteralToken Literal { get; }
 
-        private LiteralExpression(Line sourceLine, TokenList tokens, ILiteralToken literal) : base(sourceLine, tokens)
+        private LiteralExpression(ILiteralToken literal, ExpressionSource source) : base(source)
         {
             Literal = literal;
         }
 
-        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(ExpressionSource source)
         {
+            var tokens = source.Tokens;
             if (!IsValid(tokens))
             {
                 return ParseExpressionResult.Invalid<LiteralExpression>("Invalid expression.");
@@ -22,7 +23,7 @@ namespace Lexy.Poc.Core.Language.Expressions
 
             var literalToken = tokens.LiteralToken(0);
 
-            var expression = new LiteralExpression(sourceLine, tokens, literalToken);
+            var expression = new LiteralExpression(literalToken, source);
             return ParseExpressionResult.Success(expression);
         }
 

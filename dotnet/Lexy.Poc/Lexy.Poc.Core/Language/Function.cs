@@ -24,9 +24,9 @@ namespace Lexy.Poc.Core.Language
             Name.ParseName(name);
         }
 
-        internal static Function Parse(NodeName name)
+        internal static Function Create(string name)
         {
-            return new Function(name?.Name);
+            return new Function(name);
         }
 
         public override IParsableNode Parse(IParserContext context)
@@ -74,7 +74,7 @@ namespace Lexy.Poc.Core.Language
             {
                 if (!(parameter.Type is CustomVariableType enumVariableType)) continue;
 
-                var dependency = nodes.GetEnum(enumVariableType.EnumName);
+                var dependency = nodes.GetEnum(enumVariableType.TypeName);
                 if (dependency == null)
                 {
                     throw new InvalidOperationException("Type or enum not found: " + parameter.Type);

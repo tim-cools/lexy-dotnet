@@ -59,16 +59,16 @@ namespace Lexy.Poc.Core.Language.Expressions
         public Expression Right { get; }
         public ExpressionOperator Operator { get; }
 
-        private BinaryExpression(Expression left, Expression right, ExpressionOperator operatorValue, Line sourceLine,
-            TokenList tokens) : base(sourceLine, tokens)
+        private BinaryExpression(Expression left, Expression right, ExpressionOperator operatorValue, ExpressionSource source) : base(source)
         {
             Left = left;
             Right = right;
             Operator = operatorValue;
         }
 
-        public static ParseExpressionResult Parse(Line sourceLine, TokenList tokens)
+        public static ParseExpressionResult Parse(ExpressionSource source)
         {
+            var tokens = source.Tokens;
             var supportedTokens = GetCurrentLevelSupportedTokens(tokens);
             var lowerPriorityOperation = GetLowestPriorityOperation(supportedTokens);
             if (lowerPriorityOperation == null)
@@ -89,11 +89,11 @@ namespace Lexy.Poc.Core.Language.Expressions
                     $"No tokens right from: {lowerPriorityOperation.Index} ({tokens})");
             }
 
-            var left = ExpressionFactory.Parse(leftTokens, sourceLine);
-            var right = ExpressionFactory.Parse(rightTokens, sourceLine);
+            var left = ExpressionFactory.Parse(leftTokens, source.Line);
+            var right = ExpressionFactory.Parse(rightTokens, source.Line);
             var operatorValue = lowerPriorityOperation.ExpressionOperator;
 
-            var binaryExpression = new BinaryExpression(left, right, operatorValue, sourceLine, tokens);
+            var binaryExpression = new BinaryExpression(left, right, operatorValue, source);
             return ParseExpressionResult.Success(binaryExpression) ;
         }
 
@@ -166,6 +166,56 @@ namespace Lexy.Poc.Core.Language.Expressions
         {
             yield return Left;
             yield return Right;
+        }
+
+        protected override void Validate(IParserContext context)
+        {
+        }
+    }
+
+    public class VariableDeclarationExpression : Expression
+    {
+        public VariableType VariableType { get; }
+        public string VariableName { get; }
+        public Expression Assignment { get; }
+
+        private VariableDeclarationExpression(VariableType variableType, string variableName, Expression assignment, ExpressionSource source) : base(source)
+        {
+            VariableType = variableType ?? throw new ArgumentNullException(nameof(variableType));
+            VariableName = variableName ?? throw new ArgumentNullException(nameof(variableName));
+            Assignment = assignment;
+        }
+
+        public static ParseExpressionResult Parse(ExpressionSource source)
+        {
+            var tokens = source.Tokens;
+            if (!IsValid(tokens))
+            {
+                return ParseExpressionResult.Invalid<VariableDeclarationExpression>("Invalid expression.");
+            }
+
+            var type = VariableType.Parse(tokens.TokenValue(0));
+            var name = tokens.TokenValue(1);
+            var assignment = tokens.Length > 3 ? ExpressionFactory.Parse(tokens.TokensFrom(3), source.Line) : null;
+            var expression = new VariableDeclarationExpression(type, name, assignment, source);
+
+            return ParseExpressionResult.Success(expression);
+        }
+
+        public static bool IsValid(TokenList tokens)
+        {
+            return tokens.Length == 2
+                   && tokens.IsTokenType<StringLiteralToken>(0)
+                   && tokens.IsTokenType<StringLiteralToken>(1)
+                || tokens.Length >= 4
+                   && tokens.IsTokenType<StringLiteralToken>(0)
+                   && tokens.IsTokenType<StringLiteralToken>(1)
+                   && tokens.OperatorToken(2, OperatorType.Assignment);
+        }
+
+        protected override IEnumerable<INode> GetChildren()
+        {
+            yield return Assignment;
         }
 
         protected override void Validate(IParserContext context)

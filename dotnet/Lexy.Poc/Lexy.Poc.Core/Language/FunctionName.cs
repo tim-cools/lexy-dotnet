@@ -13,7 +13,7 @@ namespace Lexy.Poc.Core.Language
 
         public void ParseName(string parameter = null)
         {
-            Value = parameter ?? "Function" + Guid.NewGuid().ToString("N");
+            Value = parameter ?? "Function__" + Guid.NewGuid().ToString("N");
         }
 
         public string ClassName()

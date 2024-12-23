@@ -84,5 +84,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             return ParseTokenResult.Invalid(
                 $@"Unexpected end of line. Closing quote expected. Format: d""2024/12/18 14:17:30""");
         }
+
+        public override string ToString() => DateTimeValue.ToString(DateTimeFormat, CultureInfo.InvariantCulture);
     }
 }
