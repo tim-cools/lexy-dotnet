@@ -24,5 +24,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
 
         And,
         Or,
+
+        ArgumentSeparator
     }
 }

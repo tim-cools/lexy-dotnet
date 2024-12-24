@@ -69,7 +69,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
 
             return allowedNextTokensValues.Contains(value)
                 ? Finish()
-                : ParseTokenResult.Invalid($"Invalid number token character: {value}");
+                : ParseTokenResult.Invalid($"Invalid number token character: '{value}'");
         }
 
         public override ParseTokenResult Finalize(IParserContext parserContext)

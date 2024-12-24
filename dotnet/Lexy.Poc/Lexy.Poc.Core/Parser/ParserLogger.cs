@@ -159,8 +159,10 @@ namespace Lexy.Poc.Core.Parser
             }
             else
             {
-                builder.AppendLine(node.GetType().Name);
+                builder.AppendLine(node == null ? "<null>" : node?.GetType().Name);
             }
+
+            if (node == null) return;
 
             var children = node.GetChildren();
 

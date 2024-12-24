@@ -39,11 +39,11 @@ namespace Lexy.Poc.Core.Language
         {
             if (string.IsNullOrEmpty(Value))
             {
-                context.Logger.Fail(Reference, $"Invalid function name: {Value}. Name should not be empty.");
+                context.Logger.Fail(Reference, $"Invalid function name: '{Value}'. Name should not be empty.");
             }
             if (!SyntaxFacts.IsValidIdentifier(Value))
             {
-                context.Logger.Fail(Reference, $"Invalid function name: {Value}.");
+                context.Logger.Fail(Reference, $"Invalid function name: '{Value}'.");
             }
         }
     }

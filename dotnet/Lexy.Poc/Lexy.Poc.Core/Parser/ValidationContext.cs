@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Lexy.Poc.Core.Language;
 
 namespace Lexy.Poc.Core.Parser
@@ -14,6 +15,8 @@ namespace Lexy.Poc.Core.Parser
             public void Dispose() => func();
         }
 
+        private readonly Stack<IFunctionCodeContext> contexts = new Stack<IFunctionCodeContext>();
+
         public IParserContext ParserContext { get; }
         public IFunctionCodeContext FunctionCodeContext { get; private set; }
         public IParserLogger Logger => ParserContext.Logger;
@@ -28,11 +31,15 @@ namespace Lexy.Poc.Core.Parser
         {
             if (FunctionCodeContext != null)
             {
-                throw new InvalidOperationException("Already in a code scope. Only can enter scope once.");
+                contexts.Push(FunctionCodeContext);
             }
 
-            FunctionCodeContext = new FunctionCodeContext(Nodes, Logger);
-            return new CodeContextScope(() => FunctionCodeContext = null);
+            FunctionCodeContext = new FunctionCodeContext(Logger, FunctionCodeContext);
+
+            return new CodeContextScope(() =>
+            {
+                return FunctionCodeContext = contexts.Count == 0 ? null : contexts.Pop();
+            });
         }
     }
 }

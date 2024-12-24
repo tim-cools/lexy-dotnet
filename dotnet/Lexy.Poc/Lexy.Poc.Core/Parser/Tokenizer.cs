@@ -11,13 +11,16 @@ namespace Lexy.Poc.Core.Parser
             new Dictionary<char, Func<TokenCharacter, ParsableToken>>
             {
                 { TokenValues.CommentChar, value => new CommentToken(value) },
+
                 { TokenValues.Quote, value => new QuotedLiteralToken(value) },
+
                 { TokenValues.Assignment, value => new OperatorToken(value) },
                 { TokenValues.Addition, value => new OperatorToken(value) },
                 { TokenValues.Subtraction, value => new OperatorToken(value) },
                 { TokenValues.Multiplication, value => new OperatorToken(value) },
                 { TokenValues.Division, value => new OperatorToken(value) },
                 { TokenValues.Modulus, value => new OperatorToken(value) },
+                { TokenValues.ArgumentSeparator, value => new OperatorToken(value) },
 
                 { TokenValues.OpenParentheses, value => new OperatorToken(value) },
                 { TokenValues.CloseParentheses, value => new OperatorToken(value) },
@@ -59,7 +62,7 @@ namespace Lexy.Poc.Core.Parser
                     var result = current.Parse(tokenCharacter, parserContext);
                     if (result.Status == TokenStatus.InvalidToken)
                     {
-                        parserContext.Logger.Fail(parserContext.LineReference(index), $"Invalid token at {index}: {result.ValidationError}");
+                        parserContext.Logger.Fail(parserContext.LineReference(index), result.ValidationError);
                         errors = true;
                         break;
                     }

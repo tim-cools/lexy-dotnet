@@ -82,7 +82,7 @@ namespace Lexy.Poc.Tokenizer
         {
             ServiceProvider
                 .TestLine(@"   456d78", false)
-                .ValidateError("ERROR - Invalid token at 6: Invalid number token character: d");
+                .ValidateError("ERROR - Invalid number token character: 'd'");
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace Lexy.Poc.Tokenizer
         {
             ServiceProvider
                 .TestLine(@"   456(78", false)
-                .ValidateError("ERROR - Invalid token at 6: Invalid number token character: (");
+                .ValidateError("ERROR - Invalid number token character: '('");
         }
     }
 }

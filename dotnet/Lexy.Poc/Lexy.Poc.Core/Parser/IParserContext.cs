@@ -1,5 +1,6 @@
 using Lexy.Poc.Core.Language;
 using Lexy.Poc.Core.Language.Expressions;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Parser
 {
@@ -24,5 +25,6 @@ namespace Lexy.Poc.Core.Parser
         SourceReference LineStartReference();
         SourceReference DocumentReference();
         SourceReference LineReference(int characterPosition);
+        SourceReference TokenReference(Token token);
     }
 }

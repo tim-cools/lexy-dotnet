@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Lexy.Poc.Core.Language;
+using Lexy.Poc.Core.Parser.Tokens;
 
 namespace Lexy.Poc.Core.Parser
 {
@@ -63,6 +64,16 @@ namespace Lexy.Poc.Core.Parser
                 sourceCodeDocument.File,
                 sourceCodeDocument.CurrentLine?.Index + 1,
                 sourceCodeDocument.CurrentLine?.Tokens.CharacterPosition(tokenIndex) + 1);
+        }
+
+        public SourceReference TokenReference(Token token)
+        {
+            if (token == null) throw new ArgumentNullException(nameof(token));
+
+            return new SourceReference(
+                sourceCodeDocument.File,
+                sourceCodeDocument.CurrentLine?.Index + 1,
+                token.FirstCharacter.Position + 1);
         }
 
         public SourceReference LineEndReference()

@@ -6,7 +6,7 @@ using Lexy.Poc.Core.Parser;
 
 namespace Lexy.Poc.Core.Language
 {
-    internal class ExpressionList : IReadOnlyList<Expression>
+    internal class ExpressionList : Node, IReadOnlyList<Expression>
     {
         private readonly List<Expression> values = new List<Expression>();
 
@@ -29,6 +29,24 @@ namespace Lexy.Poc.Core.Language
             else
             {
                 values.Add(expression);
+            }
+        }
+
+        public ExpressionList(SourceReference reference) : base(reference)
+        {
+        }
+
+        public override IEnumerable<INode> GetChildren() => values;
+
+        protected override void Validate(IValidationContext context)
+        {
+        }
+
+        public override void ValidateTree(IValidationContext context)
+        {
+            using (context.CreateCodeContextScope())
+            {
+                base.ValidateTree(context);
             }
         }
     }

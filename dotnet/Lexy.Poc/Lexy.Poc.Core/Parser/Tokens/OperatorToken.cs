@@ -42,6 +42,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
             new OperatorCombinations(TokenValues.CloseBrackets, null, OperatorType.CloseBrackets),
             new OperatorCombinations(TokenValues.GreaterThan, null, OperatorType.GreaterThan),
             new OperatorCombinations(TokenValues.LessThan, null, OperatorType.LessThan),
+            new OperatorCombinations(TokenValues.ArgumentSeparator, null, OperatorType.ArgumentSeparator),
             new OperatorCombinations(TokenValues.GreaterThan, TokenValues.Assignment, OperatorType.GreaterThanOrEqual),
             new OperatorCombinations(TokenValues.LessThan, TokenValues.Assignment, OperatorType.LessThanOrEqual),
             new OperatorCombinations(TokenValues.Assignment, TokenValues.Assignment, OperatorType.Equals),

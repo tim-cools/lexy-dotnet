@@ -5,12 +5,13 @@ namespace Lexy.Poc.Core.Language.Expressions
 {
     public class ElseExpression : Expression, IParsableNode, IDependantExpression
     {
-        private readonly ExpressionList falseExpressions = new ExpressionList();
+        private readonly ExpressionList falseExpressions;
 
         public IEnumerable<Expression> FalseExpressions => falseExpressions;
 
         private ElseExpression(ExpressionSource source, SourceReference reference) : base(source, reference)
         {
+            falseExpressions = new ExpressionList(reference);
         }
 
         public static ParseExpressionResult Parse(ExpressionSource source)

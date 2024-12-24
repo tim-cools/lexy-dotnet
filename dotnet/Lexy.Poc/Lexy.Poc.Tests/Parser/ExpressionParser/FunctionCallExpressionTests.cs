@@ -13,7 +13,8 @@ namespace Lexy.Poc.Parser.ExpressionParser
             expression.ValidateOfType<FunctionCallExpression>(functionCallExpression =>
             {
                 functionCallExpression.FunctionName.ShouldBe("func");
-                functionCallExpression.Expression.ValidateVariableExpression("y");
+                functionCallExpression.Arguments.Length.ShouldBe(1);
+                functionCallExpression.Arguments[0].ValidateVariableExpression("y");
             });
         }
 
@@ -24,7 +25,9 @@ namespace Lexy.Poc.Parser.ExpressionParser
             expression.ValidateOfType<FunctionCallExpression>(functionCall =>
             {
                 functionCall.FunctionName.ShouldBe("func");
-                functionCall.Expression.ValidateOfType<BinaryExpression>(multiplication =>
+
+                functionCall.Arguments.Length.ShouldBe(1);
+                functionCall.Arguments[0].ValidateOfType<BinaryExpression>(multiplication =>
                     multiplication.Right.ValidateOfType<ParenthesizedExpression>(inner =>
                         inner.Expression.ValidateOfType<BinaryExpression>(addition =>
                             addition.Operator.ShouldBe(ExpressionOperator.Addition))));

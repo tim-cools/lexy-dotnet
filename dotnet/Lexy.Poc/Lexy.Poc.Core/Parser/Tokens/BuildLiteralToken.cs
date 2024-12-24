@@ -4,13 +4,14 @@ namespace Lexy.Poc.Core.Parser.Tokens
 {
     public class BuildLiteralToken : ParsableToken
     {
-        private static char[] terminatorValues = new[]
+        private static readonly char[] TerminatorValues = new[]
         {
             TokenValues.Space,
             TokenValues.OpenParentheses,
             TokenValues.OpenBrackets,
             TokenValues.CloseParentheses,
             TokenValues.CloseBrackets,
+            TokenValues.ArgumentSeparator,
         };
 
         private bool hasMemberAccessor;
@@ -24,7 +25,7 @@ namespace Lexy.Poc.Core.Parser.Tokens
         {
             var value = character.Value;
 
-            if (terminatorValues.Contains(value))
+            if (TerminatorValues.Contains(value))
             {
                 return ParseTokenResult.Finished(false, SealLiteral());
             }

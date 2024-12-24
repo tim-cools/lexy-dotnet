@@ -105,7 +105,7 @@ namespace Lexy.Poc.Core.Language.Expressions
 
     public class CaseExpression : Expression, IParsableNode, IDependantExpression
     {
-        private readonly ExpressionList expressions = new ExpressionList();
+        private readonly ExpressionList expressions;
 
         public Expression Value { get; }
         public IEnumerable<Expression> Expressions => expressions;
@@ -115,6 +115,7 @@ namespace Lexy.Poc.Core.Language.Expressions
         {
             Value = value;
             IsDefault = isDefault;
+            expressions = new ExpressionList(reference);
         }
 
         public static ParseExpressionResult Parse(ExpressionSource source)

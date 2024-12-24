@@ -69,7 +69,7 @@ namespace Lexy.Poc.Tokenizer
             ServiceProvider
                 .TestLine(@"  Value = ValidateEnumKeyword..Second", false)
                 .ValidateTokens()
-                .ExpectError("ERROR - Invalid token at 30: Unexpected character: '.'. Member accessor should be followed by member name.")
+                .ExpectError("ERROR - Unexpected character: '.'. Member accessor should be followed by member name.")
                 .Assert();
         }
 

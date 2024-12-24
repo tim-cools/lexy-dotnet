@@ -111,7 +111,6 @@ namespace Lexy.Poc.Core.Language
         {
             using (context.CreateCodeContextScope())
             {
-
                 base.ValidateTree(context);
             }
         }

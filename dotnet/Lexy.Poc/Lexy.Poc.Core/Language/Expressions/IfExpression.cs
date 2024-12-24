@@ -6,7 +6,7 @@ namespace Lexy.Poc.Core.Language.Expressions
 {
     public class IfExpression : Expression, IParsableNode
     {
-        private readonly ExpressionList trueExpressions = new ExpressionList();
+        private readonly ExpressionList trueExpressions;
 
         public Expression Condition { get; }
         public IEnumerable<Expression> TrueExpressions => trueExpressions;
@@ -16,6 +16,7 @@ namespace Lexy.Poc.Core.Language.Expressions
         private IfExpression(Expression condition, ExpressionSource source, SourceReference reference) : base(source, reference)
         {
             Condition = condition;
+            trueExpressions = new ExpressionList(reference);
         }
 
         public static ParseExpressionResult Parse(ExpressionSource source)
@@ -65,9 +66,10 @@ namespace Lexy.Poc.Core.Language.Expressions
         public override IEnumerable<INode> GetChildren()
         {
             yield return Condition;
-            foreach (var expression in TrueExpressions)
+            yield return trueExpressions;
+            if (Else != null)
             {
-                yield return expression;
+                yield return Else;
             }
         }
 

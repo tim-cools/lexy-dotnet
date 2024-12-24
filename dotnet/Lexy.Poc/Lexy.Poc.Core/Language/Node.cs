@@ -20,19 +20,24 @@ namespace Lexy.Poc.Core.Language
             var children = GetChildren();
             foreach (var child in children)
             {
-                if (child == null) throw new InvalidOperationException($"({GetType().Name}) Child is null");
+                ValidateTree(context, child);
+            }
+        }
 
-                if (child is IRootNode node)
-                {
-                    context.Logger.SetCurrentNode(node);
-                }
+        private void ValidateTree(IValidationContext context, INode child)
+        {
+            if (child == null) throw new InvalidOperationException($"({GetType().Name}) Child is null");
 
-                child.ValidateTree(context);
+            if (child is IRootNode node)
+            {
+                context.Logger.SetCurrentNode(node);
+            }
 
-                if (this is IRootNode)
-                {
-                    context.Logger.SetCurrentNode(this as IRootNode);
-                }
+            child.ValidateTree(context);
+
+            if (this is IRootNode)
+            {
+                context.Logger.SetCurrentNode(this as IRootNode);
             }
         }
 

@@ -6,12 +6,13 @@ namespace Lexy.Poc.Core.Language
 {
     public class FunctionCode : ParsableNode
     {
-        private readonly ExpressionList expressions = new ExpressionList();
+        private readonly ExpressionList expressions;
 
         public IReadOnlyList<Expression> Expressions => expressions;
 
         public FunctionCode(SourceReference reference) : base(reference)
         {
+            expressions = new ExpressionList(reference);
         }
 
         public override IParsableNode Parse(IParserContext context)

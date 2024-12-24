@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Poc.Core.Language;
 
 namespace Lexy.Poc.Core.Parser
 {
     public class FunctionCodeContext : IFunctionCodeContext
     {
-        private readonly Nodes nodes;
         private readonly IParserLogger logger;
+        private readonly IFunctionCodeContext parentContext;
         private readonly IDictionary<string, VariableType> variables = new Dictionary<string, VariableType>();
 
-        public FunctionCodeContext(Nodes nodes, IParserLogger logger)
+        public FunctionCodeContext(IParserLogger logger, IFunctionCodeContext parentContext)
         {
-            this.nodes = nodes ?? throw new ArgumentNullException(nameof(nodes));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.parentContext = parentContext;
         }
 
         public void RegisterVariableAndVerifyUnique(SourceReference reference, string name, VariableType type)
         {
-            if (variables.ContainsKey(name))
+            if (Contains(name))
             {
                 logger.Fail(reference, $"Duplicated variable name: '{name}'");
                 return;
@@ -27,9 +26,14 @@ namespace Lexy.Poc.Core.Parser
             variables.Add(name, type);
         }
 
+        public bool Contains(string name)
+        {
+            return variables.ContainsKey(name) || parentContext != null && parentContext.Contains(name);
+        }
+
         public void EnsureVariableExists(SourceReference reference, string name)
         {
-            if (!variables.ContainsKey(name))
+            if (!Contains(name))
             {
                 logger.Fail(reference, $"Unknown variable name: '{name}'");
             }
@@ -37,7 +41,9 @@ namespace Lexy.Poc.Core.Parser
 
         public VariableType GetVariableType(string name)
         {
-            return variables.TryGetValue(name, out var value) ? value : null;
+            return variables.TryGetValue(name, out var value)
+                ? value
+                : parentContext?.GetVariableType(name);
         }
     }
 }

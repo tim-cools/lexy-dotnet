@@ -6,6 +6,7 @@ namespace Lexy.Poc.Core.Parser
         public const char Quote = '\"';
         public const char Assignment = '=';
         public const char MemberAccess = '.';
+        public const char ArgumentSeparator = ',';
 
         public const char Addition = '+';
         public const char Subtraction= '-';
