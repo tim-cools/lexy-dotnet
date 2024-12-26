@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Parser;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class EnumDefinition : RootNode
     {

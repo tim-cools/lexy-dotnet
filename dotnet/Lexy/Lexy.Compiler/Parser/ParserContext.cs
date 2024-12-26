@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public class ParserContext : IParserContext
     {

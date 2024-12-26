@@ -1,8 +1,7 @@
-
 using System;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Parser.Tokens
+namespace Lexy.Compiler.Parser.Tokens
 {
     public class StringLiteralToken : Token, ILiteralToken
     {

@@ -1,6 +1,6 @@
 using System;
-using Lexy.Poc.Core.Compiler;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Compiler;
+using Lexy.Compiler.Parser;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lexy.Poc.Compiler

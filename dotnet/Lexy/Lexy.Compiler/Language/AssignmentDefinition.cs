@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Parser;
+using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class AssignmentDefinition : Node
     {

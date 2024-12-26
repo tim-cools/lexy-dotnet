@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public static class Keywords
     {

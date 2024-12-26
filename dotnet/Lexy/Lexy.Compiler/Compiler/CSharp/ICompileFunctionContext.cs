@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using Lexy.Poc.Core.Compiler.CSharp.BuiltInFunctions;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Language.Expressions.Functions;
+using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
+using Lexy.Compiler.Language.Expressions.Functions;
 
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     internal interface ICompileFunctionContext
     {

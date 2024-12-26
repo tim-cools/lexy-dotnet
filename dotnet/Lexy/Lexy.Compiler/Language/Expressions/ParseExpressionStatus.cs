@@ -1,4 +1,4 @@
-namespace Lexy.Poc.Core.Language.Expressions
+namespace Lexy.Compiler.Language.Expressions
 {
     public enum ParseExpressionStatus
     {

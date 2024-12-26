@@ -1,7 +1,7 @@
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     public class GeneratedClass
     {

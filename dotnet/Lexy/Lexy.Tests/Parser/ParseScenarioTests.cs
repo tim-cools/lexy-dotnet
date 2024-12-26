@@ -1,6 +1,6 @@
-using Lexy.Poc.Core.Infrastructure;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Infrastructure;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Parser;
 using NUnit.Framework;
 using Shouldly;
 

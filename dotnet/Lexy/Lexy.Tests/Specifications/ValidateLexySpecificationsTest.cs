@@ -1,4 +1,4 @@
-using Lexy.Poc.Core.Specifications;
+using Lexy.Compiler.Specifications;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 

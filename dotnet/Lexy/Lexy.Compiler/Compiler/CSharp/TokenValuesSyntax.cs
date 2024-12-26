@@ -1,9 +1,9 @@
 using System;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Parser.Tokens;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     internal static class TokenValuesSyntax
     {

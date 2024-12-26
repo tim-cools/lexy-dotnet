@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Lexy.Poc.Core.Compiler;
-using Lexy.Poc.Core.Infrastructure;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.RunTime;
+using Lexy.Compiler.Compiler;
+using Lexy.Compiler.Infrastructure;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Parser;
+using Lexy.RunTime.RunTime;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     public class ScenarioRunner : IScenarioRunner, IDisposable
     {

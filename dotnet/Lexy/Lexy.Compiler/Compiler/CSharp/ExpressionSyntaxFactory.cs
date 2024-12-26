@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.RunTime;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Parser;
+using Lexy.RunTime.RunTime;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     internal static class ExpressionSyntaxFactory
     {

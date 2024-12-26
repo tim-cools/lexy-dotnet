@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Parser;
 
-namespace Lexy.Poc.Core.Language.Expressions.Functions
+namespace Lexy.Compiler.Language.Expressions.Functions
 {
     public abstract class EndStartDateFunction : BuiltInFunction
     {

@@ -1,11 +1,11 @@
-using Lexy.Poc.Core.Compiler;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.RunTime;
-using Lexy.Poc.Core.Specifications;
+using Lexy.Compiler.Compiler;
+using Lexy.Compiler.Parser;
+using Lexy.Compiler.Specifications;
+using Lexy.RunTime.RunTime;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Lexy.Poc.Core
+namespace Lexy.Compiler
 {
     public static class ServiceProviderExtensions
     {

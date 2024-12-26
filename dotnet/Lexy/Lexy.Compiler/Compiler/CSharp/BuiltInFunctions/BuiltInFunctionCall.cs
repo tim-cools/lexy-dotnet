@@ -1,9 +1,9 @@
 using System;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Language.Expressions.Functions;
+using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Language.Expressions.Functions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Lexy.Poc.Core.Compiler.CSharp.BuiltInFunctions
+namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions
 {
     internal abstract class BuiltInFunctionCall
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lexy.Poc.Core.RunTime
+namespace Lexy.RunTime.RunTime
 {
     public static class BuiltInTableFunctions
     {

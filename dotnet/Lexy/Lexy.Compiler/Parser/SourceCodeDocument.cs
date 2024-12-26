@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public class SourceCodeDocument : ISourceCodeDocument
     {

@@ -1,6 +1,6 @@
-using Lexy.Poc.Core.Language.Expressions.Functions;
+using Lexy.Compiler.Language.Expressions.Functions;
 
-namespace Lexy.Poc.Core.Language.Expressions
+namespace Lexy.Compiler.Language.Expressions
 {
     public class ParseBuiltInFunctionsResult
     {

@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using Lexy.Poc.Core.Infrastructure;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Infrastructure;
+using Lexy.Compiler.Parser;
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     public class SpecificationsRunner : ISpecificationsRunner
     {

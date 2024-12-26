@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Parser;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 

@@ -1,5 +1,5 @@
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Language.Expressions.Functions;
+using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Language.Expressions.Functions;
 using NUnit.Framework;
 using Shouldly;
 

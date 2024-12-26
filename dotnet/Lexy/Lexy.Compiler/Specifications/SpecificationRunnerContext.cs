@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 using Microsoft.Extensions.Logging;
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     public class SpecificationRunnerContext : ISpecificationRunnerContext, IDisposable
     {

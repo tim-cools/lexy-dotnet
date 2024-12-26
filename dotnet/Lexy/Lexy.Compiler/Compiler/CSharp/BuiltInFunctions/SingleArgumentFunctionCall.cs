@@ -1,9 +1,9 @@
-using Lexy.Poc.Core.Language.Expressions.Functions;
+using Lexy.Compiler.Language.Expressions.Functions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Lexy.Poc.Core.Compiler.CSharp.BuiltInFunctions
+namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions
 {
     internal abstract class SingleArgumentFunctionCall : MethodFunctionCall
     {

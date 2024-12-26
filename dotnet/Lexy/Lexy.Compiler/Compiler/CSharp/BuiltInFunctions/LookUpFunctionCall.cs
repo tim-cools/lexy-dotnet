@@ -1,10 +1,10 @@
-using Lexy.Poc.Core.Language.Expressions.Functions;
+using Lexy.Compiler.Language.Expressions.Functions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Lexy.Poc.Core.Compiler.CSharp.BuiltInFunctions
+namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions
 {
     internal class LookUpFunctionCall : BuiltInFunctionCall
     {

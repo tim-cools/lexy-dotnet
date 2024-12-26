@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lexy.Poc.Core.Infrastructure
+namespace Lexy.Compiler.Infrastructure
 {
     public class LambdaComparer<T> : IEqualityComparer<T>
     {

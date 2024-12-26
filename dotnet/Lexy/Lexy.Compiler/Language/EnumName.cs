@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Parser;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class EnumName : Node
     {

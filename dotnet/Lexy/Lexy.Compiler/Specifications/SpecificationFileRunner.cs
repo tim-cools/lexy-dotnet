@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Lexy.Poc.Core.Infrastructure;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Infrastructure;
+using Lexy.Compiler.Parser;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     public class SpecificationFileRunner : ISpecificationFileRunner
     {

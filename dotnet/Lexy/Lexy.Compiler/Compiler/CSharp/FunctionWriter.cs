@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lexy.Poc.Core.Compiler.CSharp.BuiltInFunctions;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.RunTime;
+using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Expressions;
+using Lexy.RunTime.RunTime;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static Lexy.Poc.Core.Compiler.CSharp.ExpressionSyntaxFactory;
+using static Lexy.Compiler.Compiler.CSharp.ExpressionSyntaxFactory;
 
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     public class FunctionWriter : IRootTokenWriter
     {

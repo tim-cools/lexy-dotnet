@@ -1,6 +1,6 @@
 using System;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public class Line
     {

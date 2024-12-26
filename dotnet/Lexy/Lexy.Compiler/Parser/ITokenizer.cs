@@ -1,6 +1,4 @@
-using System.Linq;
-
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public interface ITokenizer
     {

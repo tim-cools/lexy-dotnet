@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public static class TypeNames
     {

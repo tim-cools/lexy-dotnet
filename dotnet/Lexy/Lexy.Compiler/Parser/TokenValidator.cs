@@ -1,8 +1,7 @@
 using System;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public class TokenValidator
     {

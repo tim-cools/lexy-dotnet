@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexy.Poc.Core.Parser.Tokens
+namespace Lexy.Compiler.Parser.Tokens
 {
     public class OperatorToken : ParsableToken
     {

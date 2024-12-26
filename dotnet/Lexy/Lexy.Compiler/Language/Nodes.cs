@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Lexy.Poc.Core.Parser;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class Nodes : IEnumerable<INode>
     {

@@ -1,8 +1,7 @@
 using System;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Parser;
 
-namespace Lexy.Poc.Core.Language.Expressions
+namespace Lexy.Compiler.Language.Expressions
 {
     public class ExpressionSource
     {

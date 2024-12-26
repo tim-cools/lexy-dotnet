@@ -1,8 +1,8 @@
 
 
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Parser;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public abstract class RootNode : ParsableNode, IRootNode
     {

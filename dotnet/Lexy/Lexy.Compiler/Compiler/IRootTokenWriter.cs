@@ -1,7 +1,7 @@
-using Lexy.Poc.Core.Compiler.CSharp;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Compiler.CSharp;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Compiler
+namespace Lexy.Compiler.Compiler
 {
     internal interface IRootTokenWriter
     {

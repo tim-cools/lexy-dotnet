@@ -1,4 +1,3 @@
-using Lexy.Poc.Core;
 using NUnit.Framework;
 
 namespace Lexy.Poc.Tokenizer

@@ -1,6 +1,4 @@
-using Lexy.Poc.Core.Parser;
-
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class TableType : VariableType, ITypeWithMembers
     {

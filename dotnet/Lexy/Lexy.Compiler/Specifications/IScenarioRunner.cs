@@ -1,8 +1,8 @@
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Parser;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     public interface IScenarioRunner
     {

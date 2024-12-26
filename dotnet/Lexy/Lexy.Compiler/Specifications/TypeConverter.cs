@@ -1,8 +1,8 @@
 using System;
-using Lexy.Poc.Core.Compiler;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Compiler;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     internal static class TypeConverter
     {

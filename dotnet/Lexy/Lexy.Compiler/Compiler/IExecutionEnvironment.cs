@@ -1,8 +1,7 @@
 using System.Reflection;
-using Lexy.Poc.Core.Compiler.CSharp;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Compiler.CSharp;
 
-namespace Lexy.Poc.Core.Compiler
+namespace Lexy.Compiler.Compiler
 {
     public interface IExecutionEnvironment
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Compiler
+namespace Lexy.Compiler.Compiler
 {
     public class CompilerResult
     {

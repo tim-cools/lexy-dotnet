@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     public class EnumWriter : IRootTokenWriter
     {

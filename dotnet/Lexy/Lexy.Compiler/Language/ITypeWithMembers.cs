@@ -1,4 +1,4 @@
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public interface ITypeWithMembers
     {

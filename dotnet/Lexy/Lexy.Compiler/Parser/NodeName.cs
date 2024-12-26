@@ -1,5 +1,5 @@
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     internal class NodeName
     {

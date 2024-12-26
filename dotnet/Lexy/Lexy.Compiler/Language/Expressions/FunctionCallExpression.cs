@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Lexy.Poc.Core.Language.Expressions.Functions;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Language.Expressions.Functions;
+using Lexy.Compiler.Parser;
+using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Poc.Core.Language.Expressions
+namespace Lexy.Compiler.Language.Expressions
 {
     public class FunctionCallExpression : Expression
     {

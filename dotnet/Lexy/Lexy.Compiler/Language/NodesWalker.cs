@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     internal static class NodesWalker
     {

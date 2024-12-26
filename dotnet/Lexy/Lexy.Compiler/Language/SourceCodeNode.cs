@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Parser;
+using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class SourceCodeNode : RootNode
     {

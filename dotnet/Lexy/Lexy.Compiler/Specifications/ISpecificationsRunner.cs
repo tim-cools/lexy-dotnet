@@ -1,5 +1,5 @@
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     public interface ISpecificationsRunner
     {

@@ -1,4 +1,4 @@
-namespace Lexy.Poc.Core.Language.Expressions.Functions
+namespace Lexy.Compiler.Language.Expressions.Functions
 {
     internal interface IUsesTable
     {

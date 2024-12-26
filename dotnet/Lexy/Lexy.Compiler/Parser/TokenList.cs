@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public class TokenList : IEnumerable<Token>
     {

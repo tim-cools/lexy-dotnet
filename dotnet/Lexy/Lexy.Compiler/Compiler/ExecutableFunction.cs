@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Lexy.Poc.Core.Compiler.CSharp;
-using Lexy.Poc.Core.RunTime;
+using Lexy.Compiler.Compiler.CSharp;
+using Lexy.RunTime.RunTime;
 
-namespace Lexy.Poc.Core.Compiler
+namespace Lexy.Compiler.Compiler
 {
     public class ExecutableFunction
     {

@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Parser;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class FunctionName : Node
     {

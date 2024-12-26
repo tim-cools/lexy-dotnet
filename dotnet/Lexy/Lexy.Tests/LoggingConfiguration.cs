@@ -1,10 +1,9 @@
 using System;
 using System.Globalization;
 using System.IO;
-using Lexy.Poc.Core;
-using Lexy.Poc.Core.Compiler;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.RunTime;
+using Lexy.Compiler.Compiler;
+using Lexy.Compiler.Parser;
+using Lexy.RunTime.RunTime;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Filters;

@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Lexy.Poc.Core.Compiler.CSharp.BuiltInFunctions;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Language.Expressions.Functions;
+using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Expressions.Functions;
 
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     internal class CompileFunctionContext : ICompileFunctionContext
     {

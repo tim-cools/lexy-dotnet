@@ -1,8 +1,6 @@
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public interface IParserContext
     {

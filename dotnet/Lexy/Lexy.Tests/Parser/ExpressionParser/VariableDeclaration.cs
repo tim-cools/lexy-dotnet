@@ -1,6 +1,6 @@
 using System;
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Language.Expressions;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Expressions;
 using NUnit.Framework;
 using Shouldly;
 

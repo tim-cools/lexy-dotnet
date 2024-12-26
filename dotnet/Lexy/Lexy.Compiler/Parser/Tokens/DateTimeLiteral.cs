@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Lexy.Poc.Core.Infrastructure;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Infrastructure;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Parser.Tokens
+namespace Lexy.Compiler.Parser.Tokens
 {
     public class DateTimeLiteral : ParsableToken, ILiteralToken
     {

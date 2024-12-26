@@ -1,4 +1,4 @@
-using Lexy.Poc.Core;
+using Lexy.Compiler;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

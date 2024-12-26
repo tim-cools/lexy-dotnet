@@ -1,7 +1,7 @@
 
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Parser.Tokens
+namespace Lexy.Compiler.Parser.Tokens
 {
     public interface ILiteralToken : IToken
     {

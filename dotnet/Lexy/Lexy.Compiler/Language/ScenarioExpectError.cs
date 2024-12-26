@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Parser;
+using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class ScenarioExpectError : ParsableNode
     {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Lexy.Poc.Core.Compiler
+namespace Lexy.Compiler.Compiler
 {
     public class CompilerContext : ICompilerContext
     {

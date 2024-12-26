@@ -1,6 +1,6 @@
 using System;
 
-namespace Lexy.Poc.Core.Language
+namespace Lexy.Compiler.Language
 {
     public class ParsableNodeArray
     {

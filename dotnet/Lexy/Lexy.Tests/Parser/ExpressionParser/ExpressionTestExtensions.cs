@@ -1,6 +1,6 @@
 using System;
-using Lexy.Poc.Core.Language.Expressions;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Parser.Tokens;
 using Shouldly;
 
 namespace Lexy.Poc.Parser.ExpressionParser

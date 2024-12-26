@@ -1,15 +1,14 @@
-using System.Collections.Generic;
-using Lexy.Poc.Core.RunTime;
+using Lexy.RunTime.RunTime;
 
-namespace Lexy.Runtime
+namespace Lexy.Compiler
 {
     public class FunctionTestSimpleReturn
     {
         public decimal Input = 5m;
         public decimal Result = default(decimal);
-        public Lexy.Poc.Core.RunTime.FunctionResult __Result()
+        public FunctionResult __Result()
         {
-            var result = new Lexy.Poc.Core.RunTime.FunctionResult();
+            var result = new FunctionResult();
             result["Result"] = Result;
             return result;
         }

@@ -1,4 +1,4 @@
-namespace Lexy.Poc.Core.Parser.Tokens
+namespace Lexy.Compiler.Parser.Tokens
 {
     internal class WhitespaceToken : ParsableToken
     {

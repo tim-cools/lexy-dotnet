@@ -1,7 +1,7 @@
-using Lexy.Poc.Core.Language.Expressions.Functions;
-using Lexy.Poc.Core.RunTime;
+using Lexy.Compiler.Language.Expressions.Functions;
+using Lexy.RunTime.RunTime;
 
-namespace Lexy.Poc.Core.Compiler.CSharp.BuiltInFunctions
+namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions
 {
     internal class TodayFunctionCall : NoArgumentFunctionCall
     {

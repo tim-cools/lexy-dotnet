@@ -1,5 +1,5 @@
-using Lexy.Poc.Core.Language;
-using Lexy.Poc.Core.Parser;
+using Lexy.Compiler.Language;
+using Lexy.Compiler.Parser;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Shouldly;

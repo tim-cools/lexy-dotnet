@@ -1,4 +1,4 @@
-namespace Lexy.Poc.Core.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp
 {
     public static class LexyCodeConstants
     {

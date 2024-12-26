@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Specifications
+namespace Lexy.Compiler.Specifications
 {
     public interface ISpecificationRunnerContext
     {

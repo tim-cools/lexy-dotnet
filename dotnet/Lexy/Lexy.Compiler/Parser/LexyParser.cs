@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using Lexy.Poc.Core.Language;
+using Lexy.Compiler.Language;
 
-namespace Lexy.Poc.Core.Parser
+namespace Lexy.Compiler.Parser
 {
     public class LexyParser : ILexyParser
     {

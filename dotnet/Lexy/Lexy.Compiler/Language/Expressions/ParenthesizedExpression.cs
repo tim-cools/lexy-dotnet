@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Poc.Core.Parser;
-using Lexy.Poc.Core.Parser.Tokens;
+using Lexy.Compiler.Parser;
+using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Poc.Core.Language.Expressions
+namespace Lexy.Compiler.Language.Expressions
 {
     public class ParenthesizedExpression : Expression
     {
