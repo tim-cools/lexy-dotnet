@@ -50,7 +50,10 @@ namespace Lexy.Compiler.Language
 
         public override IEnumerable<INode> GetChildren()
         {
-            yield return Header;
+            if (Header != null)
+            {
+                yield return Header;
+            }
 
             foreach (var row in Rows)
             {

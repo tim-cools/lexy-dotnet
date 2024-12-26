@@ -7,6 +7,10 @@ namespace Lexy.Compiler.Language
     {
         public static VariableDeclarationType Parse(string type)
         {
+            if (type == Keywords.ImplicitVariableDeclaration)
+            {
+                return new ImplicitVariableDeclaration();
+            }
             if (TypeNames.Contains(type))
             {
                 return new PrimitiveVariableDeclarationType(type);

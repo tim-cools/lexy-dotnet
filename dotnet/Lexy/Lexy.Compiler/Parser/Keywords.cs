@@ -31,6 +31,8 @@ namespace Lexy.Compiler.Parser
         public const string ExpectError = "ExpectError";
         public const string ExpectRootErrors = "ExpectRootErrors";
 
+        public const string ImplicitVariableDeclaration = "var";
+
         public const string Comment = "#";
 
         private static readonly IList<string> values = new List<string>
@@ -62,6 +64,8 @@ namespace Lexy.Compiler.Parser
             Code,
             ExpectError,
             ExpectRootErrors,
+
+            ImplicitVariableDeclaration,
 
             Comment,
         };

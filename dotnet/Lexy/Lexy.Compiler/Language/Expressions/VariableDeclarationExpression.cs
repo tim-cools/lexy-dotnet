@@ -42,8 +42,15 @@ namespace Lexy.Compiler.Language.Expressions
         public static bool IsValid(TokenList tokens)
         {
             return tokens.Length == 2
+                   && tokens.IsKeyword(0, Keywords.ImplicitVariableDeclaration)
+                   && tokens.IsTokenType<StringLiteralToken>(1)
+                   || tokens.Length == 2
                    && tokens.IsTokenType<StringLiteralToken>(0)
                    && tokens.IsTokenType<StringLiteralToken>(1)
+                   || tokens.Length >= 4
+                   && tokens.IsKeyword(0, Keywords.ImplicitVariableDeclaration)
+                   && tokens.IsTokenType<StringLiteralToken>(1)
+                   && tokens.OperatorToken(2, OperatorType.Assignment)
                    || tokens.Length >= 4
                    && tokens.IsTokenType<StringLiteralToken>(0)
                    && tokens.IsTokenType<StringLiteralToken>(1)
@@ -60,19 +67,32 @@ namespace Lexy.Compiler.Language.Expressions
 
         protected override void Validate(IValidationContext context)
         {
-            var variableType = Type.CreateVariableType(context);
-            context.FunctionCodeContext.RegisterVariableAndVerifyUnique(Reference, Name, variableType);
-
             var assignmentType = Assignment?.DeriveType(context);
+            if (Assignment != null && assignmentType == null)
+            {
+                context.Logger.Fail(Reference, "Invalid expression. Could not derive type.");
+            }
+
+            var variableType = GetVariableType(context, assignmentType);
+
+            context.FunctionCodeContext.RegisterVariableAndVerifyUnique(Reference, Name, variableType);
+        }
+
+        private VariableType GetVariableType(IValidationContext context, VariableType assignmentType)
+        {
+            if (Type is ImplicitVariableDeclaration implicitVariableType)
+            {
+                implicitVariableType.Define(assignmentType);
+                return assignmentType;
+            }
+
+            var variableType = Type.CreateVariableType(context);
             if (Assignment != null && !assignmentType.Equals(variableType))
             {
                 context.Logger.Fail(Reference, "Invalid expression. Literal or enum value expression expected.");
             }
 
-            /*
-            var defaultValue = literalExpression?.Literal;
-            context.ValidateTypeAndDefault(Reference, Type, defaultValue);
-            */
+            return variableType;
         }
 
         public override VariableType DeriveType(IValidationContext context) => null;

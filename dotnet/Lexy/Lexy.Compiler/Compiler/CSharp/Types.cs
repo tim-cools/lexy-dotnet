@@ -77,27 +77,14 @@ namespace Lexy.Compiler.Compiler.CSharp
 
         public static TypeSyntax Syntax(VariableType variableType)
         {
-            if (variableType.Equals(PrimitiveType.String))
-            {
-                return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
-            }
 
-            if (variableType.Equals(PrimitiveType.Number))
+            return variableType switch
             {
-                return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DecimalKeyword));
-            }
-
-            if (variableType.Equals(PrimitiveType.Date))
-            {
-                return SyntaxFactory.ParseName("System.DateTime");
-            }
-
-            if (variableType.Equals(PrimitiveType.Boolean))
-            {
-                return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
-            }
-
-            throw new InvalidOperationException("Couldn't map type: " + variableType);
+                PrimitiveType primitive => Syntax(primitive.Type),
+                EnumType enumType => SyntaxFactory.IdentifierName(enumType.Type),
+                TableType tableType => SyntaxFactory.IdentifierName(tableType.Type),
+                _ => throw new InvalidOperationException("Couldn't map type: " + variableType)
+            };
         }
 
         public static TypeSyntax Syntax(VariableDeclarationType type)
@@ -106,6 +93,7 @@ namespace Lexy.Compiler.Compiler.CSharp
             {
                 PrimitiveVariableDeclarationType primitive => Syntax(primitive.Type),
                 CustomVariableDeclarationType enumType => SyntaxFactory.IdentifierName(enumType.Type),
+                ImplicitVariableDeclaration implicitVariable => Syntax(implicitVariable.VariableType),
                 _ => throw new InvalidOperationException("Couldn't map type: " + type)
             };
         }
