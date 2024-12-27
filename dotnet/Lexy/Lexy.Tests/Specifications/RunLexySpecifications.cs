@@ -22,7 +22,8 @@ namespace Lexy.Poc.Specifications
 
             var runner = GetService<ISpecificationsRunner>();
             //runner.Run("../../../../../../laws/Specifications/Table/LookupValidation.lexy");
-            //runner.Run("../../../../../../laws/Specifications/BuiltInFunctions/New.lexy");
+            //runner.Run("../../../../../../laws/Specifications/Isolate.lexy");
+            //runner.Run("../../../../../../laws/Specifications/Function/Variables.lexy");
             runner.Run("../../../../../../laws/Specifications/BuiltInFunctions/Extract.lexy");
         }
     }

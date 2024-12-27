@@ -185,10 +185,7 @@ namespace Lexy.Compiler.Parser
 
                 foreach (var dependency in nodeDependencies)
                 {
-                    if (dependency == null)
-                    {
-                        throw new NotImplementedException("node.GetNodes() should never return null");
-                    }
+                    if (dependency == null) throw new InvalidOperationException("node.GetNodes() should never return null");
 
                     resultDependencies.Add(dependency);
                 }

@@ -75,6 +75,10 @@ namespace Lexy.Compiler.Language.Expressions
             }
 
             var variableType = GetVariableType(context, assignmentType);
+            if (variableType == null)
+            {
+                context.Logger.Fail(Reference, $"Invalid variable type '{Type}'");
+            }
 
             context.FunctionCodeContext.RegisterVariableAndVerifyUnique(Reference, Name, variableType, VariableSource.Code);
         }
