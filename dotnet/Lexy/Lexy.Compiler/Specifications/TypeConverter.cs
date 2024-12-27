@@ -23,7 +23,7 @@ namespace Lexy.Compiler.Specifications
 
                 var enumType = compilerResult.GetEnumType(enumVariableType.Type);
 
-                return EnumerationParser.Parse(enumType, enumValue);
+                return Enum.Parse(enumType, enumValue);
             }
 
             if (type is PrimitiveVariableDeclarationType primitiveVariableType)
