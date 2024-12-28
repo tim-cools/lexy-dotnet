@@ -45,7 +45,10 @@ namespace Lexy.Compiler.Language.Expressions
 
         protected override void Validate(IValidationContext context)
         {
-            context.VariableContext.EnsureVariableExists(Reference, Identifier);
+            if (!context.VariableContext.EnsureVariableExists(Reference, Identifier))
+            {
+                return;
+            }
 
             var variableSource = context.VariableContext.GetVariableSource(Identifier);
             if (variableSource == null)

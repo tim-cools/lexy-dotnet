@@ -8,7 +8,7 @@ namespace Lexy.Compiler.Parser
     {
         void AddVariable(string variableName, VariableType type, VariableSource source);
         void RegisterVariableAndVerifyUnique(SourceReference reference, string variableName, VariableType type, VariableSource source);
-        void EnsureVariableExists(SourceReference reference, string variableName);
+        bool EnsureVariableExists(SourceReference reference, string variableName);
 
         bool Contains(string variableName);
         bool Contains(VariableReference reference, IValidationContext context);

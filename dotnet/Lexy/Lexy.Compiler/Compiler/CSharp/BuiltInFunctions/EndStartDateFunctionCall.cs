@@ -3,28 +3,30 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions
+namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
+
+internal abstract class EndStartDateFunctionCall : MethodFunctionCall
 {
-    internal abstract class EndStartDateFunctionCall : MethodFunctionCall
+    public EndStartDateFunction Function { get; }
+
+    protected EndStartDateFunctionCall(EndStartDateFunction function) : base(function)
     {
-        public EndStartDateFunction Function { get; }
+        Function = function;
+    }
 
-        protected EndStartDateFunctionCall(EndStartDateFunction function) : base(function)
-        {
-            Function = function;
-        }
+    public override MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context)
+    {
+        return null;
+    }
 
-        public override MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context) => null;
-
-        protected override SeparatedSyntaxList<ArgumentSyntax> GetArguments(ICompileFunctionContext context)
-        {
-            return SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                new SyntaxNodeOrToken[]
-                {
-                    SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(Function.EndDateExpression, context)),
-                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                    SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(Function.StartDateExpression, context))
-                });
-        }
+    protected override SeparatedSyntaxList<ArgumentSyntax> GetArguments(ICompileFunctionContext context)
+    {
+        return SyntaxFactory.SeparatedList<ArgumentSyntax>(
+            new SyntaxNodeOrToken[]
+            {
+                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(Function.EndDateExpression, context)),
+                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(Function.StartDateExpression, context))
+            });
     }
 }

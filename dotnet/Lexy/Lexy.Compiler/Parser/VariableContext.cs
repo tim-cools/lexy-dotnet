@@ -61,12 +61,15 @@ namespace Lexy.Compiler.Parser
                 || ContainChild(memberVariableType, reference.ChildrenReference(), context);
         }
 
-        public void EnsureVariableExists(SourceReference reference, string name)
+        public bool EnsureVariableExists(SourceReference reference, string name)
         {
             if (!Contains(name))
             {
                 logger.Fail(reference, $"Unknown variable name: '{name}'.");
+                return false;
             }
+
+            return true;
         }
 
         public VariableType GetVariableType(string name)

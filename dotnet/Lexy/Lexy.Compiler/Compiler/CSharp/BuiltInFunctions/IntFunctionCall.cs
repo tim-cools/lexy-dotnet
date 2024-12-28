@@ -1,15 +1,14 @@
 using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.RunTime;
 
-namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions
-{
-    internal class IntFunctionCall : SingleArgumentFunctionCall
-    {
-        protected override string ClassName => nameof(BuiltInNumberFunctions);
-        protected override string MethodName => nameof(BuiltInNumberFunctions.Int);
+namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-        public IntFunctionCall(IntFunction function) : base(function)
-        {
-        }
+internal class IntFunctionCall : SingleArgumentFunctionCall
+{
+    protected override string ClassName => nameof(BuiltInNumberFunctions);
+    protected override string MethodName => nameof(BuiltInNumberFunctions.Int);
+
+    public IntFunctionCall(IntFunction function) : base(function)
+    {
     }
 }

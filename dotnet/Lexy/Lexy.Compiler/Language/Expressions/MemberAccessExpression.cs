@@ -53,22 +53,7 @@ namespace Lexy.Compiler.Language.Expressions
             VariableType = context.VariableContext.GetVariableType(Variable, context);
             RootType = context.RootNodes.GetType(Variable.ParentIdentifier);
 
-            if (RootType == null)
-            {
-                var variableSource = context.VariableContext.GetVariableSource(Variable.ParentIdentifier);
-                if (variableSource == null)
-                {
-                    context.Logger.Fail(Reference, "Can't define source of variable: " + Variable.ParentIdentifier);
-                }
-                else
-                {
-                    VariableSource = variableSource.Value;
-                }
-            }
-            else
-            {
-                VariableSource = VariableSource.Type;
-            }
+            SetVariableSource(context);
 
             if (VariableType != null) return;
 
@@ -88,6 +73,25 @@ namespace Lexy.Compiler.Language.Expressions
             if (memberType == null)
             {
                 context.Logger.Fail(Reference, $"Invalid member access '{Variable}'. Member '{MemberAccessLiteral.Member}' not found on '{Variable.ParentIdentifier}'.");
+            }
+        }
+
+        private void SetVariableSource(IValidationContext context)
+        {
+            if (RootType != null)
+            {
+                VariableSource = VariableSource.Type;
+                return;
+            }
+
+            var variableSource = context.VariableContext.GetVariableSource(Variable.ParentIdentifier);
+            if (variableSource == null)
+            {
+                context.Logger.Fail(Reference, "Can't define source of variable: " + Variable.ParentIdentifier);
+            }
+            else
+            {
+                VariableSource = variableSource.Value;
             }
         }
 
