@@ -1,3 +1,5 @@
+using Lexy.Compiler.Language.Tables;
+
 namespace Lexy.Compiler.Language.Types
 {
     public class PrimitiveType : VariableType

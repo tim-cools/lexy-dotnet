@@ -4,6 +4,7 @@ using System.Linq;
 using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions.Functions;
+using Lexy.Compiler.Language.Functions;
 
 namespace Lexy.Compiler.Compiler.CSharp
 {

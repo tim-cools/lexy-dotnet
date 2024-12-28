@@ -1,10 +1,10 @@
 using System;
 using Lexy.Compiler.Language.Expressions;
-using Lexy.Compiler.Language.Types;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Types
 {
     public static class ValidationContextExtensions
     {

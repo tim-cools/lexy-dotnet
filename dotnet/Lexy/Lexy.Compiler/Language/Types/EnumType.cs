@@ -1,4 +1,5 @@
 using System.Linq;
+using Lexy.Compiler.Language.Enums;
 using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Types

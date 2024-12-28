@@ -7,7 +7,7 @@ using Lexy.Compiler.Language.Types;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Functions
 {
     public class Function : RootNode, IHasNodeDependencies
     {

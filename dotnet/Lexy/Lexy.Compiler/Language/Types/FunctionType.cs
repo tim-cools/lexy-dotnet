@@ -1,3 +1,4 @@
+using Lexy.Compiler.Language.Functions;
 using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Types

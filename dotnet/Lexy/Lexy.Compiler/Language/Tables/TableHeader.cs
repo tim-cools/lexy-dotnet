@@ -3,7 +3,7 @@ using System.Linq;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Tables
 {
     public class TableHeader : Node
     {

@@ -6,18 +6,6 @@ using Lexy.Compiler.Language.Expressions.Functions;
 
 namespace Lexy.Compiler.DependencyGraph;
 
-public static class DependencyGraphFactory
-{
-    public static Dependencies Create(RootNodeList rootNodes)
-    {
-        if (rootNodes == null) throw new ArgumentNullException(nameof(rootNodes));
-
-        var dependencies = new Dependencies(rootNodes);
-        dependencies.Build();
-        return dependencies;
-    }
-}
-
 public class Dependencies
 {
     private readonly RootNodeList rootNodes;
@@ -100,52 +88,5 @@ public class Dependencies
     private static bool DependencyExists(List<DependencyNode> resultDependencies, IRootNode dependency)
     {
         return resultDependencies.Any(any => any.Name == dependency.NodeName && any.Type == dependency.GetType());
-    }
-}
-
-public class DependencyNode
-{
-    private readonly List<DependencyNode> dependencies = new();
-
-    public string Name { get; }
-    public Type Type { get; }
-    public DependencyNode ParentNode { get; }
-
-    public IReadOnlyList<DependencyNode> Dependencies => dependencies;
-
-    public DependencyNode(string name, Type type, DependencyNode parentNode)
-    {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Type = type ?? throw new ArgumentNullException(nameof(type));
-        ParentNode = parentNode;
-    }
-
-    public void AddDependency(DependencyNode dependency)
-    {
-        dependencies.Add(dependency);
-    }
-
-    protected bool Equals(DependencyNode other)
-    {
-        return Name == other.Name && Equals(Type, other.Type);
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
-        return Equals((DependencyNode)obj);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Name, Type);
-    }
-
-    public bool ExistsInLineage(string name, Type type)
-    {
-        if (Name == name && Type == type) return true;
-        return ParentNode != null && ParentNode.ExistsInLineage(name, type);
     }
 }

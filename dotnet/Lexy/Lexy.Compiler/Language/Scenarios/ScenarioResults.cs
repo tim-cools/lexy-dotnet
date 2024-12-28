@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Lexy.Compiler.Parser;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Scenarios
 {
     public class ScenarioResults : ParsableNode
     {

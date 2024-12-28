@@ -1,5 +1,6 @@
 using System;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
 using Lexy.Compiler.Parser.Tokens;
 using Microsoft.CodeAnalysis;

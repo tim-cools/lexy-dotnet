@@ -4,7 +4,7 @@ using System.Linq;
 using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
-using Lexy.Compiler.Language.Types;
+using Lexy.Compiler.Language.Functions;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Lexy.Compiler.Compiler.CSharp.ExpressionSyntaxFactory;
 
-namespace Lexy.Compiler.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp.Writers
 {
     public class FunctionWriter : IRootTokenWriter
     {

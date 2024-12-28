@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Lexy.Compiler.Language.Expressions;
 using Lexy.Compiler.Parser;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Expressions
 {
     internal class ExpressionList : Node, IReadOnlyList<Expression>
     {

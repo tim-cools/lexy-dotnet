@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Lexy.Compiler.Compiler;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
 
 namespace Lexy.Compiler.Specifications

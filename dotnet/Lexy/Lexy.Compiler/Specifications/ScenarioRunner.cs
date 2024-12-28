@@ -6,6 +6,8 @@ using System.Linq;
 using Lexy.Compiler.Compiler;
 using Lexy.Compiler.Infrastructure;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.Types;
 using Lexy.Compiler.Parser;
 using Lexy.RunTime;

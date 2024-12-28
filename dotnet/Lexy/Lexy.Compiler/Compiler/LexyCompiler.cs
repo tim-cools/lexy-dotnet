@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Lexy.Compiler.Compiler.CSharp;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Functions;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;

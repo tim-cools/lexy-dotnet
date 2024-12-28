@@ -1,14 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Types
 {
-    public abstract class TypeWithMembers : VariableType, ITypeWithMembers
-    {
-        public abstract VariableType MemberType(string name, IValidationContext context);
-    }
-
     public class TableType : TypeWithMembers
     {
         public string Type { get; }
@@ -61,44 +57,6 @@ namespace Lexy.Compiler.Language.Types
             return Table.Header.Columns.Select(column =>
                     new ComplexTypeMember(column.Name, column.Type.CreateVariableType(context)))
                 .ToList();
-        }
-    }
-
-    public class CustomType : TypeWithMembers
-    {
-        public string Type { get; }
-        public TypeDefinition TypeDefinition { get; }
-
-        public CustomType(string type, TypeDefinition typeDefinition)
-        {
-            Type = type;
-            TypeDefinition = typeDefinition;
-        }
-
-        protected bool Equals(TableType other)
-        {
-            return Type == other.Type;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((TableType)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (Type != null ? Type.GetHashCode() : 0);
-        }
-
-        public override string ToString() => Type;
-
-        public override VariableType MemberType(string name, IValidationContext context)
-        {
-            var definition = TypeDefinition.Variables.FirstOrDefault(variable => variable.Name == name);
-            return definition?.Type.CreateVariableType(context);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Scenarios;
 using Microsoft.Extensions.Logging;
 
 namespace Lexy.Compiler.Specifications

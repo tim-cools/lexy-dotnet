@@ -1,5 +1,10 @@
 using System;
+using Lexy.Compiler.Compiler.CSharp.Writers;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Enums;
+using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Scenarios;
+using Lexy.Compiler.Language.Tables;
 
 namespace Lexy.Compiler.Compiler.CSharp
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Lexy.Compiler.Parser;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Functions
 {
     public class FunctionName : Node
     {

@@ -1,5 +1,9 @@
 using System.Linq;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Enums;
+using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Scenarios;
+using Lexy.Compiler.Language.Tables;
 using NUnit.Framework;
 using Shouldly;
 

@@ -1,4 +1,5 @@
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Parser;
 using Microsoft.Extensions.DependencyInjection;
 

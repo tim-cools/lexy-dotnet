@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Lexy.Compiler.Language.Enums;
+using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Scenarios;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
 
 namespace Lexy.Compiler.Language

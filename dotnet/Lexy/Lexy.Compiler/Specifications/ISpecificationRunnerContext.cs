@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Scenarios;
 
 namespace Lexy.Compiler.Specifications
 {

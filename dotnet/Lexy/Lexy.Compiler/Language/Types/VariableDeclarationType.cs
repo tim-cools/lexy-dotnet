@@ -1,5 +1,6 @@
 
 using System;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Types

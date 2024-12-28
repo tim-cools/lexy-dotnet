@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using Lexy.Compiler.Compiler.CSharp;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Enums;
+using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Tables;
 using Lexy.RunTime;
 
 namespace Lexy.Compiler.Compiler

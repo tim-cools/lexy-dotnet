@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Lexy.Compiler.Language;
-using Lexy.RunTime;
+using Lexy.Compiler.Language.Enums;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Lexy.Compiler.Compiler.CSharp
+namespace Lexy.Compiler.Compiler.CSharp.Writers
 {
     public class EnumWriter : IRootTokenWriter
     {

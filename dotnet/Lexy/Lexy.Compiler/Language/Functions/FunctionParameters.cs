@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
-using Lexy.Compiler.Language.Types;
 using Lexy.Compiler.Parser;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Functions
 {
     public class FunctionParameters : ParsableNode
     {

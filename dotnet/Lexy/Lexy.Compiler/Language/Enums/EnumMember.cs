@@ -3,7 +3,7 @@ using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Enums
 {
     public class EnumMember : Node
     {

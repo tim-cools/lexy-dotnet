@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Lexy.Compiler.Language.Enums;
+using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Scenarios
 {
     public class Scenario : RootNode
     {

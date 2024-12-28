@@ -5,7 +5,7 @@ using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 using Lexy.RunTime;
 
-namespace Lexy.Compiler.Language
+namespace Lexy.Compiler.Language.Scenarios
 {
     public class AssignmentDefinition : Node
     {
@@ -76,115 +76,6 @@ namespace Lexy.Compiler.Language
             {
                 context.Logger.Fail(Reference, $"Variable '{Variable}' of type '{VariableType}' is not assignable from expression of type '{expressionType}'.");
             }
-        }
-    }
-
-    public static class VariableReferenceParser
-    {
-
-        public static VariableReferenceParseResult Parse(Expression expression)
-        {
-            return expression switch
-            {
-                MemberAccessExpression memberAccessExpression => Parse(memberAccessExpression),
-                LiteralExpression literalExpression => Parse(literalExpression),
-                IdentifierExpression literalExpression => VariableReferenceParseResult.Success(new VariableReference(literalExpression.Identifier)),
-                _ => VariableReferenceParseResult.Failed("Invalid constant value. Expected: 'Variable = ConstantValue'")
-            };
-        }
-
-        private static VariableReferenceParseResult Parse(LiteralExpression literalExpression)
-        {
-            return literalExpression.Literal switch
-            {
-                StringLiteralToken stringLiteral => VariableReferenceParseResult.Success(new VariableReference(stringLiteral.Value)),
-                _ => VariableReferenceParseResult.Failed("Invalid expression literal. Expected: 'Variable = ConstantValue'")
-            };
-        }
-
-        private static VariableReferenceParseResult Parse(MemberAccessExpression memberAccessExpression)
-        {
-            if (memberAccessExpression.MemberAccessLiteral.Parts.Length == 0)
-            {
-                return VariableReferenceParseResult.Failed("Invalid number of variable reference parts: "
-                                                           + memberAccessExpression.MemberAccessLiteral.Parts.Length);
-            }
-
-            var variableReference = new VariableReference(memberAccessExpression.MemberAccessLiteral.Parts);
-            return VariableReferenceParseResult.Success(variableReference);
-        }
-    }
-
-    public sealed class VariableReferenceParseResult : ParseResult<VariableReference>
-    {
-        private VariableReferenceParseResult(VariableReference result) : base(result)
-        {
-        }
-
-        private VariableReferenceParseResult(bool success, string errorMessage) : base(success, errorMessage)
-        {
-        }
-
-        public static VariableReferenceParseResult Success(VariableReference result)
-        {
-            return new VariableReferenceParseResult(result);
-        }
-
-        public static VariableReferenceParseResult Failed(string errorMessage)
-        {
-            return new VariableReferenceParseResult(false, errorMessage);
-        }
-    }
-
-    public sealed class ConstantValueParseResult : ParseResult<ConstantValue>
-    {
-        private ConstantValueParseResult(ConstantValue result) : base(result)
-        {
-        }
-
-        private ConstantValueParseResult(bool success, string errorMessage) : base(success, errorMessage)
-        {
-        }
-
-        public static ConstantValueParseResult Success(ConstantValue result)
-        {
-            return new ConstantValueParseResult(result);
-        }
-
-        public static ConstantValueParseResult Failed(string errorMessage)
-        {
-            return new ConstantValueParseResult(false, errorMessage);
-        }
-    }
-
-    public class ConstantValue
-    {
-        public object Value { get; }
-
-        private ConstantValue(object value)
-        {
-            Value = value;
-        }
-
-        public static ConstantValueParseResult Parse(Expression expression)
-        {
-            return expression switch
-            {
-                LiteralExpression literalExpression => Parse(literalExpression),
-                MemberAccessExpression literalExpression => Parse(literalExpression),
-                _ => ConstantValueParseResult.Failed("Invalid expression variable. Expected: 'Variable = ConstantValue'")
-            };
-        }
-
-        private static ConstantValueParseResult Parse(LiteralExpression literalExpression)
-        {
-            var value = new ConstantValue(literalExpression.Literal.TypedValue);
-            return ConstantValueParseResult.Success(value);
-        }
-
-        private static ConstantValueParseResult Parse(MemberAccessExpression literalExpression)
-        {
-            return ConstantValueParseResult.Success(new ConstantValue(literalExpression.MemberAccessLiteral.Value));
         }
     }
 }

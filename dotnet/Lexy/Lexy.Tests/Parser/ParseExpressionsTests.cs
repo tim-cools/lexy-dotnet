@@ -1,7 +1,5 @@
-using Lexy.Compiler.Language;
-using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Parser;
-using Lexy.Compiler.Parser.Tokens;
 using Lexy.Poc.Parser.ExpressionParser;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
