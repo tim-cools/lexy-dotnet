@@ -33,6 +33,7 @@ Function: ValidateTableKeyword
         parser.ParseNodes(code);
 
         var logger = GetService<IParserLogger>();
-        logger.HasErrorMessage("Duplicated node name: 'ValidateTableKeyword'").ShouldBeTrue(logger.FormatMessages());
+        logger.HasErrorMessage("Duplicated node name: 'ValidateTableKeyword'")
+          .ShouldBeTrue(logger.FormatMessages());
     }
 }

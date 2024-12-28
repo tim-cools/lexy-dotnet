@@ -71,15 +71,6 @@ public static class ExpressionTestExtensions
         });
     }
 
-    public static void ValidateStringLiteralExpression(this Expression expression, string value)
-    {
-        expression.ValidateOfType<LiteralExpression>(literal =>
-        {
-            literal.Literal.ValidateOfType<StringLiteralToken>(number =>
-                number.Value.ShouldBe(value));
-        });
-    }
-
     public static void ValidateIdentifierExpression(this Expression expression, string value)
     {
         expression.ValidateOfType<IdentifierExpression>(literal => { literal.Identifier.ShouldBe(value); });

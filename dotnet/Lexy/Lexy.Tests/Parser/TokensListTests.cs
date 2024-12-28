@@ -20,8 +20,8 @@ public class TokensListTests
 
         var result = list.TokensFrom(1);
         result.Length.ShouldBe(2);
-        result[0].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("456"));
-        result[1].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("789"));
+        result[0].ValidateStringLiteralToken("456");
+        result[1].ValidateStringLiteralToken("789");
     }
 
     [Test]
@@ -36,8 +36,8 @@ public class TokensListTests
 
         var result = list.TokensFromStart(2);
         result.Length.ShouldBe(2);
-        result[0].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("123"));
-        result[1].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("456"));
+        result[0].ValidateStringLiteralToken("123");
+        result[1].ValidateStringLiteralToken("456");
     }
 
     [Test]
@@ -54,8 +54,8 @@ public class TokensListTests
 
         var result = list.TokensRange(1, 3);
         result.Length.ShouldBe(3);
-        result[0].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("2222"));
-        result[1].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("3333"));
-        result[2].ValidateOfType<StringLiteralToken>(value => value.Value.ShouldBe("4444"));
+        result[0].ValidateStringLiteralToken("2222");
+        result[1].ValidateStringLiteralToken("3333");
+        result[2].ValidateStringLiteralToken("4444");
     }
 }

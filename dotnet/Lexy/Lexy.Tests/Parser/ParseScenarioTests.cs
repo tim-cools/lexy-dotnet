@@ -1,3 +1,4 @@
+using System;
 using Lexy.Compiler.Infrastructure;
 using Lexy.Compiler.Language.Types;
 using Lexy.Compiler.Parser;
@@ -113,31 +114,27 @@ public class ParseScenarioTests : ScopedServicesTestFixture
     Result2 = 456";
 
         var parser = GetService<ILexyParser>();
-        var scenario = parser.ParseScenario(code);
+        var scenario = parser.ParseScenario(code) ?? throw new ArgumentNullException("parser.ParseScenario(code)");
 
         scenario.Name.Value.ShouldBe("ValidNumberIntAsParameter");
         scenario.Function.ShouldNotBeNull();
         scenario.Function.Parameters.Variables.Count.ShouldBe(2);
         scenario.Function.Parameters.Variables[0].Name.ShouldBe("Value1");
         scenario.Function.Parameters.Variables[0].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
-            value.Type.ShouldBe("number")
-        );
+            value.Type.ShouldBe("number"));
         scenario.Function.Parameters.Variables[0].DefaultExpression.ToString().ShouldBe("123");
         scenario.Function.Parameters.Variables[1].Name.ShouldBe("Value2");
         scenario.Function.Parameters.Variables[1].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
-            value.Type.ShouldBe("number")
-        );
+            value.Type.ShouldBe("number"));
         scenario.Function.Parameters.Variables[1].DefaultExpression.ToString().ShouldBe("456");
         scenario.Function.Results.Variables.Count.ShouldBe(2);
         scenario.Function.Results.Variables[0].Name.ShouldBe("Result1");
         scenario.Function.Results.Variables[0].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
-            value.Type.ShouldBe("number")
-        );
+            value.Type.ShouldBe("number"));
         scenario.Function.Results.Variables[0].DefaultExpression.ShouldBeNull();
         scenario.Function.Results.Variables[1].Name.ShouldBe("Result2");
         scenario.Function.Results.Variables[1].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
-            value.Type.ShouldBe("number")
-        );
+            value.Type.ShouldBe("number"));
         scenario.Function.Results.Variables[1].DefaultExpression.ShouldBeNull();
         scenario.Function.Code.Expressions.Count.ShouldBe(2);
         scenario.Function.Code.Expressions[0].ToString().ShouldBe("Result1=Value1");
@@ -211,6 +208,7 @@ public class ParseScenarioTests : ScopedServicesTestFixture
 
         errors.Length.ShouldBe(1);
         errors[0].ShouldBe(
-            "tests.lexy(2, 13): ERROR - Unexpected function name. Inline function should not have a name: 'ThisShouldNotBeAllowed'");
+            "tests.lexy(2, 13): ERROR - Unexpected function name. " +
+            "Inline function should not have a name: 'ThisShouldNotBeAllowed'");
     }
 }

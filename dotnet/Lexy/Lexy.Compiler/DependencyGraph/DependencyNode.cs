@@ -6,10 +6,10 @@ namespace Lexy.Compiler.DependencyGraph;
 public class DependencyNode
 {
     private readonly List<DependencyNode> dependencies = new();
+    private readonly DependencyNode parentNode;
 
     public string Name { get; }
     public Type Type { get; }
-    public DependencyNode ParentNode { get; }
 
     public IReadOnlyList<DependencyNode> Dependencies => dependencies;
 
@@ -17,7 +17,7 @@ public class DependencyNode
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Type = type ?? throw new ArgumentNullException(nameof(type));
-        ParentNode = parentNode;
+        this.parentNode = parentNode;
     }
 
     public void AddDependency(DependencyNode dependency)
@@ -46,6 +46,6 @@ public class DependencyNode
     public bool ExistsInLineage(string name, Type type)
     {
         if (Name == name && Type == type) return true;
-        return ParentNode != null && ParentNode.ExistsInLineage(name, type);
+        return parentNode != null && parentNode.ExistsInLineage(name, type);
     }
 }
