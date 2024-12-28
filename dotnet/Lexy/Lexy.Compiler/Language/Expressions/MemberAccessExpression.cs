@@ -15,6 +15,7 @@ namespace Lexy.Compiler.Language.Expressions
         public VariableReference Variable { get; }
         public VariableType VariableType { get; private set; }
         public VariableType RootType { get; private set; }
+        public VariableSource VariableSource { get; private set; }
 
         private MemberAccessExpression(VariableReference variable, MemberAccessLiteral literal, ExpressionSource source, SourceReference reference) : base(source, reference)
         {
@@ -51,6 +52,23 @@ namespace Lexy.Compiler.Language.Expressions
         {
             VariableType = context.VariableContext.GetVariableType(Variable, context);
             RootType = context.RootNodes.GetType(Variable.ParentIdentifier);
+
+            if (RootType == null)
+            {
+                var variableSource = context.VariableContext.GetVariableSource(Variable.ParentIdentifier);
+                if (variableSource == null)
+                {
+                    context.Logger.Fail(Reference, "Can't define source of variable: " + Variable.ParentIdentifier);
+                }
+                else
+                {
+                    VariableSource = variableSource.Value;
+                }
+            }
+            else
+            {
+                VariableSource = VariableSource.Type;
+            }
 
             if (VariableType != null) return;
 

@@ -5,6 +5,7 @@ namespace Lexy.Compiler.Parser
         Unknown,
         Parameters,
         Results,
-        Code
+        Code,
+        Type
     }
 }

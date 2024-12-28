@@ -1,6 +1,8 @@
 using System;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.Types;
+using Lexy.RunTime;
 
 namespace Lexy.Compiler.Parser.Tokens
 {
@@ -26,19 +28,14 @@ namespace Lexy.Compiler.Parser.Tokens
 
         public VariableType DeriveType(IValidationContext context)
         {
-            if (parts.Length != 2)
-            {
-                return null;
-            }
+            var variableReference = new VariableReference(parts);
+            var variableType = context.VariableContext.GetVariableType(variableReference, context);
+            if (variableType != null) return variableType;
 
-            var variableType = context.VariableContext.GetVariableType(Parent)
-                               ?? context.RootNodes.GetType(Parent);
-            if (!(variableType is ITypeWithMembers typeWithMembers))
-            {
-                return null;
-            }
+            if (parts.Length != 2) return null;
 
-            return typeWithMembers.MemberType(Member, context);
+            var rootType = context.RootNodes.GetType(Parent);
+            return rootType is not ITypeWithMembers typeWithMembers ? null : typeWithMembers.MemberType(Member, context);
         }
     }
 }

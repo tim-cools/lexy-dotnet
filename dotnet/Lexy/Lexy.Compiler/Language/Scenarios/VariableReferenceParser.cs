@@ -6,6 +6,11 @@ namespace Lexy.Compiler.Language.Scenarios;
 
 public static class VariableReferenceParser
 {
+    public static VariableReferenceParseResult Parse(string[] parts)
+    {
+        var variableReference = new VariableReference(parts);
+        return VariableReferenceParseResult.Success(variableReference);
+    }
 
     public static VariableReferenceParseResult Parse(Expression expression)
     {

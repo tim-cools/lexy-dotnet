@@ -192,26 +192,32 @@ namespace Lexy.Compiler.Compiler.CSharp
 
         private static ExpressionSyntax IdentifierNameSyntax(IdentifierExpression expression)
         {
-            switch (expression.VariableSource)
+            return FromSource(expression.VariableSource, IdentifierName(expression.Identifier));
+        }
+
+        private static ExpressionSyntax FromSource(VariableSource source, SimpleNameSyntax nameSyntax)
+        {
+            switch (source)
             {
                 case VariableSource.Parameters:
                     return MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         IdentifierName(LexyCodeConstants.ParameterVariable),
-                        IdentifierName(expression.Identifier));
+                        nameSyntax);
 
                 case VariableSource.Results:
                     return MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         IdentifierName(LexyCodeConstants.ResultsVariable),
-                        IdentifierName(expression.Identifier));
+                        nameSyntax);
 
                 case VariableSource.Code:
-                    return IdentifierName(expression.Identifier);
+                case VariableSource.Type:
+                    return nameSyntax;
 
                 case VariableSource.Unknown:
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"source: {source}");
             }
         }
 
@@ -253,17 +259,16 @@ namespace Lexy.Compiler.Compiler.CSharp
             }
 
             var rootType = VariableClassName(expression, expression.Variable);
-
             var childReference = expression.Variable.ChildrenReference();
 
             ExpressionSyntax result = MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
-                IdentifierName(rootType),
+                FromSource(expression.VariableSource, IdentifierName(rootType)),
                 IdentifierName(childReference.ParentIdentifier));
 
             while (childReference.HasChildIdentifiers)
             {
-                expression.Variable.ChildrenReference();
+                childReference = childReference.ChildrenReference();
                 result = MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     result,

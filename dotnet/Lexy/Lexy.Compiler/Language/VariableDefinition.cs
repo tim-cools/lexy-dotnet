@@ -90,6 +90,12 @@ namespace Lexy.Compiler.Language
 
         public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
         {
+            if (VariableType is EnumType enumType)
+            {
+                yield return rootNodeList.GetEnum(enumType.Type);
+                yield break;
+            }
+
             if (VariableType is not CustomType customType)
             {
                 yield break;

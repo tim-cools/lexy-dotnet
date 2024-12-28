@@ -47,7 +47,13 @@ namespace Lexy.Compiler.Language.Expressions
         {
             context.VariableContext.EnsureVariableExists(Reference, Identifier);
 
-            VariableSource = context.VariableContext.GetVariableSource(Identifier) ?? VariableSource.Unknown;
+            var variableSource = context.VariableContext.GetVariableSource(Identifier);
+            if (variableSource == null)
+            {
+                context.Logger.Fail(Reference, "Can't define source of variable: " + Identifier);
+                return;
+            }
+            VariableSource = variableSource.Value;
         }
 
         public override VariableType DeriveType(IValidationContext context) =>
