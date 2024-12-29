@@ -1,8 +1,9 @@
+using Lexy.Web.Editor.Api.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllersWithViews();
+builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblyContaining<ProjectController>());
 
 var app = builder.Build();
 
@@ -16,7 +17,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",
