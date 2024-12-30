@@ -9,10 +9,10 @@ public class ExpressionSource
     public Line Line { get; }
     public TokenList Tokens { get; }
 
-    public ExpressionSource(SourceFile file, Line line, TokenList tokens)
+    public ExpressionSource(Line line, TokenList tokens)
     {
-        File = file ?? throw new ArgumentNullException(nameof(file));
         Line = line ?? throw new ArgumentNullException(nameof(line));
+        File = line.File ?? throw new InvalidOperationException($"{nameof(line.File)} should not be null.");
         Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
     }
 

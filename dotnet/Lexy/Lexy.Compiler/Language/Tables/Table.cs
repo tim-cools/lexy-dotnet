@@ -27,16 +27,14 @@ public class Table : RootNode
 
     public override IParsableNode Parse(IParserContext context)
     {
-        var line = context.CurrentLine;
-        if (line.IsEmpty()) return this;
-
-        if (line.IsComment())
-            throw new InvalidOperationException("No comments expected. Comment should be parsed by Document only.");
-
         if (IsFirstLine())
+        {
             Header = TableHeader.Parse(context);
+        }
         else
+        {
             Rows.Add(TableRow.Parse(context));
+        }
 
         return this;
     }

@@ -34,17 +34,7 @@ public class CaseExpression : Expression, IParsableNode, IDependantExpression
 
     public IParsableNode Parse(IParserContext context)
     {
-        var line = context.CurrentLine;
-        if (line.IsComment() || line.IsEmpty()) return this;
-
-        var expression = ExpressionFactory.Parse(context.SourceCode.File, line.Tokens, line);
-        if (!expression.IsSuccess)
-        {
-            context.Logger.Fail(context.LineStartReference(), expression.ErrorMessage);
-            return null;
-        }
-
-        expressions.Add(expression.Result, context);
+        var expression = expressions.Parse(context);
         return expression.Result is IParsableNode node ? node : this;
     }
 
@@ -66,7 +56,7 @@ public class CaseExpression : Expression, IParsableNode, IDependantExpression
             return ParseExpressionResult.Invalid<CaseExpression>("Invalid 'case'. No parameters found.");
 
         var value = tokens.TokensFrom(1);
-        var valueExpression = ExpressionFactory.Parse(source.File, value, source.Line);
+        var valueExpression = ExpressionFactory.Parse(value, source.Line);
         if (!valueExpression.IsSuccess) return valueExpression;
 
         var reference = source.CreateReference();

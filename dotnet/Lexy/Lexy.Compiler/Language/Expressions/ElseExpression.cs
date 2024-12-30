@@ -33,17 +33,7 @@ public class ElseExpression : Expression, IParsableNode, IDependantExpression
 
     public IParsableNode Parse(IParserContext context)
     {
-        var line = context.CurrentLine;
-        if (line.IsComment() || line.IsEmpty()) return this;
-
-        var expression = ExpressionFactory.Parse(context.SourceCode.File, line.Tokens, line);
-        if (!expression.IsSuccess)
-        {
-            context.Logger.Fail(context.LineStartReference(), expression.ErrorMessage);
-            return null;
-        }
-
-        falseExpressions.Add(expression.Result, context);
+        var expression = falseExpressions.Parse(context);
         return expression.Result is IParsableNode node ? node : this;
     }
 

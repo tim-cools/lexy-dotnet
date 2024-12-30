@@ -25,12 +25,12 @@ public static class ExpressionFactory
                 { FunctionCallExpression.IsValid, FunctionCallExpression.Parse }
             };
 
-    public static ParseExpressionResult Parse(SourceFile file, TokenList tokens, Line currentLine)
+    public static ParseExpressionResult Parse(TokenList tokens, Line currentLine)
     {
         foreach (var factory in factories)
             if (factory.Key(tokens))
             {
-                var source = new ExpressionSource(file, currentLine, tokens);
+                var source = new ExpressionSource(currentLine, tokens);
                 return factory.Value(source);
             }
 

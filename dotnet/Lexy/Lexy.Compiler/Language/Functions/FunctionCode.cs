@@ -17,14 +17,7 @@ public class FunctionCode : ParsableNode
 
     public override IParsableNode Parse(IParserContext context)
     {
-        var line = context.CurrentLine;
-        if (line.IsComment() || line.IsEmpty()) return this;
-
-        var expression = ExpressionFactory.Parse(context.SourceCode.File, line.Tokens, line);
-        if (context.Failed(expression, context.LineStartReference())) return this;
-
-        expressions.Add(expression.Result, context);
-
+        var expression = expressions.Parse(context);
         return expression.Result is IParsableNode node ? node : this;
     }
 

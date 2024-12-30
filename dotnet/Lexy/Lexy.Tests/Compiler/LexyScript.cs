@@ -17,7 +17,7 @@ public static class LexyScript
         var function = nodes.GetSingleFunction();
 
         var compiler = serviceScope.ServiceProvider.GetRequiredService<ILexyCompiler>();
-        var environment = compiler.Compile(nodes, function);
+        var environment = compiler.Compile(nodes);
         return environment.GetFunction(function);
     }
 }

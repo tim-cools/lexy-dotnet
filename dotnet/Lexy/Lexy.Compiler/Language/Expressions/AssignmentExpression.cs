@@ -22,10 +22,10 @@ public class AssignmentExpression : Expression
         var tokens = source.Tokens;
         if (!IsValid(tokens)) return ParseExpressionResult.Invalid<ParseExpressionResult>("Invalid expression.");
 
-        var variableExpression = ExpressionFactory.Parse(source.File, tokens.TokensFromStart(1), source.Line);
+        var variableExpression = ExpressionFactory.Parse(tokens.TokensFromStart(1), source.Line);
         if (!variableExpression.IsSuccess) return variableExpression;
 
-        var assignment = ExpressionFactory.Parse(source.File, tokens.TokensFrom(2), source.Line);
+        var assignment = ExpressionFactory.Parse(tokens.TokensFrom(2), source.Line);
         if (!assignment.IsSuccess) return assignment;
 
         var reference = source.CreateReference();

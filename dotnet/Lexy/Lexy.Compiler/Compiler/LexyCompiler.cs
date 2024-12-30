@@ -29,14 +29,11 @@ public class LexyCompiler : ILexyCompiler
         this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
     }
 
-    public CompilerResult Compile(RootNodeList rootNodeList, Function function)
+    public CompilerResult Compile(IEnumerable<IRootNode> nodes)
     {
-        if (rootNodeList == null) throw new ArgumentNullException(nameof(rootNodeList));
-        if (function == null) throw new ArgumentNullException(nameof(function));
+        if (nodes == null) throw new ArgumentNullException(nameof(nodes));
 
-        var generateNodes = FunctionAndDependencies(rootNodeList, function);
-
-        var syntaxNode = GenerateSyntaxNode(rootNodeList, generateNodes);
+        var syntaxNode = GenerateSyntaxNode(nodes);
         var assembly = CreateAssembly(syntaxNode);
 
         environment.CreateExecutables(assembly);
@@ -104,17 +101,17 @@ public class LexyCompiler : ILexyCompiler
         return references;
     }
 
-    private SyntaxNode GenerateSyntaxNode(RootNodeList rootNodeList, List<IRootNode> generateNodes)
+    private SyntaxNode GenerateSyntaxNode(IEnumerable<IRootNode> generateNodes)
     {
-        var root = GenerateCompilationUnitS(rootNodeList, generateNodes);
+        var root = GenerateCompilationUnitS(generateNodes);
 
         return root.NormalizeWhitespace();
     }
 
-    private CompilationUnitSyntax GenerateCompilationUnitS(RootNodeList rootNodeList, List<IRootNode> generateNodes)
+    private CompilationUnitSyntax GenerateCompilationUnitS(IEnumerable<IRootNode> generateNodes)
     {
         var members = generateNodes
-            .Select(node => GenerateMember(rootNodeList, node))
+            .Select(GenerateMember)
             .ToList();
 
         var namespaceDeclaration = NamespaceDeclaration(IdentifierName(LexyCodeConstants.Namespace))
@@ -132,7 +129,7 @@ public class LexyCompiler : ILexyCompiler
         return root;
     }
 
-    private MemberDeclarationSyntax GenerateMember(RootNodeList rootNodeList, IRootNode node)
+    private MemberDeclarationSyntax GenerateMember(IRootNode node)
     {
         var writer = CSharpCode.GetWriter(node);
 

@@ -8,13 +8,15 @@ public class Line
 
     internal string Content { get; }
     private string TrimmedContent { get; }
+    public SourceFile File { get; }
 
     public TokenList Tokens { get; private set; }
 
-    public Line(int index, string line)
+    public Line(int index, string line, SourceFile file)
     {
         Index = index;
         Content = line ?? throw new ArgumentNullException(nameof(line));
+        File = file ?? throw new ArgumentNullException(nameof(file));
         TrimmedContent = line.Trim();
     }
 

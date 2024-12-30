@@ -41,7 +41,7 @@ public class FunctionCallExpression : Expression
         var arguments = new List<Expression>();
         foreach (var argumentTokens in argumentsTokenList.Result)
         {
-            var argumentExpression = ExpressionFactory.Parse(source.File, argumentTokens, source.Line);
+            var argumentExpression = ExpressionFactory.Parse(argumentTokens, source.Line);
             if (!argumentExpression.IsSuccess) return argumentExpression;
 
             arguments.Add(argumentExpression.Result);

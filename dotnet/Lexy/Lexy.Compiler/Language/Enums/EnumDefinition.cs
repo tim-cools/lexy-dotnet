@@ -26,12 +26,6 @@ public class EnumDefinition : RootNode
 
     public override IParsableNode Parse(IParserContext context)
     {
-        var line = context.CurrentLine;
-        if (line.IsEmpty()) return this;
-
-        if (line.IsComment())
-            throw new InvalidOperationException("No comments expected. Comment should be parsed by Document only.");
-
         var lastIndex = Members.LastOrDefault()?.NumberValue ?? -1;
         var member = EnumMember.Parse(context, lastIndex);
         if (member != null) Members.Add(member);

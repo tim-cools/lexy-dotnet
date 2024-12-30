@@ -26,7 +26,7 @@ public class ParenthesizedExpression : Expression
             return ParseExpressionResult.Invalid<ParenthesizedExpression>("No closing parentheses found.");
 
         var innerExpressionTokens = tokens.TokensRange(1, matchingClosingParenthesis - 1);
-        var innerExpression = ExpressionFactory.Parse(source.File, innerExpressionTokens, source.Line);
+        var innerExpression = ExpressionFactory.Parse(innerExpressionTokens, source.Line);
         if (!innerExpression.IsSuccess) return innerExpression;
 
         var reference = source.CreateReference();

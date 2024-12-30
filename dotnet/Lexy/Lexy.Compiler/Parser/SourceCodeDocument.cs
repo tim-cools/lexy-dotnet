@@ -15,8 +15,8 @@ public class SourceCodeDocument : ISourceCodeDocument
     public void SetCode(string[] lines, string fileName)
     {
         index = -1;
-        code = lines.Select((line, index) => new Line(index, line)).ToArray();
         File = new SourceFile(fileName);
+        code = lines.Select((line, index) => new Line(index, line, File)).ToArray();
     }
 
     public bool HasMoreLines()

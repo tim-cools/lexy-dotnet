@@ -59,10 +59,10 @@ public class BinaryExpression : Expression
             return ParseExpressionResult.Invalid<BinaryExpression>(
                 $"No tokens right from: {lowestPriorityOperation.Index} ({tokens})");
 
-        var left = ExpressionFactory.Parse(source.File, leftTokens, source.Line);
+        var left = ExpressionFactory.Parse(leftTokens, source.Line);
         if (!left.IsSuccess) return left;
 
-        var right = ExpressionFactory.Parse(source.File, rightTokens, source.Line);
+        var right = ExpressionFactory.Parse(rightTokens, source.Line);
         if (!right.IsSuccess) return left;
 
         var operatorValue = lowestPriorityOperation.ExpressionOperator;

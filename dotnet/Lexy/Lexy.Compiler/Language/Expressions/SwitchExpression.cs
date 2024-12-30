@@ -20,9 +20,7 @@ public class SwitchExpression : Expression, IParsableNode
     public IParsableNode Parse(IParserContext context)
     {
         var line = context.CurrentLine;
-        if (line.IsComment() || line.IsEmpty()) return this;
-
-        var expression = ExpressionFactory.Parse(context.SourceCode.File, line.Tokens, line);
+        var expression = ExpressionFactory.Parse(line.Tokens, line);
         if (!expression.IsSuccess)
         {
             context.Logger.Fail(context.LineStartReference(), expression.ErrorMessage);
@@ -53,7 +51,7 @@ public class SwitchExpression : Expression, IParsableNode
         if (tokens.Length == 1) return ParseExpressionResult.Invalid<IfExpression>("No condition found");
 
         var condition = tokens.TokensFrom(1);
-        var conditionExpression = ExpressionFactory.Parse(source.File, condition, source.Line);
+        var conditionExpression = ExpressionFactory.Parse(condition, source.Line);
         if (!conditionExpression.IsSuccess) return conditionExpression;
 
         var reference = source.CreateReference();

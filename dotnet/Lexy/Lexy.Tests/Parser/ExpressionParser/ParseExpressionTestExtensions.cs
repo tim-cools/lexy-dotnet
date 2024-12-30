@@ -12,13 +12,13 @@ public static class ParseExpressionTestExtensions
     {
         var context = fixture.GetService<IParserContext>();
         var tokenizer = fixture.GetService<ITokenizer>();
-        var sourceFile = new SourceFile("generated.lexy");
-        var line = new Line(0, expression);
+        var sourceFile = new SourceFile("tests.lexy");
+        var line = new Line(0, expression, sourceFile);
 
         if (!line.Tokenize(tokenizer, context))
             throw new InvalidOperationException("Tokenizing failed: " + context.Logger.ErrorMessages().Format(2));
 
-        var result = ExpressionFactory.Parse(sourceFile, line.Tokens, line);
+        var result = ExpressionFactory.Parse(line.Tokens, line);
         result.IsSuccess.ShouldBeTrue(result.ErrorMessage);
         return result.Result;
     }
@@ -29,8 +29,8 @@ public static class ParseExpressionTestExtensions
     {
         var context = fixture.GetService<IParserContext>();
         var tokenizer = fixture.GetService<ITokenizer>();
-        var sourceFile = new SourceFile("generated.lexy");
-        var line = new Line(0, expression);
+        var sourceFile = new SourceFile("tests.lexy");
+        var line = new Line(0, expression, sourceFile);
 
         if (!line.Tokenize(tokenizer, context))
         {
@@ -40,7 +40,7 @@ public static class ParseExpressionTestExtensions
             return;
         }
 
-        var result = ExpressionFactory.Parse(sourceFile, line.Tokens, line);
+        var result = ExpressionFactory.Parse(line.Tokens, line);
         result.IsSuccess.ShouldBeFalse();
         result.ErrorMessage.ShouldBe(errorMessage);
     }

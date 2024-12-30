@@ -49,7 +49,7 @@ public class LexyParser : ILexyParser
         sourceCodeDocument.SetCode(code, Path.GetFileName(fullFileName));
 
         var currentIndent = 0;
-        var nodes = new ParsableNodeArray(context.RootNode);
+        var nodePerIndent = new ParsableNodeArray(context.RootNode);
 
         while (sourceCodeDocument.HasMoreLines())
         {
@@ -72,12 +72,12 @@ public class LexyParser : ILexyParser
                 continue;
             }
 
-            var node = nodes.Get(indent);
+            var node = nodePerIndent.Get(indent);
             node = ParseLine(node);
 
             currentIndent = indent + 1;
 
-            nodes.Set(currentIndent, node);
+            nodePerIndent.Set(currentIndent, node);
         }
 
         Reset();
@@ -134,10 +134,13 @@ public class LexyParser : ILexyParser
 
     private IParsableNode ParseLine(IParsableNode currentNode)
     {
+        //var parseLineContext = new ParseLineContext(context.CurrentLine, context.Logger);
         var node = currentNode.Parse(context);
         if (node == null)
-            throw new InvalidOperationException(
-                $"({currentNode}) Parse should return child node or itself.");
+        {
+            throw new InvalidOperationException($"({currentNode}) Parse should return child node or itself.");
+        }
+
         return node;
     }
 }

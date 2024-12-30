@@ -50,9 +50,6 @@ public class Function : RootNode, IHasNodeDependencies
     public override IParsableNode Parse(IParserContext context)
     {
         var line = context.CurrentLine;
-        if (line.IsComment())
-            throw new InvalidOperationException("No comments expected. Comment should be parsed by Document only.");
-
         var name = line.Tokens.TokenValue(0);
         if (!line.Tokens.IsTokenType<KeywordToken>(0)) return InvalidToken(name, context);
 

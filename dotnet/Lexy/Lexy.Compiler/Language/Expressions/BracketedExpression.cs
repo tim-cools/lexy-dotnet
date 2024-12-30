@@ -29,7 +29,7 @@ public class BracketedExpression : Expression
 
         var functionName = tokens.TokenValue(0);
         var innerExpressionTokens = tokens.TokensRange(2, matchingClosingParenthesis - 1);
-        var innerExpression = ExpressionFactory.Parse(source.File, innerExpressionTokens, source.Line);
+        var innerExpression = ExpressionFactory.Parse(innerExpressionTokens, source.Line);
         if (!innerExpression.IsSuccess) return innerExpression;
 
         var reference = source.CreateReference();

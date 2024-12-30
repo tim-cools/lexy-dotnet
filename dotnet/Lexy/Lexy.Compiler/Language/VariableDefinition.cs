@@ -74,7 +74,7 @@ public class VariableDefinition : Node, IHasNodeDependencies
             return null;
         }
 
-        var defaultValue = ExpressionFactory.Parse(context.SourceCode.File, tokens.TokensFrom(3), line);
+        var defaultValue = ExpressionFactory.Parse(tokens.TokensFrom(3), line);
         if (context.Failed(defaultValue, context.TokenReference(3))) return null;
 
         return new VariableDefinition(name, variableType, source, context.LineStartReference(), defaultValue.Result);

@@ -30,7 +30,7 @@ public class VariableDeclarationExpression : Expression
         var type = VariableDeclarationType.Parse(tokens.TokenValue(0), source.CreateReference());
         var name = tokens.TokenValue(1);
         var assignment = tokens.Length > 3
-            ? ExpressionFactory.Parse(source.File, tokens.TokensFrom(3), source.Line)
+            ? ExpressionFactory.Parse(tokens.TokensFrom(3), source.Line)
             : null;
         if (assignment is { IsSuccess: false }) return assignment;
 

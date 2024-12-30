@@ -23,13 +23,7 @@ public class IfExpression : Expression, IParsableNode
 
     public IParsableNode Parse(IParserContext context)
     {
-        var line = context.CurrentLine;
-        if (line.IsComment() || line.IsEmpty()) return this;
-
-        var expression = ExpressionFactory.Parse(context.SourceCode.File, line.Tokens, line);
-        if (context.Failed(expression, context.LineStartReference())) return null;
-
-        trueExpressions.Add(expression.Result, context);
+        var expression = trueExpressions.Parse(context);
         return expression.Result is IParsableNode node ? node : this;
     }
 
@@ -48,7 +42,7 @@ public class IfExpression : Expression, IParsableNode
         if (tokens.Length == 1) return ParseExpressionResult.Invalid<IfExpression>("No condition found");
 
         var condition = tokens.TokensFrom(1);
-        var conditionExpression = ExpressionFactory.Parse(source.File, condition, source.Line);
+        var conditionExpression = ExpressionFactory.Parse(condition, source.Line);
         if (!conditionExpression.IsSuccess) return conditionExpression;
 
         var reference = source.CreateReference();

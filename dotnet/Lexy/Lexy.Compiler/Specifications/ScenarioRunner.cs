@@ -53,10 +53,10 @@ public class ScenarioRunner : IScenarioRunner, IDisposable
         this.context = context;
 
         this.rootNodeList = rootNodeList ?? throw new ArgumentNullException(nameof(rootNodeList));
-        this.Scenario = scenario ?? throw new ArgumentNullException(nameof(scenario));
         this.parserLogger = parserLogger ?? throw new ArgumentNullException(nameof(parserLogger));
         this.serviceScope = serviceScope ?? throw new ArgumentNullException(nameof(serviceScope));
 
+        Scenario = scenario ?? throw new ArgumentNullException(nameof(scenario));
         function = scenario.Function ?? rootNodeList.GetFunction(scenario.FunctionName.Value);
     }
 
@@ -71,7 +71,8 @@ public class ScenarioRunner : IScenarioRunner, IDisposable
 
         if (!ValidateErrors(context)) return;
 
-        var compilerResult = lexyCompiler.Compile(rootNodeList, function);
+        var nodes = function.GetFunctionAndDependencies(rootNodeList);
+        var compilerResult = lexyCompiler.Compile(nodes);
         var executable = compilerResult.GetFunction(function);
         var values = GetValues(Scenario.Parameters, function.Parameters, compilerResult);
 
