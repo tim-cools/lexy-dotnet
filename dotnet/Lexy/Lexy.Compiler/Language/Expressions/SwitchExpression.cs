@@ -46,9 +46,9 @@ public class SwitchExpression : Expression, IParsableNode
     public static ParseExpressionResult Parse(ExpressionSource source)
     {
         var tokens = source.Tokens;
-        if (!IsValid(tokens)) return ParseExpressionResult.Invalid<IfExpression>("Not valid.");
+        if (!IsValid(tokens)) return ParseExpressionResult.Invalid<SwitchExpression>("Not valid.");
 
-        if (tokens.Length == 1) return ParseExpressionResult.Invalid<IfExpression>("No condition found");
+        if (tokens.Length == 1) return ParseExpressionResult.Invalid<SwitchExpression>("No condition found");
 
         var condition = tokens.TokensFrom(1);
         var conditionExpression = ExpressionFactory.Parse(condition, source.Line);

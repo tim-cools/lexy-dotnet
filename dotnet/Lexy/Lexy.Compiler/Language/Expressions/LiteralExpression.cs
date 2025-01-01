@@ -49,7 +49,7 @@ public class LiteralExpression : Expression
         return tokens.Length == 1
                && tokens.IsLiteralToken(0)
                || tokens.Length == 2
-               && tokens.OperatorToken(0, OperatorType.Subtraction)
+               && tokens.IsOperatorToken(0, OperatorType.Subtraction)
                && tokens.IsLiteralToken(1)
                && tokens.LiteralToken(1) is NumberLiteralToken;
     }

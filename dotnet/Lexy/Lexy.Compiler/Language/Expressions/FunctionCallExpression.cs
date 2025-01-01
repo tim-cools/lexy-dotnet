@@ -64,7 +64,7 @@ public class FunctionCallExpression : Expression
     public static bool IsValid(TokenList tokens)
     {
         return tokens.IsTokenType<StringLiteralToken>(0)
-               && tokens.OperatorToken(1, OperatorType.OpenParentheses);
+               && tokens.IsOperatorToken(1, OperatorType.OpenParentheses);
     }
 
     public override IEnumerable<INode> GetChildren()

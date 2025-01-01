@@ -42,7 +42,7 @@ public class BracketedExpression : Expression
     {
         return tokens.Length > 1
                && tokens.IsTokenType<StringLiteralToken>(0)
-               && tokens.OperatorToken(1, OperatorType.OpenBrackets);
+               && tokens.IsOperatorToken(1, OperatorType.OpenBrackets);
     }
 
     private static int FindMatchingClosingBracket(TokenList tokens)

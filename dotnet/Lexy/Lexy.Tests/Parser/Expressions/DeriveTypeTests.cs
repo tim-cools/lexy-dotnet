@@ -70,8 +70,7 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     {
         var type = DeriveType(@"a", context =>
         {
-            var reference = new SourceReference(new SourceFile("tests.lexy"), 1, 1);
-            context.VariableContext.RegisterVariableAndVerifyUnique(reference, "a", PrimitiveType.String,
+            context.VariableContext.RegisterVariableAndVerifyUnique(NewReference(), "a", PrimitiveType.String,
                 VariableSource.Results);
         });
 
@@ -83,8 +82,7 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     {
         var type = DeriveType(@"a", context =>
         {
-            var reference = new SourceReference(new SourceFile("tests.lexy"), 1, 1);
-            context.VariableContext.RegisterVariableAndVerifyUnique(reference, "a", PrimitiveType.Number,
+            context.VariableContext.RegisterVariableAndVerifyUnique(NewReference(), "a", PrimitiveType.Number,
                 VariableSource.Results);
         });
         type.ShouldBe(PrimitiveType.Number);
@@ -95,8 +93,7 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     {
         var type = DeriveType(@"a", context =>
         {
-            var reference = new SourceReference(new SourceFile("tests.lexy"), 1, 1);
-            context.VariableContext.RegisterVariableAndVerifyUnique(reference, "a", PrimitiveType.Boolean,
+            context.VariableContext.RegisterVariableAndVerifyUnique(NewReference(), "a", PrimitiveType.Boolean,
                 VariableSource.Results);
         });
         type.ShouldBe(PrimitiveType.Boolean);
@@ -107,8 +104,7 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     {
         var type = DeriveType(@"a", context =>
         {
-            var reference = new SourceReference(new SourceFile("tests.lexy"), 1, 1);
-            context.VariableContext.RegisterVariableAndVerifyUnique(reference, "a", PrimitiveType.Date,
+            context.VariableContext.RegisterVariableAndVerifyUnique(NewReference(), "a", PrimitiveType.Date,
                 VariableSource.Results);
         });
         type.ShouldBe(PrimitiveType.Date);
@@ -119,8 +115,7 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     {
         var type = DeriveType(@"a + ""bc""", context =>
         {
-            var reference = new SourceReference(new SourceFile("tests.lexy"), 1, 1);
-            context.VariableContext.RegisterVariableAndVerifyUnique(reference, "a", PrimitiveType.String,
+            context.VariableContext.RegisterVariableAndVerifyUnique(NewReference(), "a", PrimitiveType.String,
                 VariableSource.Results);
         });
         type.ShouldBe(PrimitiveType.String);
@@ -131,8 +126,7 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     {
         var type = DeriveType(@"a + 20", context =>
         {
-            var reference = new SourceReference(new SourceFile("tests.lexy"), 1, 1);
-            context.VariableContext.RegisterVariableAndVerifyUnique(reference, "a", PrimitiveType.Number,
+            context.VariableContext.RegisterVariableAndVerifyUnique(NewReference(), "a", PrimitiveType.Number,
                 VariableSource.Results);
         });
         type.ShouldBe(PrimitiveType.Number);
@@ -143,11 +137,15 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     {
         var type = DeriveType(@"(a + 20.05) * 3", context =>
         {
-            var reference = new SourceReference(new SourceFile("tests.lexy"), 1, 1);
-            context.VariableContext.RegisterVariableAndVerifyUnique(reference, "a", PrimitiveType.Number,
+            context.VariableContext.RegisterVariableAndVerifyUnique(NewReference(), "a", PrimitiveType.Number,
                 VariableSource.Results);
         });
         type.ShouldBe(PrimitiveType.Number);
+    }
+
+    private static SourceReference NewReference()
+    {
+        return new SourceReference(new SourceFile("tests.lexy"), 1, 1);
     }
 
     private VariableType DeriveType(string expressionValue, Action<IValidationContext> validationContextHandler = null)

@@ -52,11 +52,11 @@ public class VariableDeclarationExpression : Expression
                || tokens.Length >= 4
                && tokens.IsKeyword(0, Keywords.ImplicitVariableDeclaration)
                && tokens.IsTokenType<StringLiteralToken>(1)
-               && tokens.OperatorToken(2, OperatorType.Assignment)
+               && tokens.IsOperatorToken(2, OperatorType.Assignment)
                || tokens.Length >= 4
                && tokens.IsTokenType<StringLiteralToken>(0)
                && tokens.IsTokenType<StringLiteralToken>(1)
-               && tokens.OperatorToken(2, OperatorType.Assignment);
+               && tokens.IsOperatorToken(2, OperatorType.Assignment);
     }
 
     public override IEnumerable<INode> GetChildren()

@@ -61,7 +61,7 @@ public class ParenthesizedExpression : Expression
 
     public static bool IsValid(TokenList tokens)
     {
-        return tokens.OperatorToken(0, OperatorType.OpenParentheses);
+        return tokens.IsOperatorToken(0, OperatorType.OpenParentheses);
     }
 
     public override IEnumerable<INode> GetChildren()

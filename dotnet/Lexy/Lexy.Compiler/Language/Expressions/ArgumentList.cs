@@ -18,6 +18,7 @@ public static class ArgumentList
         var countParentheses = 0;
         var countBrackets = 0;
         foreach (var token in tokens)
+        {
             if (token is OperatorToken operatorToken)
             {
                 switch (operatorToken.Type)
@@ -53,6 +54,7 @@ public static class ArgumentList
             {
                 argumentTokens.Add(token);
             }
+        }
 
         if (argumentTokens.Count == 0)
             return ArgumentTokenParseResult.Failed(@"Invalid token ','. No tokens before comma.");

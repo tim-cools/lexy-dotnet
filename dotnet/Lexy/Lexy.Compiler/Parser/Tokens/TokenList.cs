@@ -97,7 +97,7 @@ public class TokenList : IEnumerable<Token>
                && (values[index] as KeywordToken)?.Value == keyword;
     }
 
-    public bool OperatorToken(int index, OperatorType type)
+    public bool IsOperatorToken(int index, OperatorType type)
     {
         return index >= 0
                && index <= values.Length - 1

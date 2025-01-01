@@ -39,7 +39,7 @@ public class AssignmentExpression : Expression
     {
         return tokens.Length >= 3
                && (tokens.IsTokenType<StringLiteralToken>(0) || tokens.IsTokenType<MemberAccessLiteral>(0))
-               && tokens.OperatorToken(1, OperatorType.Assignment);
+               && tokens.IsOperatorToken(1, OperatorType.Assignment);
     }
 
     public override IEnumerable<INode> GetChildren()
