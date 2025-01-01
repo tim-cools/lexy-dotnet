@@ -1,4 +1,4 @@
-namespace Lexy.Compiler.Language.Expressions;
+namespace Lexy.Compiler.Language;
 
 public abstract class ParseResult<T>
 {
