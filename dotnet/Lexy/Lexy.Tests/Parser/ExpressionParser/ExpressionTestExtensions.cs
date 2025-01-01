@@ -14,7 +14,7 @@ public static class ExpressionTestExtensions
         var specificValue = value as T;
         if (specificValue == null)
             throw new InvalidOperationException(
-                $"Value '{value.GetType().Name}' should be of type ‘{typeof(T).Name}'");
+                $"Value '{value.GetType().Name}' should be of type '{typeof(T).Name}'");
 
         validate(specificValue);
     }

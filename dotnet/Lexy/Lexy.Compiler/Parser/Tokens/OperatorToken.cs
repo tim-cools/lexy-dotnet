@@ -65,6 +65,7 @@ public class OperatorToken : ParsableToken
                     && combination.FirstChar == Value[0])
                 {
                     Type = combination.Type;
+                    AppendValue(value);
                     return ParseTokenResult.Finished(true);
                 }
             }
