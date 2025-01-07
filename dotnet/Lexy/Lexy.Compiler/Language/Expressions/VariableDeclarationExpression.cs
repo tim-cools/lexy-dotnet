@@ -69,10 +69,15 @@ public class VariableDeclarationExpression : Expression
     {
         var assignmentType = Assignment?.DeriveType(context);
         if (Assignment != null && assignmentType == null)
+        {
             context.Logger.Fail(Reference, "Invalid expression. Could not derive type.");
+        }
 
         var variableType = GetVariableType(context, assignmentType);
-        if (variableType == null) context.Logger.Fail(Reference, $"Invalid variable type '{Type}'");
+        if (variableType == null)
+        {
+            context.Logger.Fail(Reference, $"Invalid variable type '{Type}'");
+        }
 
         context.VariableContext.RegisterVariableAndVerifyUnique(Reference, Name, variableType, VariableSource.Code);
     }

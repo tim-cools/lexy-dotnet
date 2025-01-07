@@ -16,11 +16,6 @@ internal abstract class NoArgumentFunctionCall : FunctionCall
         Function = function;
     }
 
-    public override MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context)
-    {
-        return null;
-    }
-
     public override ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context)
     {
         return SyntaxFactory.InvocationExpression(

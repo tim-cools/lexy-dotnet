@@ -12,8 +12,7 @@ internal class SimpleLexyFunctionFunctionExpressionStatementException : IExpress
 {
     public bool Matches(Expression expression)
     {
-        return expression is FunctionCallExpression functionCallExpression
-               && functionCallExpression.ExpressionFunction is LexyFunction;
+        return expression is FunctionCallExpression { ExpressionFunction: LexyFunction };
     }
 
     public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression, ICompileFunctionContext context)

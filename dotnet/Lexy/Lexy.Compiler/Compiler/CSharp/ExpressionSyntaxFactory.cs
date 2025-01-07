@@ -5,7 +5,6 @@ using Lexy.Compiler.Compiler.CSharp.ExpressionStatementExceptions;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
 using Lexy.Compiler.Language.VariableTypes;
-using Lexy.Compiler.Parser;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

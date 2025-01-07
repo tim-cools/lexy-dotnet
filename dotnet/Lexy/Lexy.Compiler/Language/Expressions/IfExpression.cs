@@ -62,8 +62,10 @@ public class IfExpression : Expression, IParsableNode, IParentExpression
     {
         var type = Condition.DeriveType(context);
         if (type == null || !type.Equals(PrimitiveType.Boolean))
+        {
             context.Logger.Fail(Reference,
                 $"'if' condition expression should be 'boolean', is of wrong type '{type}'.");
+        }
     }
 
     public void LinkChildExpression(IChildExpression expression)

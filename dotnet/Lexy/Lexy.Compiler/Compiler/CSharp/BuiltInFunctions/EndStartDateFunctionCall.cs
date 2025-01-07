@@ -14,11 +14,6 @@ internal abstract class EndStartDateFunctionCall : MethodFunctionCall
         Function = function;
     }
 
-    public override MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context)
-    {
-        return null;
-    }
-
     protected override SeparatedSyntaxList<ArgumentSyntax> GetArguments(ICompileFunctionContext context)
     {
         return SyntaxFactory.SeparatedList<ArgumentSyntax>(

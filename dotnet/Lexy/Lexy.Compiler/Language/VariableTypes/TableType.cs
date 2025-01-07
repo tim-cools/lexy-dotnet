@@ -54,11 +54,4 @@ public class TableType : TypeWithMembers
         var complexType = context.RootNodes.GetTable(Type)?.GetRowType(context);
         return new TableRowType(Type, complexType);
     }
-
-    private IEnumerable<ComplexTypeMember> GetMembers(IValidationContext context)
-    {
-        return Table.Header.Columns.Select(column =>
-                new ComplexTypeMember(column.Name, column.Type.CreateVariableType(context)))
-            .ToList();
-    }
 }

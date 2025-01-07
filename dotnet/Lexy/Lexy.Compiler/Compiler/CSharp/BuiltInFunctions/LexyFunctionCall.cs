@@ -14,11 +14,6 @@ internal class LexyFunctionCall : FunctionCall
         ExpressionFunction = expressionFunction;
     }
 
-    public override MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context)
-    {
-        return null;
-    }
-
     public override ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context)
     {
         return RunFunction(ExpressionFunction.FunctionName, ExpressionFunction.VariableName);

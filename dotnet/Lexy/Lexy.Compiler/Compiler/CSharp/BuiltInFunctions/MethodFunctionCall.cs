@@ -17,11 +17,6 @@ internal abstract class MethodFunctionCall : FunctionCall
         Function = function;
     }
 
-    public override MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context)
-    {
-        return null;
-    }
-
     public override ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context)
     {
         var arguments = GetArguments(context);

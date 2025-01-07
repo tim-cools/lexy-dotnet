@@ -11,7 +11,7 @@ public class RunLexySpecifications : ScopedServicesTestFixture
         LoggingConfiguration.LogFileNames();
 
         var runner = GetService<ISpecificationsRunner>();
-        runner.RunAll("../../../../../../laws/Specifications");
+        runner.RunAll("../../../../../../laws/specifications");
     }
 
     [Test]

@@ -14,6 +14,13 @@ internal abstract class FunctionCall
         ExpressionFunction = expressionFunction ?? throw new ArgumentNullException(nameof(expressionFunction));
     }
 
+    public virtual MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context)
+    {
+        return null;
+    }
+
+    public abstract ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context);
+
     public static FunctionCall Create(FunctionCallExpression expression)
     {
         return expression.ExpressionFunction switch
@@ -48,8 +55,4 @@ internal abstract class FunctionCall
             _ => null
         };
     }
-
-    public abstract MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context);
-
-    public abstract ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context);
 }
