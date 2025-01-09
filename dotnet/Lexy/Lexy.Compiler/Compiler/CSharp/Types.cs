@@ -68,25 +68,16 @@ internal static class Types
             EnumType enumType => IdentifierName(ClassNames.EnumClassName(enumType.Type)),
             TableType tableType => IdentifierName(tableType.Type),
             ComplexType complexType => ComplexTypeSyntax(complexType),
-            ComplexTypeReference complexTypeReference => ComplexTypeReferenceSyntax(complexTypeReference),
-            _ => throw new InvalidOperationException("Couldn't map type: " + variableType)
-        };
-    }
-
-    private static TypeSyntax ComplexTypeReferenceSyntax(ComplexTypeReference complexTypeReference)
-    {
-        return complexTypeReference switch
-        {
-            FunctionParametersType _ => QualifiedName(
+            FunctionParametersType complexTypeReference => QualifiedName(
                 IdentifierName(ClassNames.FunctionClassName(complexTypeReference.Name)),
                 IdentifierName(LexyCodeConstants.ParametersType)),
-            FunctionResultsType _ => QualifiedName(
+            FunctionResultsType complexTypeReference => QualifiedName(
                 IdentifierName(ClassNames.FunctionClassName(complexTypeReference.Name)),
                 IdentifierName(LexyCodeConstants.ResultsType)),
-            TableRowType _ => QualifiedName(
+            TableRowType complexTypeReference => QualifiedName(
                 IdentifierName(ClassNames.TableClassName(complexTypeReference.Name)),
                 IdentifierName(LexyCodeConstants.RowType)),
-            _ => throw new InvalidOperationException($"Invalid type: {complexTypeReference?.GetType()}")
+            _ => throw new InvalidOperationException("Couldn't map type: " + variableType)
         };
     }
 

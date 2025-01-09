@@ -15,7 +15,7 @@ public class FunctionResult
 
     public decimal Number(string name)
     {
-        var value = GetValue(new VariableReference(name));
+        var value = GetValue(VariableReference.Parse(name));
         return (decimal)value;
     }
 
@@ -25,6 +25,11 @@ public class FunctionResult
         var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public);
         if (field == null) throw new InvalidOperationException($"Couldn't find field: '{name}' on type: '{type.Name}'");
         return field;
+    }
+
+    public object GetValue(string value)
+    {
+        return GetValue(VariableReference.Parse(value));
     }
 
     public object GetValue(VariableReference expectedVariable)

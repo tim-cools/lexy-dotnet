@@ -5,21 +5,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-internal abstract class MethodFunctionCall : FunctionCall
+internal abstract class MethodFunctionCall<TExpressionFunction> : FunctionCall<TExpressionFunction>
+    where TExpressionFunction : ExpressionFunction
 {
-    public ExpressionFunction Function { get; }
-
     protected abstract string ClassName { get; }
     protected abstract string MethodName { get; }
 
-    protected MethodFunctionCall(ExpressionFunction function) : base(function)
+    public override ExpressionSyntax CallExpressionSyntax(TExpressionFunction expressionFunction)
     {
-        Function = function;
-    }
-
-    public override ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context)
-    {
-        var arguments = GetArguments(context);
+        var arguments = GetArguments(expressionFunction);
 
         return SyntaxFactory.InvocationExpression(
                 SyntaxFactory.MemberAccessExpression(
@@ -29,5 +23,5 @@ internal abstract class MethodFunctionCall : FunctionCall
             .WithArgumentList(SyntaxFactory.ArgumentList(arguments));
     }
 
-    protected abstract SeparatedSyntaxList<ArgumentSyntax> GetArguments(ICompileFunctionContext context);
+    protected abstract SeparatedSyntaxList<ArgumentSyntax> GetArguments(TExpressionFunction powerFunction);
 }

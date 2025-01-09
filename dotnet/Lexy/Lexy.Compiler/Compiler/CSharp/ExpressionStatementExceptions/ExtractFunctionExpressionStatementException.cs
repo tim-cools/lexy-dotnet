@@ -18,7 +18,7 @@ internal class ExtractFunctionExpressionStatementException : IExpressionStatemen
                && functionCallExpression.ExpressionFunction is ExtractResultsFunction;
     }
 
-    public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression, ICompileFunctionContext context)
+    public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression)
     {
         if (!(expression is FunctionCallExpression functionCallExpression))
             throw new InvalidOperationException("expression should be FunctionCallExpression");

@@ -3,12 +3,8 @@ using Lexy.RunTime;
 
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-internal class HoursFunctionCall : EndStartDateFunctionCall
+internal class HoursFunctionCall : EndStartDateFunctionCall<HoursFunction>
 {
     protected override string ClassName => nameof(BuiltInDateFunctions);
     protected override string MethodName => nameof(BuiltInDateFunctions.Hours);
-
-    public HoursFunctionCall(HoursFunction function) : base(function)
-    {
-    }
 }

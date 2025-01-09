@@ -7,23 +7,13 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-internal class LookUpRowFunctionCall : FunctionCall
+internal class LookUpRowFunctionCall : FunctionCall<LookupRowFunction>
 {
-    private readonly string methodName;
-
-    public LookupRowFunction LookupFunction { get; }
-
-    public LookUpRowFunctionCall(LookupRowFunction lookupFunction) : base(lookupFunction)
+    public override MemberDeclarationSyntax CustomMethodSyntax(LookupRowFunction lookupFunction)
     {
-        LookupFunction = lookupFunction;
-        methodName =
-            $"__LookUp{lookupFunction.Table}RowBy{lookupFunction.SearchValueColumn.Member}";
-    }
-
-    public override MemberDeclarationSyntax CustomMethodSyntax(ICompileFunctionContext context)
-    {
+        var methodName = MethodName(lookupFunction);
         return MethodDeclaration(
-                Types.Syntax(LookupFunction.RowType),
+                Types.Syntax(lookupFunction.RowType),
                 Identifier(methodName))
             .WithModifiers(Modifiers.PrivateStatic())
             .WithParameterList(
@@ -32,7 +22,7 @@ internal class LookUpRowFunctionCall : FunctionCall
                         new SyntaxNodeOrToken[]
                         {
                             Parameter(Identifier("condition"))
-                                .WithType(Types.Syntax(LookupFunction.SearchValueColumnType)),
+                                .WithType(Types.Syntax(lookupFunction.SearchValueColumnType)),
                             Token(SyntaxKind.CommaToken),
                             Parameter(Identifier(LexyCodeConstants.ContextVariable))
                                 .WithType(IdentifierName("IExecutionContext"))
@@ -51,34 +41,39 @@ internal class LookUpRowFunctionCall : FunctionCall
                                         SeparatedList<ArgumentSyntax>(
                                             new SyntaxNodeOrToken[]
                                             {
-                                                Arguments.String(LookupFunction.SearchValueColumn.Member),
+                                                Arguments.String(lookupFunction.SearchValueColumn.Member),
                                                 Token(SyntaxKind.CommaToken),
-                                                Arguments.String(LookupFunction.Table),
+                                                Arguments.String(lookupFunction.Table),
                                                 Token(SyntaxKind.CommaToken),
-                                                Arguments.MemberAccess(ClassNames.TableClassName(LookupFunction.Table),
+                                                Arguments.MemberAccess(ClassNames.TableClassName(lookupFunction.Table),
                                                     "Values"),
                                                 Token(SyntaxKind.CommaToken),
                                                 Argument(IdentifierName("condition")),
                                                 Token(SyntaxKind.CommaToken),
                                                 Arguments.MemberAccessLambda("row",
-                                                    LookupFunction.SearchValueColumn.Member),
+                                                    lookupFunction.SearchValueColumn.Member),
                                                 Token(SyntaxKind.CommaToken),
                                                 Argument(IdentifierName(LexyCodeConstants.ContextVariable))
                                             })))))));
     }
 
-    public override ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context)
+    public override ExpressionSyntax CallExpressionSyntax(LookupRowFunction lookupFunction)
     {
+        var methodName = MethodName(lookupFunction);
         return InvocationExpression(IdentifierName(methodName))
             .WithArgumentList(
                 ArgumentList(
                     SeparatedList<ArgumentSyntax>(
                         new SyntaxNodeOrToken[]
                         {
-                            Argument(ExpressionSyntaxFactory.ExpressionSyntax(LookupFunction.ValueExpression,
-                                context)),
+                            Argument(ExpressionSyntaxFactory.ExpressionSyntax(lookupFunction.ValueExpression)),
                             Token(SyntaxKind.CommaToken),
                             Argument(IdentifierName(LexyCodeConstants.ContextVariable))
                         })));
+    }
+
+    private static string MethodName(LookupRowFunction lookupFunction)
+    {
+        return $"__LookUp{lookupFunction.Table}RowBy{lookupFunction.SearchValueColumn.Member}";
     }
 }

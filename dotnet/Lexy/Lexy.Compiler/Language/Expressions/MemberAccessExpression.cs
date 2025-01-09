@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
-using Lexy.RunTime;
 
 namespace Lexy.Compiler.Language.Expressions;
 
 public class MemberAccessExpression : Expression, IHasNodeDependencies
 {
     public MemberAccessLiteral MemberAccessLiteral { get; }
-
     public VariableReference Variable { get; }
+
     public VariableType VariableType { get; private set; }
-    public VariableType RootType { get; private set; }
+    public VariableType ParentVariableType { get; private set; }
     public VariableSource VariableSource { get; private set; }
 
     private MemberAccessExpression(VariableReference variable, MemberAccessLiteral literal, ExpressionSource source,
@@ -58,19 +56,24 @@ public class MemberAccessExpression : Expression, IHasNodeDependencies
     protected override void Validate(IValidationContext context)
     {
         VariableType = context.VariableContext.GetVariableType(Variable, context);
-        RootType = context.RootNodes.GetType(Variable.ParentIdentifier);
+        ParentVariableType = context.RootNodes.GetType(Variable.ParentIdentifier);
 
         SetVariableSource(context);
 
         if (VariableType != null) return;
 
-        if (VariableType == null && RootType == null)
+        ValidateMemberType(context);
+    }
+
+    private void ValidateMemberType(IValidationContext context)
+    {
+        if (VariableType == null && ParentVariableType == null)
         {
             context.Logger.Fail(Reference, $"Invalid member access '{Variable}'. Variable '{Variable}' not found.");
             return;
         }
 
-        if (RootType is not ITypeWithMembers typeWithMembers)
+        if (ParentVariableType is not ITypeWithMembers typeWithMembers)
         {
             context.Logger.Fail(Reference,
                 $"Invalid member access '{Variable}'. Variable '{Variable.ParentIdentifier}' not found.");
@@ -87,7 +90,7 @@ public class MemberAccessExpression : Expression, IHasNodeDependencies
 
     private void SetVariableSource(IValidationContext context)
     {
-        if (RootType != null)
+        if (ParentVariableType != null)
         {
             VariableSource = VariableSource.Type;
             return;

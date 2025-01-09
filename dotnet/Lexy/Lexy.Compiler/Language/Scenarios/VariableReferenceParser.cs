@@ -19,7 +19,7 @@ public static class VariableReferenceParser
             MemberAccessExpression memberAccessExpression => Parse(memberAccessExpression),
             LiteralExpression literalExpression => Parse(literalExpression),
             IdentifierExpression literalExpression => VariableReferenceParseResult.Success(
-                new VariableReference(literalExpression.Identifier)),
+                VariableReference.Parse(literalExpression.Identifier)),
             _ => VariableReferenceParseResult.Failed("Invalid constant value. Expected: 'Variable = ConstantValue'")
         };
     }
@@ -29,7 +29,7 @@ public static class VariableReferenceParser
         return literalExpression.Literal switch
         {
             StringLiteralToken stringLiteral => VariableReferenceParseResult.Success(
-                new VariableReference(stringLiteral.Value)),
+                VariableReference.Parse(stringLiteral.Value)),
             _ => VariableReferenceParseResult.Failed("Invalid expression literal. Expected: 'Variable = ConstantValue'")
         };
     }

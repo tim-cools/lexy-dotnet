@@ -15,7 +15,7 @@ internal class SimpleLexyFunctionFunctionExpressionStatementException : IExpress
         return expression is FunctionCallExpression { ExpressionFunction: LexyFunction };
     }
 
-    public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression, ICompileFunctionContext context)
+    public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression)
     {
         if (!(expression is FunctionCallExpression functionCallExpression))
             throw new InvalidOperationException("expression should be FunctionCallExpression");

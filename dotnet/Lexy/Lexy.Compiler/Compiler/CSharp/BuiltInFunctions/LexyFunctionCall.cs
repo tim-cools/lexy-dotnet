@@ -5,18 +5,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-internal class LexyFunctionCall : FunctionCall
+internal class LexyFunctionCall : FunctionCall<LexyFunction>
 {
-    public LexyFunction ExpressionFunction { get; }
-
-    public LexyFunctionCall(LexyFunction expressionFunction) : base(expressionFunction)
+    public override ExpressionSyntax CallExpressionSyntax(LexyFunction expression)
     {
-        ExpressionFunction = expressionFunction;
-    }
-
-    public override ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context)
-    {
-        return RunFunction(ExpressionFunction.FunctionName, ExpressionFunction.VariableName);
+        return RunFunction(expression.FunctionName, expression.VariableName);
     }
 
     public static InvocationExpressionSyntax RunFunction(string functionName, string variableName)

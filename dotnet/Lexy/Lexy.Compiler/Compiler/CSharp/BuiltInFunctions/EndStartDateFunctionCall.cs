@@ -5,23 +5,17 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-internal abstract class EndStartDateFunctionCall : MethodFunctionCall
+internal abstract class EndStartDateFunctionCall<TExpressionFunction> : MethodFunctionCall<TExpressionFunction>
+    where TExpressionFunction : EndStartDateFunction
 {
-    public EndStartDateFunction Function { get; }
-
-    protected EndStartDateFunctionCall(EndStartDateFunction function) : base(function)
-    {
-        Function = function;
-    }
-
-    protected override SeparatedSyntaxList<ArgumentSyntax> GetArguments(ICompileFunctionContext context)
+    protected override SeparatedSyntaxList<ArgumentSyntax> GetArguments(TExpressionFunction powerFunction)
     {
         return SyntaxFactory.SeparatedList<ArgumentSyntax>(
             new SyntaxNodeOrToken[]
             {
-                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(Function.EndDateExpression, context)),
+                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(powerFunction.EndDateExpression)),
                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(Function.StartDateExpression, context))
+                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(powerFunction.StartDateExpression))
             });
     }
 }

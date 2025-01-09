@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 using Lexy.Compiler.Compiler.CSharp.ExpressionStatementExceptions;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
@@ -43,14 +44,12 @@ internal static class ExpressionSyntaxFactory
             new SimpleLexyFunctionFunctionExpressionStatementException()
         };
 
-    private static IEnumerable<StatementSyntax> ExecuteExpressionStatementSyntax(IEnumerable<Expression> lines,
-        ICompileFunctionContext context)
+    private static IEnumerable<StatementSyntax> ExecuteExpressionStatementSyntax(IEnumerable<Expression> lines)
     {
-        return lines.SelectMany(expression => ExecuteStatementSyntax(expression, context)).ToList();
+        return lines.SelectMany(ExecuteStatementSyntax).ToList();
     }
 
-    public static StatementSyntax[] ExecuteStatementSyntax(Expression expression,
-        ICompileFunctionContext context)
+    public static StatementSyntax[] ExecuteStatementSyntax(Expression expression)
     {
         var statements = new List<StatementSyntax>
         {
@@ -69,40 +68,37 @@ internal static class ExpressionSyntaxFactory
                                         Literal(expression.Source.Line.ToString())))))))
         };
 
-        statements.AddRange(ExpressionStatementSyntax(expression, context));
+        statements.AddRange(ExpressionStatementSyntax(expression));
 
         return statements.ToArray();
     }
 
-    private static IEnumerable<StatementSyntax> ExpressionStatementSyntax(Expression expression,
-        ICompileFunctionContext context)
+    private static IEnumerable<StatementSyntax> ExpressionStatementSyntax(Expression expression)
     {
         var renderExpressionStatementException =
             RenderStatementExceptions.FirstOrDefault(exception => exception.Matches(expression));
 
         return renderExpressionStatementException != null
-            ? renderExpressionStatementException.CallExpressionSyntax(expression, context)
-            : DefaultExpressionStatementSyntax(expression, context);
+            ? renderExpressionStatementException.CallExpressionSyntax(expression)
+            : DefaultExpressionStatementSyntax(expression);
     }
 
-    private static IEnumerable<StatementSyntax> DefaultExpressionStatementSyntax(Expression expression,
-        ICompileFunctionContext context)
+    private static IEnumerable<StatementSyntax> DefaultExpressionStatementSyntax(Expression expression)
     {
         yield return expression switch
         {
-            AssignmentExpression assignment => TranslateAssignmentExpression(assignment, context),
+            AssignmentExpression assignment => TranslateAssignmentExpression(assignment),
             VariableDeclarationExpression variableDeclarationExpression => TranslateVariableDeclarationExpression(
-                variableDeclarationExpression, context),
-            IfExpression ifExpression => TranslateIfExpression(ifExpression, context),
-            SwitchExpression switchExpression => TranslateSwitchExpression(switchExpression, context),
+                variableDeclarationExpression),
+            IfExpression ifExpression => TranslateIfExpression(ifExpression),
+            SwitchExpression switchExpression => TranslateSwitchExpression(switchExpression),
             FunctionCallExpression functionCallExpression => ExpressionStatement(
-                TranslateFunctionCallExpression(functionCallExpression, context)),
+                TranslateFunctionCallExpression(functionCallExpression)),
             _ => throw new InvalidOperationException($"Wrong expression type {expression.GetType()}: {expression}")
         };
     }
 
-    private static StatementSyntax TranslateSwitchExpression(SwitchExpression switchExpression,
-        ICompileFunctionContext context)
+    private static StatementSyntax TranslateSwitchExpression(SwitchExpression switchExpression)
     {
         var cases = switchExpression.Cases
             .Select(expression =>
@@ -110,56 +106,53 @@ internal static class ExpressionSyntaxFactory
                     .WithLabels(
                         SingletonList(
                             !expression.IsDefault
-                                ? CaseSwitchLabel(ExpressionSyntax(expression.Value, context))
+                                ? CaseSwitchLabel(ExpressionSyntax(expression.Value))
                                 : (SwitchLabelSyntax)DefaultSwitchLabel()))
                     .WithStatements(
                         List(
                             new StatementSyntax[]
                             {
-                                Block(List(ExecuteExpressionStatementSyntax(expression.Expressions, context))),
+                                Block(List(ExecuteExpressionStatementSyntax(expression.Expressions))),
                                 BreakStatement()
                             })))
             .ToList();
 
-        return SwitchStatement(ExpressionSyntax(switchExpression.Condition, context))
+        return SwitchStatement(ExpressionSyntax(switchExpression.Condition))
             .WithSections(List(cases));
     }
 
-    private static StatementSyntax TranslateIfExpression(IfExpression ifExpression,
-        ICompileFunctionContext context)
+    private static StatementSyntax TranslateIfExpression(IfExpression ifExpression)
     {
         var elseStatement = ifExpression.Else != null
             ? ElseClause(
                 Block(
                     List(
-                        ExecuteExpressionStatementSyntax(ifExpression.Else.FalseExpressions, context))))
+                        ExecuteExpressionStatementSyntax(ifExpression.Else.FalseExpressions))))
             : null;
 
         var ifStatement = IfStatement(
-            ExpressionSyntax(ifExpression.Condition, context),
+            ExpressionSyntax(ifExpression.Condition),
             Block(
-                List(ExecuteExpressionStatementSyntax(ifExpression.TrueExpressions, context))));
+                List(ExecuteExpressionStatementSyntax(ifExpression.TrueExpressions))));
 
         return elseStatement != null ? ifStatement.WithElse(elseStatement) : ifStatement;
     }
 
-    private static ExpressionStatementSyntax TranslateAssignmentExpression(AssignmentExpression assignment,
-        ICompileFunctionContext context)
+    private static ExpressionStatementSyntax TranslateAssignmentExpression(AssignmentExpression assignment)
     {
         return ExpressionStatement(
             AssignmentExpression(
                 SyntaxKind.SimpleAssignmentExpression,
-                ExpressionSyntax(assignment.Variable, context),
-                ExpressionSyntax(assignment.Assignment, context)));
+                ExpressionSyntax(assignment.Variable),
+                ExpressionSyntax(assignment.Assignment)));
     }
 
-    private static StatementSyntax TranslateVariableDeclarationExpression(VariableDeclarationExpression expression,
-        ICompileFunctionContext context)
+    private static StatementSyntax TranslateVariableDeclarationExpression(VariableDeclarationExpression expression)
     {
         var typeSyntax = Types.Syntax(expression.Type);
 
         var initialize = expression.Assignment != null
-            ? ExpressionSyntax(expression.Assignment, context)
+            ? ExpressionSyntax(expression.Assignment)
             : Types.TypeDefaultExpression(expression.Type);
 
         var variable = VariableDeclarator(Identifier(expression.Name))
@@ -177,21 +170,9 @@ internal static class ExpressionSyntaxFactory
             LiteralExpression expression => TokenValuesSyntax.Expression(expression.Literal),
             IdentifierExpression expression => IdentifierNameSyntax(expression),
             MemberAccessExpression expression => TranslateMemberAccessExpression(expression),
-            _ => throw new InvalidOperationException($"Wrong expression type {line?.GetType()}: {line}")
-        };
-    }
-
-    public static ExpressionSyntax ExpressionSyntax(Expression line, ICompileFunctionContext context)
-    {
-        return line switch
-        {
-            LiteralExpression expression => TokenValuesSyntax.Expression(expression.Literal),
-            IdentifierExpression expression => IdentifierNameSyntax(expression),
-            MemberAccessExpression expression => TranslateMemberAccessExpression(expression),
-            BinaryExpression expression => TranslateBinaryExpression(expression, context),
-            ParenthesizedExpression expression => ParenthesizedExpression(ExpressionSyntax(expression.Expression,
-                context)),
-            FunctionCallExpression expression => TranslateFunctionCallExpression(expression, context),
+            BinaryExpression expression => TranslateBinaryExpression(expression),
+            ParenthesizedExpression expression => ParenthesizedExpression(ExpressionSyntax(expression.Expression)),
+            FunctionCallExpression expression => TranslateFunctionCallExpression(expression),
             _ => throw new InvalidOperationException($"Wrong expression type {line.GetType()}: {line}")
         };
     }
@@ -227,24 +208,18 @@ internal static class ExpressionSyntaxFactory
         }
     }
 
-    private static ExpressionSyntax TranslateFunctionCallExpression(FunctionCallExpression expression,
-        ICompileFunctionContext context)
+    private static ExpressionSyntax TranslateFunctionCallExpression(FunctionCallExpression expression)
     {
-        var functionCall = context.Get(expression.ExpressionFunction);
-        if (functionCall == null)
-            throw new InvalidOperationException($"Function call not found: {expression.FunctionName}");
-
-        return functionCall.CallExpressionSyntax(context);
+        return FunctionCallFactory.CallExpressionSyntax(expression.ExpressionFunction);
     }
 
-    private static ExpressionSyntax TranslateBinaryExpression(BinaryExpression expression,
-        ICompileFunctionContext context)
+    private static ExpressionSyntax TranslateBinaryExpression(BinaryExpression expression)
     {
         var kind = Translate(expression.Operator);
         return BinaryExpression(
             kind,
-            ExpressionSyntax(expression.Left, context),
-            ExpressionSyntax(expression.Right, context));
+            ExpressionSyntax(expression.Left),
+            ExpressionSyntax(expression.Right));
     }
 
     private static SyntaxKind Translate(ExpressionOperator expressionOperator)
@@ -282,7 +257,7 @@ internal static class ExpressionSyntaxFactory
 
     private static string VariableClassName(MemberAccessExpression expression, VariableReference reference)
     {
-        return expression.RootType switch
+        return expression.ParentVariableType switch
         {
             TableType _ => ClassNames.TableClassName(reference.ParentIdentifier),
             FunctionType _ => ClassNames.FunctionClassName(reference.ParentIdentifier),

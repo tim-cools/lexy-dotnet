@@ -102,4 +102,68 @@ Function: ValidateTableKeywordFunction
         var result = script.Run();
         result.Number("Result").ShouldBe(5);
     }
+
+
+    [Test]
+    public void VariableDeclarationWithDefaultEnumInCode()
+    {
+        using var script = ServiceProvider.CompileFunction(@"
+Enum: SimpleEnum
+  First
+  Second
+    
+Function: TestSimpleReturn
+  Results
+    SimpleEnum Result
+  Code
+    Result = SimpleEnum.Second
+");
+        var result = script.Run();
+        result.GetValue("Result").ToString().ShouldBe("Second");
+    }
+
+    [Test]
+    public void CustomType()
+    {
+        using var script = ServiceProvider.CompileFunction(@"
+Type: SimpleComplex
+  number First
+  string Second
+    
+Function: TestCustomType
+  Results
+    SimpleComplex Result
+  Code
+    Result.First = 777
+    Result.Second = ""123""
+");
+        var result = script.Run();
+        var value = result.GetValue("Result") as dynamic;
+        ((int) value.First).ShouldBe(777);
+        ((string)value.Second).ShouldBe("123");
+    }
+
+    [Test]
+    public void CustomTypeNestedProperties()
+    {
+        using var script = ServiceProvider.CompileFunction(@"
+Type: InnerComplex
+  number First
+  string Second
+    
+Type: SimpleComplex
+  InnerComplex Inner
+    
+Function: TestCustomType
+  Results
+    SimpleComplex Result
+  Code
+    Result.Inner.First = 777
+    Result.Inner.Second = ""123""
+");
+        var result = script.Run();
+        var value = result.GetValue("Result") as dynamic;
+        ((int) value.Inner.First).ShouldBe(777);
+        ((string) value.Inner.Second).ShouldBe("123");
+    }
 }

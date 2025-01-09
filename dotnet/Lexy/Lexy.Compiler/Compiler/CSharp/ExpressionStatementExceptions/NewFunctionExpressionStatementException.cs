@@ -16,7 +16,7 @@ internal class NewFunctionExpressionStatementException : IExpressionStatementExc
                && functionCallExpression.ExpressionFunction is NewFunction;
     }
 
-    public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression, ICompileFunctionContext context)
+    public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression)
     {
         if (!(expression is VariableDeclarationExpression assignmentExpression))
             throw new InvalidOperationException("expression should be VariableDeclarationExpression");

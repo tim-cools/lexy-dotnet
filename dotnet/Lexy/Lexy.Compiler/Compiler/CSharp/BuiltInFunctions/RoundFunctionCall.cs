@@ -6,28 +6,21 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-internal class RoundFunctionCall : MethodFunctionCall
+internal class RoundFunctionCall : MethodFunctionCall<RoundFunction>
 {
-    public RoundFunction RoundFunction { get; }
-
     protected override string ClassName => nameof(BuiltInNumberFunctions);
     protected override string MethodName => nameof(BuiltInNumberFunctions.Round);
 
-    public RoundFunctionCall(RoundFunction function) : base(function)
-    {
-        RoundFunction = function;
-    }
-
-    protected override SeparatedSyntaxList<ArgumentSyntax> GetArguments(ICompileFunctionContext context)
+    protected override SeparatedSyntaxList<ArgumentSyntax> GetArguments(RoundFunction roundFunction)
     {
         return SyntaxFactory.SeparatedList<ArgumentSyntax>(
             new SyntaxNodeOrToken[]
             {
                 SyntaxFactory.Argument(
-                    ExpressionSyntaxFactory.ExpressionSyntax(RoundFunction.NumberExpression, context)),
+                    ExpressionSyntaxFactory.ExpressionSyntax(roundFunction.NumberExpression)),
                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                 SyntaxFactory.Argument(
-                    ExpressionSyntaxFactory.ExpressionSyntax(RoundFunction.DigitsExpression, context))
+                    ExpressionSyntaxFactory.ExpressionSyntax(roundFunction.DigitsExpression))
             });
     }
 }

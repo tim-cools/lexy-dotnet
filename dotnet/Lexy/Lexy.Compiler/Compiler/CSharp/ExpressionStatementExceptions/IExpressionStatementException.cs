@@ -8,5 +8,5 @@ internal interface IExpressionStatementException
 {
     bool Matches(Expression expression);
 
-    IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression, ICompileFunctionContext context);
+    IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression);
 }

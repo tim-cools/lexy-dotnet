@@ -18,20 +18,17 @@ public class FunctionWriter : IRootTokenWriter
 {
     public GeneratedClass CreateCode(IRootNode node)
     {
-        if (!(node is Function function)) throw new InvalidOperationException("Root token not Function");
-
-        var builtInFunctionCalls = GetBuiltInFunctionCalls(function);
-        var context = new CompileFunctionContext(function, builtInFunctionCalls);
+        if (node is not Function function) throw new InvalidOperationException("Root token not Function");
 
         var members = new List<MemberDeclarationSyntax>
         {
             VariableClassFactory.TranslateVariablesClass(LexyCodeConstants.ParametersType, function.Parameters.Variables),
             VariableClassFactory.TranslateVariablesClass(LexyCodeConstants.ResultsType, function.Results.Variables),
-            RunMethod(function, context)
+            RunMethod(function)
         };
-        members.AddRange(CustomBuiltInFunctions(context));
+        members.AddRange(CustomBuiltInFunctions(function));
 
-        var name = context.FunctionClassName();
+        var name = ClassNames.FunctionClassName(node.NodeName);
 
         var classDeclaration = ClassDeclaration(name)
             .WithModifiers(Modifiers.PublicStatic())
@@ -40,21 +37,14 @@ public class FunctionWriter : IRootTokenWriter
         return new GeneratedClass(function, name, classDeclaration);
     }
 
-    private IEnumerable<MemberDeclarationSyntax> CustomBuiltInFunctions(ICompileFunctionContext context)
-    {
-        return context.BuiltInFunctionCalls
-            .Select(functionCall => functionCall.CustomMethodSyntax(context))
-            .Where(customMethodSyntax => customMethodSyntax != null);
-    }
-
-    private IEnumerable<FunctionCall> GetBuiltInFunctionCalls(Function function)
+    private IEnumerable<MemberDeclarationSyntax> CustomBuiltInFunctions(Function function)
     {
         return NodesWalker.WalkWithResult(function.Code.Expressions,
-            node => node is FunctionCallExpression expression ? FunctionCall.Create(expression) : null);
+            node => node is FunctionCallExpression expression ? FunctionCallFactory.CustomMethods(expression.ExpressionFunction) : null)
+            .Where(value => value != null);
     }
 
-    private MethodDeclarationSyntax RunMethod(Function function,
-        ICompileFunctionContext compileFunctionContext)
+    private MethodDeclarationSyntax RunMethod(Function function)
     {
         var statements = new List<StatementSyntax>
         {
@@ -62,8 +52,7 @@ public class FunctionWriter : IRootTokenWriter
             GuardStatements.VerifyNotNull(LexyCodeConstants.ContextVariable),
             InitializeResults()
         };
-        statements.AddRange(function.Code.Expressions.SelectMany(expression =>
-            ExecuteStatementSyntax(expression, compileFunctionContext)));
+        statements.AddRange(function.Code.Expressions.SelectMany(ExecuteStatementSyntax));
         statements.Add(ReturnResults());
 
         var functionSyntax = MethodDeclaration(

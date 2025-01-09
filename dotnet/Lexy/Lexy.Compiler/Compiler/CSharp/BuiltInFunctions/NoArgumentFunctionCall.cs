@@ -4,19 +4,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
-internal abstract class NoArgumentFunctionCall : FunctionCall
+internal abstract class NoArgumentFunctionCall : FunctionCall<NoArgumentFunction>
 {
-    public NoArgumentFunction Function { get; }
-
     protected abstract string ClassName { get; }
     protected abstract string MethodName { get; }
 
-    protected NoArgumentFunctionCall(NoArgumentFunction function) : base(function)
-    {
-        Function = function;
-    }
-
-    public override ExpressionSyntax CallExpressionSyntax(ICompileFunctionContext context)
+    public override ExpressionSyntax CallExpressionSyntax(NoArgumentFunction _)
     {
         return SyntaxFactory.InvocationExpression(
             SyntaxFactory.MemberAccessExpression(

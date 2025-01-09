@@ -10,12 +10,6 @@ public class VariableReference
     public bool HasChildIdentifiers => Path.Length > 1;
     public int Parts => Path.Length;
 
-    public VariableReference(string variableName)
-    {
-        if (variableName == null) throw new ArgumentNullException(nameof(variableName));
-        Path = new[] { variableName };
-    }
-
     public VariableReference(string[] variablePath)
     {
         Path = variablePath ?? throw new ArgumentNullException(nameof(variablePath));
