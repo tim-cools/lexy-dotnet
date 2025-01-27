@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Compiler.Language.Functions;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
@@ -105,5 +106,10 @@ public class FillParametersFunction : ExpressionFunction, IHasNodeDependencies
             Function.ResultsName => function.GetResultsType(context),
             _ => null
         };
+    }
+
+    public override IEnumerable<VariableUsage> UsedVariables()
+    {
+        return mapping.Select(map => map.ToUsedVariable(VariableAccess.Read));
     }
 }

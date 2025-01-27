@@ -6,11 +6,16 @@ namespace Lexy.Compiler.Language.Scenarios;
 
 public class ComplexAssignmentDefinition : ParsableNode, IAssignmentDefinition
 {
-    private readonly IList<IAssignmentDefinition> assignments = new List<IAssignmentDefinition>();
+    private readonly List<IAssignmentDefinition> assignments = new List<IAssignmentDefinition>();
 
-    public VariableReference Variable { get; }
+    public VariablePath Variable { get; }
 
-    public ComplexAssignmentDefinition(VariableReference variable, SourceReference reference)
+    public IReadOnlyList<IAssignmentDefinition> Assignments
+    {
+        get { return assignments; }
+    }
+
+    public ComplexAssignmentDefinition(VariablePath variable, SourceReference reference)
         : base(reference)
     {
         Variable = variable;
@@ -39,9 +44,10 @@ public class ComplexAssignmentDefinition : ParsableNode, IAssignmentDefinition
         }
 
         var variableType = context.VariableContext.GetVariableType(Variable, context);
-        if (variableType is not CustomType)
+        if (variableType is not CustomType && variableType is not ComplexType)
         {
-            context.Logger.Fail(Reference, $"Variable '{Variable}' without assignment should be a complex type, but is '{variableType}'.");
+            context.Logger.Fail(Reference,
+                $"Variable '{Variable}' without assignment should be a complex type, but is '{variableType}'.");
         }
     }
 

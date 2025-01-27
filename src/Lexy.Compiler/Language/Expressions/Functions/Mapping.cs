@@ -1,3 +1,4 @@
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 
@@ -14,5 +15,9 @@ public class Mapping
         VariableName = variableName;
         VariableType = variableType;
         VariableSource = variableSource;
+    }
+
+    public VariableUsage ToUsedVariable(VariableAccess access) {
+        return new VariableUsage(VariablePathParser.Parse(VariableName), null, VariableType, VariableSource, access);
     }
 }

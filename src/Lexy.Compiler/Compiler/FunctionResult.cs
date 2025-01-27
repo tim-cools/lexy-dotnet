@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Lexy.Compiler.Language;
+using Lexy.Compiler.Language.Scenarios;
+using Lexy.RunTime;
 
 namespace Lexy.Compiler.Compiler;
 
@@ -8,14 +11,17 @@ public class FunctionResult
 {
     private readonly object valueObject;
 
-    public FunctionResult(object valueObject)
+    public IReadOnlyList<ExecutionLogEntry> Logging { get; }
+
+    public FunctionResult(object valueObject, IReadOnlyList<ExecutionLogEntry> logging)
     {
         this.valueObject = valueObject;
+        Logging = logging;
     }
 
     public decimal Number(string name)
     {
-        var value = GetValue(VariableReference.Parse(name));
+        var value = GetValue(VariablePathParser.Parse(name));
         return (decimal)value;
     }
 
@@ -27,12 +33,9 @@ public class FunctionResult
         return field;
     }
 
-    public object GetValue(string value)
-    {
-        return GetValue(VariableReference.Parse(value));
-    }
+    public object GetValue(string value) => GetValue(VariablePathParser.Parse(value));
 
-    public object GetValue(VariableReference expectedVariable)
+    public object GetValue(VariablePath expectedVariable)
     {
         var currentReference = expectedVariable;
         var currentValue = GetField(valueObject, expectedVariable.ParentIdentifier).GetValue(valueObject);

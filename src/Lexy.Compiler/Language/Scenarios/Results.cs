@@ -4,21 +4,18 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Scenarios;
 
-public class ScenarioParameters : ParsableNode
+public class Results : ParsableNode
 {
     private readonly IList<IAssignmentDefinition> assignments = new List<IAssignmentDefinition>();
 
-    public ScenarioParameters(SourceReference reference) : base(reference)
+    public Results(SourceReference reference) : base(reference)
     {
     }
 
     public override IParsableNode Parse(IParseLineContext context)
     {
         var assignment = AssignmentDefinition.Parse(context);
-        if (assignment != null)
-        {
-            assignments.Add(assignment);
-        }
+        if (assignment != null) assignments.Add(assignment);
         return assignment is IParsableNode parsableNode ? parsableNode : this;
     }
 

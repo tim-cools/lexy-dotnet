@@ -15,13 +15,13 @@ public abstract class Node : INode
 
     public virtual void ValidateTree(IValidationContext context)
     {
-        Validate(context);
-
         var children = GetChildren();
         foreach (var child in children)
         {
             ValidateNodeTree(context, child);
         }
+
+        Validate(context);
     }
 
     public abstract IEnumerable<INode> GetChildren();

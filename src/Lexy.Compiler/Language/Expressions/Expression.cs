@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
@@ -22,4 +23,9 @@ public abstract class Expression : Node
     }
 
     public abstract VariableType DeriveType(IValidationContext context);
+
+    public virtual IEnumerable<VariableUsage> UsedVariables()
+    {
+        yield break;
+    }
 }

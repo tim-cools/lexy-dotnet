@@ -1,3 +1,4 @@
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis;
@@ -17,9 +18,9 @@ internal class PowerFunctionCall : MethodFunctionCall<PowerFunction>
             new SyntaxNodeOrToken[]
             {
                 SyntaxFactory.Argument(
-                    ExpressionSyntaxFactory.ExpressionSyntax(powerFunction.NumberExpression)),
+                    Expressions.ExpressionSyntax(powerFunction.NumberExpression)),
                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(powerFunction.PowerExpression))
+                SyntaxFactory.Argument(Expressions.ExpressionSyntax(powerFunction.PowerExpression))
             });
     }
 }

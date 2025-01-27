@@ -40,4 +40,9 @@ internal static class Arguments
                     IdentifierName(parameter),
                     IdentifierName(member))));
     }
+
+    public static SyntaxNodeOrToken Null()
+    {
+        return LiteralExpression(SyntaxKind.NullLiteralExpression);
+    }
 }

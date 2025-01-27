@@ -11,14 +11,13 @@ public interface IVariableContext
     void RegisterVariableAndVerifyUnique(SourceReference reference, string variableName, VariableType type,
         VariableSource source);
 
-    bool EnsureVariableExists(SourceReference reference, string variableName);
-
     bool Contains(string variableName);
-    bool Contains(VariableReference reference, IValidationContext context);
+    bool Contains(VariablePath path, IValidationContext context);
 
     VariableType GetVariableType(string variableName);
-    VariableType GetVariableType(VariableReference reference, IValidationContext context);
-    VariableSource? GetVariableSource(string variableName);
+    VariableType GetVariableType(VariablePath path, IValidationContext context);
 
     VariableEntry GetVariable(string variableName);
+
+    VariableReference CreateVariableReference(SourceReference reference, VariablePath path, IValidationContext validationContext);
 }

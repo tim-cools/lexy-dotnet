@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 
@@ -77,5 +78,12 @@ public class LexyFunction : ExpressionFunction, IHasNodeDependencies
     {
         var function = context.RootNodes.GetFunction(FunctionName);
         return function?.GetResultsType(context);
+    }
+
+
+    public override IEnumerable<VariableUsage> UsedVariables()
+    {
+        return mappingParameters.Select(map => map.ToUsedVariable(VariableAccess.Read))
+            .Union(mappingResults.Select(map => map.ToUsedVariable(VariableAccess.Write)));
     }
 }

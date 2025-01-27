@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Expressions;
 
-public class IdentifierExpression : Expression
+public class IdentifierExpression : Expression, IHasVariableReference
 {
-    public VariableSource VariableSource { get; private set; }
+    public VariableReference Variable { get; private set; }
 
     public string Identifier { get; }
 
@@ -43,20 +44,24 @@ public class IdentifierExpression : Expression
 
     protected override void Validate(IValidationContext context)
     {
-        if (!context.VariableContext.EnsureVariableExists(Reference, Identifier)) return;
+        CreateVariableReference(context);
+    }
 
-        var variableSource = context.VariableContext.GetVariableSource(Identifier);
-        if (variableSource == null)
-        {
-            context.Logger.Fail(Reference, $"Can't define source of variable: {Identifier}");
-            return;
-        }
-
-        VariableSource = variableSource.Value;
+    private void CreateVariableReference(IValidationContext context) {
+        var path = VariablePathParser.Parse(Identifier);
+        Variable = context.VariableContext.CreateVariableReference(Reference, path, context);
     }
 
     public override VariableType DeriveType(IValidationContext context)
     {
         return context.VariableContext.GetVariableType(Identifier);
+    }
+
+    public override IEnumerable<VariableUsage> UsedVariables()
+    {
+        if (Variable != null)
+        {
+            yield return VariableUsage.Read(Variable);
+        }
     }
 }

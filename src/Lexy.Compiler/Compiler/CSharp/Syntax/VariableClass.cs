@@ -4,9 +4,9 @@ using Lexy.Compiler.Language;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Lexy.Compiler.Compiler.CSharp.Writers;
+namespace Lexy.Compiler.Compiler.CSharp.Syntax;
 
-public static class VariableClassFactory
+public static class VariableClass
 {
     public static MemberDeclarationSyntax TranslateVariablesClass(string className, IReadOnlyList<VariableDefinition> variables)
     {
@@ -39,7 +39,7 @@ public static class VariableClassFactory
     private static ExpressionSyntax DefaultExpression(VariableDefinition variable)
     {
         var defaultValue = variable.DefaultExpression != null
-            ? ExpressionSyntaxFactory.ExpressionSyntax(variable.DefaultExpression)
+            ? Expressions.ExpressionSyntax(variable.DefaultExpression)
             : null;
         return defaultValue ?? Types.TypeDefaultExpression(variable.Type);
     }

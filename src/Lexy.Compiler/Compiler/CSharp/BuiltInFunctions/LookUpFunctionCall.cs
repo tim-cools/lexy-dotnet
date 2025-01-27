@@ -1,3 +1,4 @@
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis;
@@ -73,7 +74,7 @@ internal class LookUpFunctionCall : FunctionCall<LookupFunction>
                     SeparatedList<ArgumentSyntax>(
                         new SyntaxNodeOrToken[]
                         {
-                            Argument(ExpressionSyntaxFactory.ExpressionSyntax(lookupFunction.ValueExpression)),
+                            Argument(Expressions.ExpressionSyntax(lookupFunction.ValueExpression)),
                             Token(SyntaxKind.CommaToken),
                             Argument(IdentifierName(LexyCodeConstants.ContextVariable))
                         })));

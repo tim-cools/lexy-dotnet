@@ -6,6 +6,7 @@ using Lexy.Compiler.Language.Functions;
 using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
+using Table = Lexy.Compiler.Language.Tables.Table;
 
 namespace Lexy.Compiler.Compiler.CSharp;
 

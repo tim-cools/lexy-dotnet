@@ -1,3 +1,4 @@
+using System;
 using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Parser;
 
@@ -39,12 +40,15 @@ public class TableType : TypeWithMembers
 
     public override VariableType MemberType(string name, IValidationContext context)
     {
-        return name switch
+        switch(name)
         {
-            "Count" => PrimitiveType.Number,
-            Table.RowName => TableRowType(context),
-            _ => null
+            case "Count":
+                return PrimitiveType.Number;
+            case Table.RowName:
+                return TableRowType(context);
         };
+        if (Table.Header?.GetColumn(name) != null) return new ComplexType(name, Table, ComplexTypeSource.TableColumn, Array.Empty<ComplexTypeMember>());
+        return null;
     }
 
     private ComplexType TableRowType(IValidationContext context)

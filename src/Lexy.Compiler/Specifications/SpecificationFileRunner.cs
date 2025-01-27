@@ -51,7 +51,10 @@ public class SpecificationFileRunner : ISpecificationFileRunner
 
         runnerContext.LogGlobal($"Filename: {fileName}");
 
-        foreach (var scenario in scenarioRunners) scenario.Run();
+        foreach (var scenario in scenarioRunners)
+        {
+            scenario.Run();
+        }
     }
 
     private ScenarioRunner CreateScenarioRunner(Scenario scenario, ISpecificationRunnerContext context,

@@ -14,7 +14,7 @@ public class MemberAccessExpressionTests : ScopedServicesTestFixture
         {
             assignmentExpression.Variable.ValidateIdentifierExpression("A");
             assignmentExpression.Assignment.ValidateOfType<MemberAccessExpression>(memberAccess =>
-                memberAccess.Variable.ToString().ShouldBe("B.C"));
+                memberAccess.VariablePath.ToString().ShouldBe("B.C"));
         });
     }
 }

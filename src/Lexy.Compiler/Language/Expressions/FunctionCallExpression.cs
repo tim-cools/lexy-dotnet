@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
@@ -70,6 +71,10 @@ public class FunctionCallExpression : Expression
     public override IEnumerable<INode> GetChildren()
     {
         if (ExpressionFunction != null) yield return ExpressionFunction;
+        foreach (var argument in Arguments)
+        {
+            yield return argument;
+        }
     }
 
     protected override void Validate(IValidationContext context)
@@ -83,5 +88,11 @@ public class FunctionCallExpression : Expression
     public override VariableType DeriveType(IValidationContext context)
     {
         return ExpressionFunction?.DeriveReturnType(context);
+    }
+
+    public override IEnumerable<VariableUsage> UsedVariables()
+    {
+        return Arguments.GetReadVariableUsageNodes()
+            .Union(ExpressionFunction.UsedVariables());
     }
 }

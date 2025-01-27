@@ -14,17 +14,18 @@ public class Scenario : RootNode
 
     public Function Function { get; private set; }
     public EnumDefinition Enum { get; private set; }
-    public Table Table { get; private set; }
+    public Tables.Table Table { get; private set; }
 
-    public ScenarioFunctionName FunctionName { get; private set; }
+    public FunctionName FunctionName { get; private set; }
 
-    public ScenarioParameters Parameters { get; private set; }
-    public ScenarioResults Results { get; private set; }
-    public ScenarioTable ValidationTable { get; private set; }
+    public Parameters Parameters { get; private set; }
+    public Results Results { get; private set; }
+    public Table ValidationTable { get; private set; }
+    public ExecutionLogging ExecutionLogging { get; private set; }
 
-    public ScenarioExpectError ExpectError { get; private set; }
-    public ScenarioExpectRootErrors ExpectRootErrors { get; private set; }
-    public ScenarioExpectExecutionErrors ExpectExecutionErrors { get; private set; }
+    public ExpectError ExpectError { get; private set; }
+    public ExpectRootErrors ExpectRootErrors { get; private set; }
+    public ExpectExecutionErrors ExpectExecutionErrors { get; private set; }
 
     public override string NodeName => Name.Value;
 
@@ -56,12 +57,13 @@ public class Scenario : RootNode
             Keywords.TableKeyword => ParseTable(context, reference),
 
             Keywords.Function => ResetRootNode(context, ParseFunctionName(reference, context)),
-            Keywords.Parameters => ResetRootNode(context, Parameters, () => Parameters = new ScenarioParameters(reference)),
-            Keywords.Results => ResetRootNode(context, Results, () => Results = new ScenarioResults(reference)),
-            Keywords.ValidationTable => ResetRootNode(context, ValidationTable, () => ValidationTable = new ScenarioTable(reference)),
+            Keywords.Parameters => ResetRootNode(context, Parameters, () => Parameters = new Parameters(reference)),
+            Keywords.Results => ResetRootNode(context, Results, () => Results = new Results(reference)),
+            Keywords.ExecutionLogging => ResetRootNode(context, ExecutionLogging, () => ExecutionLogging = new ExecutionLogging(reference)),
+            Keywords.ValidationTable => ResetRootNode(context, ValidationTable, () => ValidationTable = new Table(reference)),
             Keywords.ExpectError => ResetRootNode(context, ParseExpectError(reference, context)),
-            Keywords.ExpectRootErrors => ResetRootNode(context, ExpectRootErrors, () => ExpectRootErrors = new ScenarioExpectRootErrors(reference)),
-            Keywords.ExpectExecutionErrors => ResetRootNode(context, ExpectExecutionErrors, () => ExpectExecutionErrors = new ScenarioExpectExecutionErrors(reference)),
+            Keywords.ExpectRootErrors => ResetRootNode(context, ExpectRootErrors, () => ExpectRootErrors = new ExpectRootErrors(reference)),
+            Keywords.ExpectExecutionErrors => ResetRootNode(context, ExpectExecutionErrors, () => ExpectExecutionErrors = new ExpectExecutionErrors(reference)),
 
             _ => InvalidToken(context, name, reference)
         };
@@ -71,7 +73,7 @@ public class Scenario : RootNode
     {
         if (ExpectError == null)
         {
-            ExpectError = new ScenarioExpectError(reference);
+            ExpectError = new ExpectError(reference);
         }
 
         return ResetRootNode(context, ExpectError.Parse(context));
@@ -96,7 +98,7 @@ public class Scenario : RootNode
     {
         if (FunctionName == null)
         {
-            FunctionName = new ScenarioFunctionName(reference);
+            FunctionName = new FunctionName(reference);
         }
         FunctionName.Parse(context);
         return this;
@@ -145,7 +147,7 @@ public class Scenario : RootNode
 
         var tokenName = Parser.NodeName.Parse(context);
 
-        Table = Table.Parse(tokenName, reference);
+        Table = Tables.Table.Parse(tokenName, reference);
         context.Logger.SetCurrentNode(Table);
         return Table;
     }

@@ -1,3 +1,4 @@
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language.Expressions.Functions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,6 +13,6 @@ internal abstract class SingleArgumentFunctionCall<TExpressionFunction> : Method
     {
         return SyntaxFactory.SingletonSeparatedList(
             SyntaxFactory.Argument(
-                ExpressionSyntaxFactory.ExpressionSyntax(powerFunction.ValueExpression)));
+                Expressions.ExpressionSyntax(powerFunction.ValueExpression)));
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 
@@ -97,5 +98,10 @@ public class ExtractResultsFunction : ExpressionFunction
     public static ExpressionFunction Create(SourceReference reference, Expression expression)
     {
         return new ExtractResultsFunction(expression, reference);
+    }
+
+    public override IEnumerable<VariableUsage> UsedVariables()
+    {
+        return mapping.Select(map => map.ToUsedVariable(VariableAccess.Write));
     }
 }

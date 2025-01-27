@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Lexy.Compiler.Compiler;
+using Lexy.Compiler.DependencyGraph;
 using Lexy.Compiler.Infrastructure;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Functions;
@@ -19,8 +19,9 @@ public class ScenarioRunner : IScenarioRunner
     private readonly IParserLogger parserLogger;
 
     private readonly string fileName;
-    private readonly Function function;
     private readonly RootNodeList rootNodeList;
+
+    private Function function;
 
     public bool Failed { get; private set; }
     public Scenario Scenario { get; }
@@ -36,21 +37,15 @@ public class ScenarioRunner : IScenarioRunner
         this.parserLogger = parserLogger ?? throw new ArgumentNullException(nameof(parserLogger));
 
         Scenario = scenario ?? throw new ArgumentNullException(nameof(scenario));
-        function = GetScenarioFunction(rootNodeList, scenario);
-    }
-
-    private static Function GetScenarioFunction(RootNodeList rootNodeList, Scenario scenario)
-    {
-        return scenario.Function
-            ?? (scenario.FunctionName != null ? rootNodeList.GetFunction(scenario.FunctionName.Value) : null);
     }
 
     public void Run()
     {
+        function = GetFunctionNode(rootNodeList, Scenario);
         if (parserLogger.NodeHasErrors(Scenario) && Scenario.ExpectExecutionErrors?.HasValues != true)
         {
-            Fail($"  Parsing scenario failed: {Scenario.FunctionName}");
-            parserLogger.ErrorNodeMessages(Scenario).ForEach(context.Log);
+            Fail($"  Parsing scenario failed: {Scenario.FunctionName}",
+                parserLogger.ErrorNodeMessages(Scenario));
             return;
         }
 
@@ -66,15 +61,36 @@ public class ScenarioRunner : IScenarioRunner
         var result = RunFunction(executable, values);
         if (result == null) return;
 
-        var validationResultText = GetValidationResult(result, compilerResult);
-        if (validationResultText.Length > 0)
+        if (!ValidateExecutionLogging(result)) return;
+
+        var validationResultText = ValidateResult(result, compilerResult);
+        if (validationResultText.Count > 0)
         {
-            Fail(validationResultText);
+            Fail("Results validation failed.", validationResultText);
         }
         else
         {
-            context.Success(Scenario);
+            context.Success(Scenario, result.Logging);
         }
+    }
+
+    private Function GetFunctionNode(RootNodeList rootNodeList, Scenario scenario)
+    {
+        if (scenario.Function != null)
+        {
+            return scenario.Function;
+        }
+
+        if (scenario.FunctionName != null)
+        {
+            var functionNode = rootNodeList.GetFunction(scenario.FunctionName.Value);
+            if (functionNode == null) {
+                Fail($"Unknown function: " + scenario.FunctionName, parserLogger.ErrorNodeMessages(Scenario));
+            }
+            return functionNode;
+        }
+
+        return null;
     }
 
     private FunctionResult RunFunction(ExecutableFunction executable, IDictionary<string, object> values)
@@ -87,7 +103,8 @@ public class ScenarioRunner : IScenarioRunner
         {
             if (!ValidateExecutionErrors(exception))
             {
-                Fail("No execution error expected. Execution raised: " + exception);
+                Fail("Execution error occured.", new [] {
+                    "Error: ",exception.ToString()});
             }
 
             return null;
@@ -99,17 +116,17 @@ public class ScenarioRunner : IScenarioRunner
         return $"------- Filename: {fileName}{Environment.NewLine}{parserLogger.ErrorMessages().Format(2)}";
     }
 
-    private void Fail(string message)
+    private void Fail(string message, IEnumerable<string> errors)
     {
         Failed = true;
-        context.Fail(Scenario, message);
+        context.Fail(Scenario, message, errors);
     }
 
-    private string GetValidationResult(FunctionResult result, ICompilationResult compilationResult)
+    private IReadOnlyList<string> ValidateResult(FunctionResult result, ICompilationResult compilationResult)
     {
-        if (Scenario.Results == null) return string.Empty;
+        if (Scenario.Results == null) return Array.Empty<string>();
 
-        var validationResult = new StringWriter();
+        var validationResult = new List<string>();
         foreach (var expected in Scenario.Results.AllAssignments())
         {
             var actual = result.GetValue(expected.Variable);
@@ -121,24 +138,33 @@ public class ScenarioRunner : IScenarioRunner
              || actual.GetType() != expectedValue.GetType()
              || Comparer.Default.Compare(actual, expectedValue) != 0)
             {
-                validationResult.WriteLine(
+                validationResult.Add(
                     $"'{expected.Variable}' should be '{expectedValue ?? "<null>"}' ({expectedValue?.GetType().Name}) but is '{actual ?? "<null>"} ({actual?.GetType().Name})'");
             }
         }
 
-        return validationResult.ToString();
+        return validationResult;
     }
 
     private bool ValidateErrors(ISpecificationRunnerContext runnerContext)
     {
         if (Scenario.ExpectRootErrors?.HasValues == true) return ValidateRootErrors();
 
-        var node = function ?? Scenario.Function ?? Scenario.Enum ?? (IRootNode)Scenario.Table;
-        var failedMessages = parserLogger.ErrorNodeMessages(node);
+        var node = function
+               ?? Scenario.Function
+               ?? Scenario.Enum
+               ?? (IRootNode)Scenario.Table;
+        if (node == null) {
+            Fail("Scenario has no function, enum or table.", Array.Empty<string>());
+            return false;
+        }
+
+        var dependencies = DependencyGraphFactory.NodeAndDependencies(this.rootNodeList, node);
+        var failedMessages = parserLogger.ErrorNodesMessages(dependencies);
 
         if (failedMessages.Length > 0 && !Scenario.ExpectError.HasValue)
         {
-            Fail("Exception occurred: " + failedMessages.Format(2));
+            Fail("Exception occurred: ", failedMessages);
             return false;
         }
 
@@ -146,16 +172,16 @@ public class ScenarioRunner : IScenarioRunner
 
         if (failedMessages.Length == 0)
         {
-            Fail($"No exception {Environment.NewLine}" +
-                 $"  Expected: {Scenario.ExpectError.Message}{Environment.NewLine}");
+            Fail($"Error expected: '{Scenario.ExpectError.Message}'", Array.Empty<string>());
             return false;
         }
 
         if (!failedMessages.Any(message => message.Contains(Scenario.ExpectError.Message)))
         {
-            Fail($"Wrong exception {Environment.NewLine}" +
-                 $"  Expected: {Scenario.ExpectError.Message}{Environment.NewLine}" +
-                 $"  Actual: {failedMessages.Format(4)}");
+            Fail($"Wrong error occurred", new []{
+                $"Expected: {Scenario.ExpectError.Message}" +
+                $"Actual: "
+            }.Union(failedMessages));
             return false;
         }
 
@@ -168,9 +194,9 @@ public class ScenarioRunner : IScenarioRunner
         var failedMessages = parserLogger.ErrorMessages().ToList();
         if (!failedMessages.Any())
         {
-            Fail($"No exceptions {Environment.NewLine}" +
-                 $"  Expected: {Scenario.ExpectRootErrors.Messages.Format(4)}{Environment.NewLine}" +
-                 "  Actual: none");
+            Fail($"Root errors expected. No errors occurred", new [] {
+                 "Expected:"
+            }.Union(Scenario.ExpectRootErrors.Messages));
             return false;
         }
 
@@ -190,9 +216,9 @@ public class ScenarioRunner : IScenarioRunner
             return false; // don't compile and run rest of scenario
         }
 
-        Fail($"Wrong exception {Environment.NewLine}" +
-             $"  Expected: {Scenario.ExpectRootErrors.Messages.Format(4)}{Environment.NewLine}" +
-             $"  Actual: {parserLogger.ErrorMessages().Format(4)}");
+        Fail($"Wrong error(s) occurred.",
+             new [] { "Expected: "}.Union(Scenario.ExpectRootErrors.Messages).Union(
+            new [] {"Actual: "}).Union(parserLogger.ErrorMessages()));
         return false;
     }
 
@@ -219,18 +245,20 @@ public class ScenarioRunner : IScenarioRunner
 
         if (failedErrors.Count > 0)
         {
-            Fail($"Execution error not found\n Not found: {expected.Format(2)}\n  Actual: {errorMessage}");
+            Fail($"Execution error not found",
+                new [] {"Not found:"}.Union(expected).Union(
+                    new [] {"Actual:" + errorMessage}));
         }
 
         return true;
     }
 
-    private IDictionary<string, object> GetValues(ScenarioParameters scenarioParameters)
+    private IDictionary<string, object> GetValues(Parameters parameters)
     {
         var result = new Dictionary<string, object>();
-        if (scenarioParameters == null) return result;
+        if (parameters == null) return result;
 
-        foreach (var parameter in scenarioParameters.AllAssignments())
+        foreach (var parameter in parameters.AllAssignments())
         {
             SetParametersValue(parameter, result);
         }
@@ -263,5 +291,15 @@ public class ScenarioRunner : IScenarioRunner
 
         var value = parameter.ConstantValue.Value;
         valueObject.Add(reference.ParentIdentifier, value);
+    }
+
+    private bool ValidateExecutionLogging(FunctionResult result) {
+        if (Scenario.ExecutionLogging == null) return true;
+        var errors = Scenario.ExecutionLogging.Entries.ValidateExecutionLogging(result.Logging);
+        if (errors != null) {
+            Fail("Invalid Execution Logging", errors);
+            return false;
+        }
+        return true;
     }
 }

@@ -3,11 +3,11 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Scenarios;
 
-public class ScenarioFunctionName : Node
+public class FunctionName : Node
 {
     public string Value { get; private set; }
 
-    public ScenarioFunctionName(SourceReference reference) : base(reference)
+    public FunctionName(SourceReference reference) : base(reference)
     {
     }
 

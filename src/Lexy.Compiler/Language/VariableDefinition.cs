@@ -34,15 +34,19 @@ public class VariableDefinition : Node, IHasNodeDependencies
     public static VariableDefinition Parse(VariableSource source, IParseLineContext context)
     {
         var line = context.Line;
+        var tokens = line.Tokens;
         var result = context.ValidateTokens<VariableDefinition>()
             .CountMinimum(2)
-            .StringLiteral(0)
             .StringLiteral(1)
             .IsValid;
 
         if (!result) return null;
 
-        var tokens = line.Tokens;
+        if (!tokens.IsTokenType<StringLiteralToken>(0) && !tokens.IsTokenType<MemberAccessLiteral>(0)) {
+            context.Logger.Fail(line.TokenReference(0), "Unexpected token.");
+            return null;
+        }
+
         var name = tokens.TokenValue(1);
         var type = tokens.TokenValue(0);
 

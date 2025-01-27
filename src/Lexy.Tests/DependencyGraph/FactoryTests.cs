@@ -6,6 +6,7 @@ using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
 using NUnit.Framework;
 using Shouldly;
+using Table = Lexy.Compiler.Language.Tables.Table;
 
 namespace Lexy.Tests.DependencyGraph;
 

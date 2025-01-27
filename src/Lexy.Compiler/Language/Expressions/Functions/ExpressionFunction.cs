@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 
@@ -10,4 +11,9 @@ public abstract class ExpressionFunction : Node
     }
 
     public abstract VariableType DeriveReturnType(IValidationContext context);
+
+    public virtual IEnumerable<VariableUsage> UsedVariables()
+    {
+        yield break;
+    }
 }

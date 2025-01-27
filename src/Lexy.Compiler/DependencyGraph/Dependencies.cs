@@ -8,6 +8,7 @@ namespace Lexy.Compiler.DependencyGraph;
 public class Dependencies
 {
     private readonly List<IRootNode> circularReferences = new();
+    private readonly List<DependencyNode> allNodes = new();
     private readonly RootNodeList rootNodes;
 
     public IList<DependencyNode> Nodes { get; } = new List<DependencyNode>();
@@ -22,6 +23,13 @@ public class Dependencies
     public void Build()
     {
         ProcessNodes(rootNodes, null);
+    }
+
+    public IEnumerable<IRootNode> NodeAndDependencies(IRootNode node)
+    {
+        var dependencyNode = allNodes.FirstOrDefault(each => each.Name == node.NodeName);
+        if (dependencyNode == null) return new []{node};
+        return new []{node}.Union(Flatten(dependencyNode.Dependencies));
     }
 
     private void ProcessNodes(IEnumerable<IRootNode> nodes, DependencyNode parentNode)
@@ -43,10 +51,16 @@ public class Dependencies
         return dependencyNode;
     }
 
-    private static DependencyNode NewDependencyNode(INode node, DependencyNode parentNode)
+    private DependencyNode NewDependencyNode(INode node, DependencyNode parentNode)
     {
-        var name = node is IRootNode { NodeName: { } } rootNode ? rootNode.NodeName : node.GetType().Name;
-        return new DependencyNode(name, node.GetType(), parentNode);
+        if (node is not IRootNode rootNode)
+        {
+            throw new InvalidOperationException("Node dependencies should be root nodes.");
+        }
+
+        var dependencyNode = new DependencyNode(rootNode.NodeName, node.GetType(), rootNode, parentNode);
+        allNodes.Add(dependencyNode);
+        return dependencyNode;
     }
 
     private IReadOnlyList<DependencyNode> GetDependencies(INode node, DependencyNode parentNode)
@@ -92,5 +106,21 @@ public class Dependencies
     private static bool DependencyExists(List<DependencyNode> resultDependencies, IRootNode dependency)
     {
         return resultDependencies.Any(any => any.Name == dependency.NodeName && any.Type == dependency.GetType());
+    }
+
+    private static IEnumerable<IRootNode> Flatten(IReadOnlyList<DependencyNode> dependencies)
+    {
+        var result = new List<IRootNode>();
+        Flatten(result, dependencies);
+        return result;
+    }
+
+    private static void Flatten(List<IRootNode> result, IReadOnlyList<DependencyNode> dependencies)
+    {
+        foreach (var dependency in dependencies)
+        {
+            result.Add(dependency.Node);
+            Flatten(result, dependency.Dependencies);
+        }
     }
 }

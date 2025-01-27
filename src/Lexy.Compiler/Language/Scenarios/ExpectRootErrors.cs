@@ -4,7 +4,7 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Scenarios;
 
-public class ScenarioExpectRootErrors : ParsableNode
+public class ExpectRootErrors : ParsableNode
 {
     private readonly IList<string> messages = new List<string>();
 
@@ -12,14 +12,14 @@ public class ScenarioExpectRootErrors : ParsableNode
 
     public bool HasValues => messages.Count > 0;
 
-    public ScenarioExpectRootErrors(SourceReference reference) : base(reference)
+    public ExpectRootErrors(SourceReference reference) : base(reference)
     {
     }
 
     public override IParsableNode Parse(IParseLineContext context)
     {
         var line = context.Line;
-        var valid = context.ValidateTokens<ScenarioExpectError>()
+        var valid = context.ValidateTokens<ExpectError>()
             .Count(1)
             .QuotedString(0)
             .IsValid;

@@ -12,11 +12,11 @@ public class AssignmentDefinition : Node, IAssignmentDefinition
     private readonly Expression variableExpression;
 
     public ConstantValue ConstantValue { get; }
-    public VariableReference Variable { get; }
+    public VariablePath Variable { get; }
 
     public VariableType VariableType { get; private set; }
 
-    private AssignmentDefinition(VariableReference variable, ConstantValue constantValue, Expression variableExpression,
+    private AssignmentDefinition(Language.VariablePath variable, ConstantValue constantValue, Expression variableExpression,
         Expression targetExpression, SourceReference reference)
         : base(reference)
     {
@@ -27,7 +27,7 @@ public class AssignmentDefinition : Node, IAssignmentDefinition
         this.targetExpression = targetExpression;
     }
 
-    public static IAssignmentDefinition Parse(IParseLineContext context, VariableReference parentVariable = null)
+    public static IAssignmentDefinition Parse(IParseLineContext context, VariablePath parentVariable = null)
     {
         var line = context.Line;
         var tokens = line.Tokens;
@@ -47,7 +47,7 @@ public class AssignmentDefinition : Node, IAssignmentDefinition
         var targetExpression = context.ExpressionFactory.Parse(targetTokens, line);
         if (context.Failed(targetExpression, reference)) return null;
 
-        var variableReference = VariableReferenceParser.Parse(targetExpression.Result);
+        var variableReference = VariablePathParser.Parse(targetExpression.Result);
         if (context.Failed(variableReference, reference)) return null;
 
         if (assignmentIndex == tokens.Length - 1) {
@@ -64,7 +64,7 @@ public class AssignmentDefinition : Node, IAssignmentDefinition
             valueExpression.Result, reference);
     }
 
-    private static TokenList AddParentVariableAccessor(VariableReference parentVariable, TokenList targetTokens)
+    private static TokenList AddParentVariableAccessor(VariablePath parentVariable, TokenList targetTokens)
     {
         if (targetTokens.Length != 1) return targetTokens;
         var variablePath = GetVariablePath(targetTokens);
@@ -75,14 +75,14 @@ public class AssignmentDefinition : Node, IAssignmentDefinition
         return new TokenList(new [] {newToken});
     }
 
-    private record VariablePath(string[] Parts, TokenCharacter FirstCharacter);
+    private record TokenVariablePath(string[] Parts, TokenCharacter FirstCharacter);
 
-    private static VariablePath GetVariablePath(TokenList targetTokens)
+    private static TokenVariablePath GetVariablePath(TokenList targetTokens)
     {
         return targetTokens[0] switch
         {
-            MemberAccessLiteral memberAccess => new VariablePath(memberAccess.Parts, memberAccess.FirstCharacter),
-            StringLiteralToken literal => new VariablePath(new[] { literal.Value }, literal.FirstCharacter),
+            MemberAccessLiteral memberAccess => new TokenVariablePath(memberAccess.Parts, memberAccess.FirstCharacter),
+            StringLiteralToken literal => new TokenVariablePath(new[] { literal.Value }, literal.FirstCharacter),
             _ => null
         };
     }
@@ -97,7 +97,7 @@ public class AssignmentDefinition : Node, IAssignmentDefinition
     {
         if (!context.VariableContext.Contains(Variable, context))
         {
-            //logger by IdentifierExpressionValidation
+            //logged by IdentifierExpressionValidation
             return;
         }
 

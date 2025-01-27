@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 using Lexy.Compiler.Compiler.CSharp.ExpressionStatementExceptions;
-using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
-using Lexy.Compiler.Language.VariableTypes;
-using Lexy.RunTime;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Lexy.Compiler.Compiler.CSharp;
+namespace Lexy.Compiler.Compiler.CSharp.Syntax;
 
-internal static class ExpressionSyntaxFactory
+internal static class Expressions
 {
     private static readonly IDictionary<ExpressionOperator, SyntaxKind> TranslateOperators =
         new Dictionary<ExpressionOperator, SyntaxKind>
@@ -44,31 +41,33 @@ internal static class ExpressionSyntaxFactory
             new SimpleLexyFunctionFunctionExpressionStatementException()
         };
 
-    private static IEnumerable<StatementSyntax> ExecuteExpressionStatementSyntax(IEnumerable<Expression> lines)
+    public static IEnumerable<StatementSyntax> ExecuteExpressionStatementSyntax(IEnumerable<Expression> lines, bool createScope)
     {
-        return lines.SelectMany(ExecuteStatementSyntax).ToList();
+        var result = new List<StatementSyntax>();
+        if (createScope)
+        {
+            result.Add(LogCalls.UseLastNodeAsScope());
+        }
+
+        result.AddRange(lines.SelectMany(ExecuteStatementSyntax));
+
+        if (createScope)
+        {
+            result.Add(LogCalls.RevertToParentScope());
+        }
+
+        return result;
     }
 
-    public static StatementSyntax[] ExecuteStatementSyntax(Expression expression)
+    private static StatementSyntax[] ExecuteStatementSyntax(Expression expression)
     {
-        var statements = new List<StatementSyntax>
+        var statements = new List<StatementSyntax>()
         {
-            ExpressionStatement(
-                InvocationExpression(
-                        MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            IdentifierName(LexyCodeConstants.ContextVariable),
-                            IdentifierName(nameof(IExecutionContext.LogDebug))))
-                    .WithArgumentList(
-                        ArgumentList(
-                            SingletonSeparatedList(
-                                Argument(
-                                    LiteralExpression(
-                                        SyntaxKind.StringLiteralExpression,
-                                        Literal(expression.Source.Line.ToString())))))))
+            LogCalls.LogLineAndVariables(expression)
         };
 
         statements.AddRange(ExpressionStatementSyntax(expression));
+        statements.Add(LogCalls.LogAssignmentVariables(expression));
 
         return statements.ToArray();
     }
@@ -101,39 +100,47 @@ internal static class ExpressionSyntaxFactory
     private static StatementSyntax TranslateSwitchExpression(SwitchExpression switchExpression)
     {
         var cases = switchExpression.Cases
-            .Select(expression =>
-                SwitchSection()
-                    .WithLabels(
-                        SingletonList(
-                            !expression.IsDefault
-                                ? CaseSwitchLabel(ExpressionSyntax(expression.Value))
-                                : (SwitchLabelSyntax)DefaultSwitchLabel()))
-                    .WithStatements(
-                        List(
-                            new StatementSyntax[]
-                            {
-                                Block(List(ExecuteExpressionStatementSyntax(expression.Expressions))),
-                                BreakStatement()
-                            })))
+            .Select(TranslateCase)
             .ToList();
 
         return SwitchStatement(ExpressionSyntax(switchExpression.Condition))
             .WithSections(List(cases));
     }
 
+    private static SwitchSectionSyntax TranslateCase(CaseExpression expression)
+    {
+        var statements = new List<StatementSyntax> { LogCalls.LogLineAndVariables(expression) };
+        statements.AddRange(ExecuteExpressionStatementSyntax(expression.Expressions, true));
+        return SwitchSection()
+            .WithLabels(
+                SingletonList(
+                    !expression.IsDefault
+                        ? CaseSwitchLabel(ExpressionSyntax(expression.Value))
+                        : (SwitchLabelSyntax)DefaultSwitchLabel()))
+            .WithStatements(
+                List(
+                    new StatementSyntax[]
+                    {
+                        Block(List(statements)),
+                        BreakStatement()
+                    }));
+    }
+
     private static StatementSyntax TranslateIfExpression(IfExpression ifExpression)
     {
-        var elseStatement = ifExpression.Else != null
-            ? ElseClause(
-                Block(
-                    List(
-                        ExecuteExpressionStatementSyntax(ifExpression.Else.FalseExpressions))))
-            : null;
+        ElseClauseSyntax elseStatement = null;
+        if (ifExpression.Else != null)
+        {
+            var statements = new List<StatementSyntax>();
+            statements.Add(LogCalls.LogLineAndVariables(ifExpression.Else));
+            statements.AddRange(ExecuteExpressionStatementSyntax(ifExpression.Else.FalseExpressions, true));
+            elseStatement = ElseClause(Block(List(statements)));
+        }
 
         var ifStatement = IfStatement(
             ExpressionSyntax(ifExpression.Condition),
             Block(
-                List(ExecuteExpressionStatementSyntax(ifExpression.TrueExpressions))));
+                List(ExecuteExpressionStatementSyntax(ifExpression.TrueExpressions, true))));
 
         return elseStatement != null ? ifStatement.WithElse(elseStatement) : ifStatement;
     }
@@ -168,44 +175,13 @@ internal static class ExpressionSyntaxFactory
         return line switch
         {
             LiteralExpression expression => TokenValuesSyntax.Expression(expression.Literal),
-            IdentifierExpression expression => IdentifierNameSyntax(expression),
-            MemberAccessExpression expression => TranslateMemberAccessExpression(expression),
+            IdentifierExpression expression => VariableReferences.Translate(expression.Variable),
+            MemberAccessExpression expression => VariableReferences.Translate(expression.Variable),
             BinaryExpression expression => TranslateBinaryExpression(expression),
             ParenthesizedExpression expression => ParenthesizedExpression(ExpressionSyntax(expression.Expression)),
             FunctionCallExpression expression => TranslateFunctionCallExpression(expression),
             _ => throw new InvalidOperationException($"Wrong expression type {line.GetType()}: {line}")
         };
-    }
-
-    private static ExpressionSyntax IdentifierNameSyntax(IdentifierExpression expression)
-    {
-        return FromSource(expression.VariableSource, IdentifierName(expression.Identifier));
-    }
-
-    private static ExpressionSyntax FromSource(VariableSource source, SimpleNameSyntax nameSyntax)
-    {
-        switch (source)
-        {
-            case VariableSource.Parameters:
-                return MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    IdentifierName(LexyCodeConstants.ParameterVariable),
-                    nameSyntax);
-
-            case VariableSource.Results:
-                return MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    IdentifierName(LexyCodeConstants.ResultsVariable),
-                    nameSyntax);
-
-            case VariableSource.Code:
-            case VariableSource.Type:
-                return nameSyntax;
-
-            case VariableSource.Unknown:
-            default:
-                throw new ArgumentOutOfRangeException($"source: {source}");
-        }
     }
 
     private static ExpressionSyntax TranslateFunctionCallExpression(FunctionCallExpression expression)
@@ -228,42 +204,5 @@ internal static class ExpressionSyntaxFactory
             throw new ArgumentOutOfRangeException(nameof(expressionOperator), expressionOperator, null);
 
         return result;
-    }
-
-    private static ExpressionSyntax TranslateMemberAccessExpression(MemberAccessExpression expression)
-    {
-        if (expression.Variable.Parts < 2)
-            throw new InvalidOperationException($"Invalid MemberAccessExpression: {expression}");
-
-        var rootType = VariableClassName(expression, expression.Variable);
-        var childReference = expression.Variable.ChildrenReference();
-
-        ExpressionSyntax result = MemberAccessExpression(
-            SyntaxKind.SimpleMemberAccessExpression,
-            FromSource(expression.VariableSource, IdentifierName(rootType)),
-            IdentifierName(childReference.ParentIdentifier));
-
-        while (childReference.HasChildIdentifiers)
-        {
-            childReference = childReference.ChildrenReference();
-            result = MemberAccessExpression(
-                SyntaxKind.SimpleMemberAccessExpression,
-                result,
-                IdentifierName(childReference.ParentIdentifier));
-        }
-
-        return result;
-    }
-
-    private static string VariableClassName(MemberAccessExpression expression, VariableReference reference)
-    {
-        return expression.ParentVariableType switch
-        {
-            TableType _ => ClassNames.TableClassName(reference.ParentIdentifier),
-            FunctionType _ => ClassNames.FunctionClassName(reference.ParentIdentifier),
-            EnumType _ => ClassNames.EnumClassName(reference.ParentIdentifier),
-            CustomType _ => ClassNames.TypeClassName(reference.ParentIdentifier),
-            _ => reference.ParentIdentifier
-        };
     }
 }

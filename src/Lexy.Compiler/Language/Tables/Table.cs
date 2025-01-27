@@ -56,6 +56,10 @@ public class Table : RootNode
 
     protected override void Validate(IValidationContext context)
     {
+        if (Header == null)
+        {
+            context.Logger.Fail(Reference, "No table header found.");
+        }
     }
 
     public override void ValidateTree(IValidationContext context)
@@ -68,9 +72,9 @@ public class Table : RootNode
 
     public ComplexType GetRowType(IValidationContext context)
     {
-        var members = Header.Columns
+        var members = Header?.Columns
             .Select(column => new ComplexTypeMember(column.Name, column.Type.CreateVariableType(context)))
-            .ToList();
+            .ToList() ?? new List<ComplexTypeMember>();
 
         return new ComplexType(Name.Value, this, ComplexTypeSource.TableRow, members);
     }

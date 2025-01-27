@@ -42,4 +42,9 @@ public class ComplexType : VariableType, ITypeWithMembers
     {
         return HashCode.Combine(Name, (int)Source);
     }
+
+    public override string ToString()
+    {
+        return $"(ComplexType) {Name}";
+    }
 }

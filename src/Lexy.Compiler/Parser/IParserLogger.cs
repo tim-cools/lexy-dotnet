@@ -24,6 +24,7 @@ public interface IParserLogger
     string[] ErrorMessages();
     string[] ErrorRootMessages();
     string[] ErrorNodeMessages(IRootNode node);
+    string[] ErrorNodesMessages(IEnumerable<IRootNode> nodes);
 
     void AssertNoErrors();
 

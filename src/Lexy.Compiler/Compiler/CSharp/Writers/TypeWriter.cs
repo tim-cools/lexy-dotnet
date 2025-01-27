@@ -1,4 +1,5 @@
 using System;
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
@@ -13,7 +14,7 @@ internal class TypeWriter : IRootTokenWriter
 
         var className = ClassNames.TypeClassName(typeDefinition.Name.Value);
 
-        var classDeclaration = VariableClassFactory.TranslateVariablesClass(className, typeDefinition.Variables);
+        var classDeclaration = VariableClass.TranslateVariablesClass(className, typeDefinition.Variables);
 
         return new GeneratedClass(node, className, classDeclaration);
     }

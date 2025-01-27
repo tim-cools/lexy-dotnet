@@ -40,7 +40,7 @@ public class ParserLogger : IParserLogger
         if (message == null) throw new ArgumentNullException(nameof(message));
 
         logger.LogDebug("{Reference}: {Message}", reference, message);
-        logEntries.Add(new LogEntry(currentNode, false, $"{reference}: {message}"));
+        logEntries.Add(new LogEntry(reference, currentNode, false, $"{reference}: {message}"));
     }
 
     public void Fail(SourceReference reference, string message)
@@ -51,7 +51,7 @@ public class ParserLogger : IParserLogger
         failedMessages++;
 
         logger.LogError("{Reference}: ERROR - {Message}", reference, message);
-        logEntries.Add(new LogEntry(currentNode, true, $"{reference}: ERROR - {message}"));
+        logEntries.Add(new LogEntry(reference, currentNode, true, $"{reference}: ERROR - {message}"));
     }
 
     public void Fail(INode node, SourceReference reference, string message)
@@ -62,7 +62,7 @@ public class ParserLogger : IParserLogger
         failedMessages++;
 
         logger.LogError("{Reference}: ERROR - {Message}", reference, message);
-        logEntries.Add(new LogEntry(node, true, $"{reference}: ERROR - {message}"));
+        logEntries.Add(new LogEntry(reference, node, true, $"{reference}: ERROR - {message}"));
     }
 
     public void LogNodes(IEnumerable<INode> nodes)
@@ -106,6 +106,15 @@ public class ParserLogger : IParserLogger
     public string[] ErrorNodeMessages(IRootNode node)
     {
         return logEntries.Where(entry => entry.IsError && entry.Node == node)
+            .OrderBy(entry => entry.SortIndex)
+            .Select(entry => entry.Message)
+            .ToArray();
+    }
+
+    public string[] ErrorNodesMessages(IEnumerable<IRootNode> nodes)
+    {
+        return logEntries.Where(entry => entry.IsError && nodes.Contains(entry.Node))
+            .OrderBy(entry => entry.SortIndex)
             .Select(entry => entry.Message)
             .ToArray();
     }
@@ -113,6 +122,7 @@ public class ParserLogger : IParserLogger
     public string[] ErrorRootMessages()
     {
         return logEntries.Where(entry => entry.IsError && entry.Node == null)
+            .OrderBy(entry => entry.SortIndex)
             .Select(entry => entry.Message)
             .ToArray();
     }
@@ -120,6 +130,7 @@ public class ParserLogger : IParserLogger
     public string[] ErrorMessages()
     {
         return logEntries.Where(entry => entry.IsError)
+            .OrderBy(entry => entry.SortIndex)
             .Select(entry => entry.Message)
             .ToArray();
     }
@@ -127,24 +138,5 @@ public class ParserLogger : IParserLogger
     public void AssertNoErrors()
     {
         if (HasErrors()) throw new InvalidOperationException($"Parsing failed: {FormatMessages()}");
-    }
-
-    private class LogEntry
-    {
-        public INode Node { get; }
-        public bool IsError { get; }
-        public string Message { get; }
-
-        public LogEntry(INode node, bool isError, string message)
-        {
-            Node = node;
-            IsError = isError;
-            Message = message;
-        }
-
-        public override string ToString()
-        {
-            return Message;
-        }
     }
 }

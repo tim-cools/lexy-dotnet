@@ -1,3 +1,4 @@
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language.Expressions.Functions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,9 +14,9 @@ internal abstract class EndStartDateFunctionCall<TExpressionFunction> : MethodFu
         return SyntaxFactory.SeparatedList<ArgumentSyntax>(
             new SyntaxNodeOrToken[]
             {
-                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(powerFunction.EndDateExpression)),
+                SyntaxFactory.Argument(Expressions.ExpressionSyntax(powerFunction.EndDateExpression)),
                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                SyntaxFactory.Argument(ExpressionSyntaxFactory.ExpressionSyntax(powerFunction.StartDateExpression))
+                SyntaxFactory.Argument(Expressions.ExpressionSyntax(powerFunction.StartDateExpression))
             });
     }
 }

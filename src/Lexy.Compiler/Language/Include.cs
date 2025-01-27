@@ -50,14 +50,14 @@ public class Include
 
         var directName = Path.GetDirectoryName(parentFullFileName);
         var fullPath = Path.GetFullPath(directName);
-        var fullFinName = $"{Path.Combine(fullPath, FileName)}.{LexySourceDocument.FileExtension}";
+        var fullFileName = $"{Path.Combine(fullPath, FileName)}.{LexySourceDocument.FileExtension}";
 
-        if (!File.Exists(fullFinName))
+        if (!File.Exists(fullFileName))
         {
             context.Logger.Fail(reference, $"Invalid include file name '{FileName}'");
             return null;
         }
 
-        return fullFinName;
+        return fullFileName;
     }
 }

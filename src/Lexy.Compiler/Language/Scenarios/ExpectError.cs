@@ -4,12 +4,12 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Scenarios;
 
-public class ScenarioExpectError : ParsableNode
+public class ExpectError : ParsableNode
 {
     public string Message { get; private set; }
     public bool HasValue => Message != null;
 
-    public ScenarioExpectError(SourceReference reference) : base(reference)
+    public ExpectError(SourceReference reference) : base(reference)
     {
     }
 
@@ -17,7 +17,7 @@ public class ScenarioExpectError : ParsableNode
     {
         var line = context.Line;
 
-        var valid = context.ValidateTokens<ScenarioExpectError>()
+        var valid = context.ValidateTokens<ExpectError>()
             .Count(2)
             .Keyword(0)
             .QuotedString(1)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lexy.Compiler.Language;
 
 namespace Lexy.Compiler.DependencyGraph;
 
@@ -11,12 +12,15 @@ public class DependencyNode
     public string Name { get; }
     public Type Type { get; }
 
+    public IRootNode Node { get; }
+
     public IReadOnlyList<DependencyNode> Dependencies => dependencies;
 
-    public DependencyNode(string name, Type type, DependencyNode parentNode)
+    public DependencyNode(string name, Type type, IRootNode node, DependencyNode parentNode)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name;
         Type = type ?? throw new ArgumentNullException(nameof(type));
+        Node = node ?? throw new ArgumentNullException(nameof(node));
         this.parentNode = parentNode;
     }
 

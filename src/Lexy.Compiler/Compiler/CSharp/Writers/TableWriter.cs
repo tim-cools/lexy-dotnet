@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Tables;
 using Microsoft.CodeAnalysis;
@@ -64,7 +65,7 @@ internal class TableWriter : IRootTokenWriter
                                     IdentifierName(rowName)))))
                     .WithVariables(
                         SingletonSeparatedList(
-                            VariableDeclarator(Identifier(LexyCodeConstants.ValueVariable)))))
+                            VariableDeclarator(Identifier(LexyCodeConstants.ValuesVariable)))))
             .WithModifiers(Modifiers.PrivateStatic());
 
         return fieldDeclaration;
@@ -89,7 +90,7 @@ internal class TableWriter : IRootTokenWriter
                         ExpressionStatement(
                             AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
-                                IdentifierName(LexyCodeConstants.ValueVariable),
+                                IdentifierName(LexyCodeConstants.ValuesVariable),
                                 ObjectCreationExpression(
                                         GenericName(Identifier("List"))
                                             .WithTypeArgumentList(
@@ -120,7 +121,7 @@ internal class TableWriter : IRootTokenWriter
                 AssignmentExpression(
                     SyntaxKind.SimpleAssignmentExpression,
                     IdentifierName(columnHeader.Name),
-                    ExpressionSyntaxFactory.ExpressionSyntax(value)));
+                    Expressions.ExpressionSyntax(value)));
         }
 
         return result.ToArray();
@@ -137,7 +138,7 @@ internal class TableWriter : IRootTokenWriter
                 ArrowExpressionClause(
                     MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName(LexyCodeConstants.ValueVariable),
+                        IdentifierName(LexyCodeConstants.ValuesVariable),
                         IdentifierName("Count"))))
             .WithSemicolonToken(
                 Token(SyntaxKind.SemicolonToken));
@@ -153,7 +154,7 @@ internal class TableWriter : IRootTokenWriter
                 .WithModifiers(Modifiers.PublicStatic())
                 .WithExpressionBody(
                     ArrowExpressionClause(
-                        IdentifierName(LexyCodeConstants.ValueVariable)))
+                        IdentifierName(LexyCodeConstants.ValuesVariable)))
                 .WithSemicolonToken(
                     Token(SyntaxKind.SemicolonToken));
     }

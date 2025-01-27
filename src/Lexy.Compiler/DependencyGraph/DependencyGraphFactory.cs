@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Lexy.Compiler.Language;
 
 namespace Lexy.Compiler.DependencyGraph;
@@ -12,5 +13,15 @@ public static class DependencyGraphFactory
         var dependencies = new Dependencies(rootNodes);
         dependencies.Build();
         return dependencies;
+    }
+
+    public static IEnumerable<IRootNode> NodeAndDependencies(RootNodeList rootNodes, IRootNode node)
+    {
+        if (rootNodes == null) throw new ArgumentNullException(nameof(rootNodes));
+        if (node == null) throw new ArgumentNullException(nameof(node));
+
+        var dependencies = new Dependencies(rootNodes);
+        dependencies.Build();
+        return dependencies.NodeAndDependencies(node);
     }
 }

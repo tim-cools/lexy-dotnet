@@ -23,7 +23,7 @@ public class MemberAccessLiteral : Token, ILiteralToken
 
     public VariableType DeriveType(IValidationContext context)
     {
-        var variableReference = new VariableReference(Parts);
+        var variableReference = new VariablePath(Parts);
         var variableType = context.VariableContext.GetVariableType(variableReference, context);
         if (variableType != null) return variableType;
 

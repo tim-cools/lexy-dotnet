@@ -32,13 +32,13 @@ public static class BuiltInTableFunctions
             var valueComparedToCondition = value.CompareTo(condition);
             if (valueComparedToCondition == 0)
             {
-                context.LogDebug($"{functionName} returned value from row: {index + 1}");
+                context.LogChild($"{functionName} returned value from row: {index + 1}");
                 return getResult(row);
             }
 
             if (valueComparedToCondition > 0)
             {
-                context.LogDebug($"{functionName} returned value from previous row: {index}");
+                context.LogChild($"{functionName} returned value from previous row: {index}");
 
                 if (lastRow == null)
                     throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
@@ -52,7 +52,7 @@ public static class BuiltInTableFunctions
         if (lastRow == null)
             throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
 
-        context.LogDebug($"{functionName} returned value from last row: {tableValues.Count}");
+        context.LogChild($"{functionName} returned value from last row: {tableValues.Count}");
         return getResult(lastRow);
     }
 
@@ -80,13 +80,13 @@ public static class BuiltInTableFunctions
             var valueComparedToCondition = value.CompareTo(condition);
             if (valueComparedToCondition == 0)
             {
-                context.LogDebug($"{functionName} returned value from row: {index + 1}");
+                context.LogChild($"{functionName} returned value from row: {index + 1}");
                 return row;
             }
 
             if (valueComparedToCondition > 0)
             {
-                context.LogDebug($"{functionName} returned value from previous row: {index}");
+                context.LogChild($"{functionName} returned value from previous row: {index}");
 
                 if (lastRow == null)
                     throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
@@ -100,7 +100,7 @@ public static class BuiltInTableFunctions
         if (lastRow == null)
             throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
 
-        context.LogDebug($"{functionName} returned value from last row: {tableValues.Count}");
+        context.LogChild($"{functionName} returned value from last row: {tableValues.Count}");
         return lastRow;
     }
 }

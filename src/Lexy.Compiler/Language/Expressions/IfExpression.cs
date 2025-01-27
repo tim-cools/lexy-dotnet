@@ -83,4 +83,10 @@ public class IfExpression : Expression, IParsableNode, IParentExpression
     {
         return null;
     }
+
+
+    public override IEnumerable<VariableUsage> UsedVariables()
+    {
+        return Condition.GetReadVariableUsage();
+    }
 }

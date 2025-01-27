@@ -1,3 +1,4 @@
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis;
@@ -17,10 +18,10 @@ internal class RoundFunctionCall : MethodFunctionCall<RoundFunction>
             new SyntaxNodeOrToken[]
             {
                 SyntaxFactory.Argument(
-                    ExpressionSyntaxFactory.ExpressionSyntax(roundFunction.NumberExpression)),
+                    Expressions.ExpressionSyntax(roundFunction.NumberExpression)),
                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                 SyntaxFactory.Argument(
-                    ExpressionSyntaxFactory.ExpressionSyntax(roundFunction.DigitsExpression))
+                    Expressions.ExpressionSyntax(roundFunction.DigitsExpression))
             });
     }
 }

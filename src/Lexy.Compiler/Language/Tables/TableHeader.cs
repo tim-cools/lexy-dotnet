@@ -61,6 +61,11 @@ public class TableHeader : Node
         if (parts.Length < 2) return null;
         var name = parts[1];
 
+        return GetColumn(name);
+    }
+
+    public ColumnHeader GetColumn(string name)
+    {
         return Columns.FirstOrDefault(value => value.Name == name);
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
@@ -50,63 +51,35 @@ public class AssignmentExpression : Expression
 
     protected override void Validate(IValidationContext context)
     {
-        if (!(Variable is IdentifierExpression identifierExpression))
-        {
-            ValidateMemberAccess(context);
+        if (Variable is not IHasVariableReference hasVariableReference
+            || hasVariableReference.Variable == null) {
+            context.Logger.Fail(Reference, $"Unknown variable name: '{Variable}'.");
             return;
         }
 
-        var variableName = identifierExpression.Identifier;
-
-        var variableType = context.VariableContext.GetVariableType(variableName);
-        if (variableType == null)
-        {
-            context.Logger.Fail(Reference, $"Unknown variable name: '{variableName}'.");
-            return;
-        }
-
+        var variableReference = hasVariableReference.Variable;
         var expressionType = Assignment.DeriveType(context);
-        if (!variableType.Equals(expressionType))
+        if (!variableReference.VariableType.Equals(expressionType))
         {
             context.Logger.Fail(Reference,
-                $"Variable '{variableName}' of type '{variableType}' is not assignable from expression of type '{expressionType}'.");
+                $"Variable '{variableReference}' of type '{variableReference.VariableType}' is not assignable from expression of type '{expressionType}'.");
         }
-    }
-
-    private void ValidateMemberAccess(IValidationContext context)
-    {
-        if (Variable is not MemberAccessExpression memberAccessExpression) return;
-
-        var assignmentType = Assignment.DeriveType(context);
-
-        var variableType = context.VariableContext.GetVariableType(memberAccessExpression.Variable, context);
-        if (variableType != null)
-        {
-            if (assignmentType == null || !assignmentType.Equals(variableType))
-            {
-                context.Logger.Fail(Reference,
-                    $"Variable '{memberAccessExpression.Variable}' of type '{variableType}' is not assignable from expression of type '{assignmentType}'.");
-            }
-            return;
-        }
-
-        var literal = memberAccessExpression.MemberAccessLiteral;
-        var parentType = context.RootNodes.GetType(literal.Parent);
-
-        if (parentType is not ITypeWithMembers typeWithMembers)
-        {
-            context.Logger.Fail(Reference, $"Type '{literal.Parent}' has no members.");
-            return;
-        }
-
-        var memberType = typeWithMembers.MemberType(literal.Member, context);
-        if (assignmentType == null || !assignmentType.Equals(memberType))
-            context.Logger.Fail(Reference,
-                $"Variable '{literal}' of type '{memberType}' is not assignable from expression of type '{assignmentType}'.");
     }
 
     public override VariableType DeriveType(IValidationContext context)
     {
         return Assignment.DeriveType(context);
+    }
+
+    public override IEnumerable<VariableUsage> UsedVariables() {
+        if (Variable is not IHasVariableReference hasVariableReference
+            || hasVariableReference.Variable == null)
+        {
+            return Assignment.GetReadVariableUsage();
+        }
+        var assignmentVariable = hasVariableReference.Variable;
+        var writeVariableUsage = new VariableUsage(assignmentVariable.Path, assignmentVariable.RootType, assignmentVariable.VariableType, assignmentVariable.Source, VariableAccess.Write);
+        return new [] { writeVariableUsage }
+            .Union(Assignment.GetReadVariableUsage());
     }
 }

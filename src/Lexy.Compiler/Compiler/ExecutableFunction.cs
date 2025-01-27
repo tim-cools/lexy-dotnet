@@ -5,6 +5,7 @@ using System.Reflection;
 using Lexy.Compiler.Infrastructure;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser.Tokens;
 using Lexy.Compiler.Specifications;
@@ -44,7 +45,7 @@ public class ExecutableFunction
         var context = new ExecutionContext(this.executionLogger);
         var results = runMethod.Invoke(null, new[] { parameters, context });
 
-        return new FunctionResult(results);
+        return new FunctionResult(results, context.Entries);
     }
 
     private void ValidateValues(IDictionary<string,object> values)
@@ -89,9 +90,36 @@ public class ExecutableFunction
             case PrimitiveType primitiveType:
                 ValidateType(VariablePath(name, parameter.Name), primitiveType, value, optional, validationErrors);
                 break;
+            case ComplexType complexType:
+                ValidateComplexType(VariablePath(name, parameter.Name), complexType, value, validationErrors);
+                break;
             default:
                 throw new InvalidOperationException(
                     $"Unexpected variable type: '{parameter.VariableType?.GetType().Name}'");
+        }
+    }
+
+    private void ValidateMember(string name, IDictionary<string, object> values, List<string> validationErrors, ComplexTypeMember member)
+    {
+        var optional = false;
+        var value = values.TryGetValue(member.Name, out var objectValue) ? objectValue : null;
+        switch (member.Type)
+        {
+            case CustomType customType:
+                ValidateCustomType(VariablePath(name, member.Name), customType, value, validationErrors);
+                break;
+            case EnumType enumType:
+                ValidateEumType(VariablePath(name, member.Name), enumType, value, optional, validationErrors);
+                break;
+            case PrimitiveType primitiveType:
+                ValidateType(VariablePath(name, member.Name), primitiveType, value, optional, validationErrors);
+                break;
+            case ComplexType complexType:
+                ValidateComplexType(VariablePath(name, member.Name), complexType, value, validationErrors);
+                break;
+            default:
+                throw new InvalidOperationException(
+                    $"Unexpected variable type: '{member.Type?.GetType().Name}'");
         }
     }
 
@@ -108,6 +136,22 @@ public class ExecutableFunction
         foreach (var parameter in customType.TypeDefinition.Variables)
         {
             ValidateParameter(name, dictionary, validationErrors, parameter);
+        }
+    }
+
+    private void ValidateComplexType(string name, ComplexType complexType, object value, List<string> validationErrors)
+    {
+        if (value != null && value is not Dictionary<string, object>)
+        {
+            validationErrors.Add($"{name}' should have a complex type '{complexType.Name}'. Invalid type: '{value.GetType().Name}'");
+            return;
+        }
+
+        var dictionary = value != null ? (Dictionary<string, object>)value : new Dictionary<string, object>();
+
+        foreach (var member in complexType.Members)
+        {
+            ValidateMember(name, dictionary, validationErrors, member);
         }
     }
 
@@ -171,7 +215,7 @@ public class ExecutableFunction
         {
             var variablePath = VariablePath(parent, key);
             var field = GetParameterSetter(parameters, variablePath);
-            if (field.VariableType is not CustomType)
+            if (field.VariableType is not CustomType && field.VariableType is not ComplexType)
             {
                 var convertedValue = GetValue(value, field.VariableType);
                 field.SetValue(convertedValue);
@@ -198,7 +242,7 @@ public class ExecutableFunction
     {
         if (parameterFields.ContainsKey(name)) return parameterFields[name];
 
-        var currentReference = VariableReference.Parse(name);
+        var currentReference = VariablePathParser.Parse(name);
         var currentValue = parameters;
         var field = GetField(currentReference.ParentIdentifier, parameters);
         var parameterType = GetFunctionParameterType(currentReference);
@@ -216,22 +260,26 @@ public class ExecutableFunction
         return setter;
     }
 
-    private VariableType GetFunctionParameterType(VariableReference currentReference)
+    private VariableType GetFunctionParameterType(VariablePath currentPath)
     {
         return function.Parameters.Variables.FirstOrDefault(parameter =>
-            parameter.Name == currentReference.ParentIdentifier).VariableType;
+            parameter.Name == currentPath.ParentIdentifier).VariableType;
     }
 
-    private static VariableType GetTypeVariableType(VariableType parameterType, VariableReference currentReference)
+    private static VariableType GetTypeVariableType(VariableType parameterType, VariablePath currentPath)
     {
-        if (parameterType is not CustomType customType)
+        switch (parameterType)
         {
-            throw new InvalidOperationException("Unexpected type: " + parameterType);
+            case CustomType customType:
+                return customType.TypeDefinition.Variables
+                    .FirstOrDefault(variable => variable.Name == currentPath.ParentIdentifier).VariableType;
+            case ComplexType complexType:
+                return complexType.Members
+                    .FirstOrDefault(variable => variable.Name == currentPath.ParentIdentifier)
+                    .Type;
+            default:
+                throw new InvalidOperationException("Unexpected type: " + parameterType);
         }
-
-        parameterType = customType.TypeDefinition.Variables
-            .FirstOrDefault(variable => variable.Name == currentReference.ParentIdentifier).VariableType;
-        return parameterType;
     }
 
     private static FieldInfo? GetField(string name, object valueObject)

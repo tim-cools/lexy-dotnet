@@ -4,12 +4,12 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Scenarios;
 
-public class ScenarioTable : ParsableNode
+public class Table : ParsableNode
 {
     public TableHeader Header { get; private set; }
     public IList<TableRow> Rows { get; } = new List<TableRow>();
 
-    public ScenarioTable(SourceReference reference) : base(reference)
+    public Table(SourceReference reference) : base(reference)
     {
     }
 

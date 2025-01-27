@@ -3,7 +3,7 @@ using Lexy.Compiler.Parser.Tokens;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Lexy.Compiler.Compiler.CSharp;
+namespace Lexy.Compiler.Compiler.CSharp.Syntax;
 
 internal static class TokenValuesSyntax
 {

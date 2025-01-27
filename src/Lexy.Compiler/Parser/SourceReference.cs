@@ -9,11 +9,19 @@ public class SourceReference
 
     public SourceFile File { get; }
 
+    public string SortIndex {
+        get
+        {
+            var value = (LineNumber * 100000000 + CharacterNumber).ToString().PadLeft(16);
+            return $"{File.FileName}/{value}";
+        }
+    }
+
     public SourceReference(SourceFile file, int? lineNumber, int? characterNumber)
     {
         File = file ?? throw new ArgumentNullException(nameof(file));
-        this.CharacterNumber = characterNumber;
-        this.LineNumber = lineNumber;
+        CharacterNumber = characterNumber;
+        LineNumber = lineNumber;
     }
 
     public override string ToString()

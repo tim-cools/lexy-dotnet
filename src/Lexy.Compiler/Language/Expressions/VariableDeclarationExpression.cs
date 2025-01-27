@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
@@ -8,6 +9,8 @@ namespace Lexy.Compiler.Language.Expressions;
 
 public class VariableDeclarationExpression : Expression
 {
+    private VariableType variableType;
+
     public VariableDeclarationType Type { get; }
     public string Name { get; }
     public Expression Assignment { get; }
@@ -93,7 +96,7 @@ public class VariableDeclarationExpression : Expression
             return assignmentType;
         }
 
-        var variableType = Type.CreateVariableType(context);
+        variableType = Type.CreateVariableType(context);
         if (Assignment != null && !assignmentType.Equals(variableType))
         {
             context.Logger.Fail(Reference, "Invalid expression. Literal or enum value expression expected.");
@@ -105,5 +108,18 @@ public class VariableDeclarationExpression : Expression
     public override VariableType DeriveType(IValidationContext context)
     {
         return null;
+    }
+
+    public override IEnumerable<VariableUsage> UsedVariables()
+    {
+        yield return new VariableUsage(VariablePathParser.Parse(Name), null, variableType, VariableSource.Code, VariableAccess.Write);
+
+        if (Assignment == null) yield break;
+
+        var readVariables = Assignment.GetReadVariableUsage();
+        foreach (var readVariable in readVariables)
+        {
+            yield return readVariable;
+        }
     }
 }

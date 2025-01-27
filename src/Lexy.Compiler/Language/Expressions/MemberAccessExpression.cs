@@ -6,20 +6,18 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Expressions;
 
-public class MemberAccessExpression : Expression, IHasNodeDependencies
+public class MemberAccessExpression : Expression, IHasNodeDependencies, IHasVariableReference
 {
     public MemberAccessLiteral MemberAccessLiteral { get; }
-    public VariableReference Variable { get; }
 
-    public VariableType VariableType { get; private set; }
-    public VariableType ParentVariableType { get; private set; }
-    public VariableSource VariableSource { get; private set; }
+    public VariablePath VariablePath { get; private set; }
+    public VariableReference Variable { get; private set; }
 
-    private MemberAccessExpression(VariableReference variable, MemberAccessLiteral literal, ExpressionSource source,
+    private MemberAccessExpression(VariablePath variablePath, MemberAccessLiteral literal, ExpressionSource source,
         SourceReference reference) : base(source, reference)
     {
         MemberAccessLiteral = literal ?? throw new ArgumentNullException(nameof(literal));
-        Variable = variable;
+        VariablePath = variablePath;
     }
 
     public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
@@ -34,7 +32,7 @@ public class MemberAccessExpression : Expression, IHasNodeDependencies
         if (!IsValid(tokens)) return ParseExpressionResult.Invalid<MemberAccessExpression>("Invalid expression.");
 
         var literal = tokens.Token<MemberAccessLiteral>(0);
-        var variable = new VariableReference(literal.Parts);
+        var variable = new VariablePath(literal.Parts);
 
         var reference = source.CreateReference();
 
@@ -55,56 +53,11 @@ public class MemberAccessExpression : Expression, IHasNodeDependencies
 
     protected override void Validate(IValidationContext context)
     {
-        VariableType = context.VariableContext.GetVariableType(Variable, context);
-        ParentVariableType = context.RootNodes.GetType(Variable.ParentIdentifier);
-
-        SetVariableSource(context);
-
-        if (VariableType != null) return;
-
-        ValidateMemberType(context);
+        CreateVariableReference(context);
     }
 
-    private void ValidateMemberType(IValidationContext context)
-    {
-        if (VariableType == null && ParentVariableType == null)
-        {
-            context.Logger.Fail(Reference, $"Invalid member access '{Variable}'. Variable '{Variable}' not found.");
-            return;
-        }
-
-        if (ParentVariableType is not ITypeWithMembers typeWithMembers)
-        {
-            context.Logger.Fail(Reference,
-                $"Invalid member access '{Variable}'. Variable '{Variable.ParentIdentifier}' not found.");
-            return;
-        }
-
-        var memberType = typeWithMembers.MemberType(MemberAccessLiteral.Member, context);
-        if (memberType == null)
-        {
-            context.Logger.Fail(Reference,
-                $"Invalid member access '{Variable}'. Member '{MemberAccessLiteral.Member}' not found on '{Variable.ParentIdentifier}'.");
-        }
-    }
-
-    private void SetVariableSource(IValidationContext context)
-    {
-        if (ParentVariableType != null)
-        {
-            VariableSource = VariableSource.Type;
-            return;
-        }
-
-        var variableSource = context.VariableContext.GetVariableSource(Variable.ParentIdentifier);
-        if (variableSource == null)
-        {
-            context.Logger.Fail(Reference, $"Can't define source of variable: {Variable.ParentIdentifier}");
-        }
-        else
-        {
-            VariableSource = variableSource.Value;
-        }
+    private void CreateVariableReference(IValidationContext context) {
+        Variable = context.VariableContext.CreateVariableReference(Reference, VariablePath, context);
     }
 
     public override VariableType DeriveType(IValidationContext context)

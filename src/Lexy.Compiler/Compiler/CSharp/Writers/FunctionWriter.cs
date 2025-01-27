@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
+using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
 using Lexy.Compiler.Language.Functions;
+using Lexy.Compiler.Language.Scenarios;
+using Lexy.Compiler.Language.VariableTypes;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static Lexy.Compiler.Compiler.CSharp.ExpressionSyntaxFactory;
+using static Lexy.Compiler.Compiler.CSharp.Syntax.Expressions;
 
 namespace Lexy.Compiler.Compiler.CSharp.Writers;
 
@@ -22,8 +25,8 @@ public class FunctionWriter : IRootTokenWriter
 
         var members = new List<MemberDeclarationSyntax>
         {
-            VariableClassFactory.TranslateVariablesClass(LexyCodeConstants.ParametersType, function.Parameters.Variables),
-            VariableClassFactory.TranslateVariablesClass(LexyCodeConstants.ResultsType, function.Results.Variables),
+            VariableClass.TranslateVariablesClass(LexyCodeConstants.ParametersType, function.Parameters.Variables),
+            VariableClass.TranslateVariablesClass(LexyCodeConstants.ResultsType, function.Results.Variables),
             RunMethod(function)
         };
         members.AddRange(CustomBuiltInFunctions(function));
@@ -50,9 +53,26 @@ public class FunctionWriter : IRootTokenWriter
         {
             GuardStatements.VerifyNotNull(LexyCodeConstants.ParameterVariable),
             GuardStatements.VerifyNotNull(LexyCodeConstants.ContextVariable),
-            InitializeResults()
+            LogCalls.SetFileName(function.Reference.File.FileName),
+            LogCalls.OpenScope($"Execute: {function.NodeName}", function.Reference.LineNumber ?? -1),
         };
-        statements.AddRange(function.Code.Expressions.SelectMany(ExecuteStatementSyntax));
+
+        if (function.Parameters != null)
+        {
+            statements.Add(LogCalls.LogVariables(function.Parameters.Reference?.LineNumber, "Parameters",
+                LexyCodeConstants.ParameterVariable));
+        }
+
+        statements.Add(InitializeResults());
+
+        statements.AddRange(ExecuteExpressionStatementSyntax(function.Code.Expressions, false));
+        if (function.Results != null)
+        {
+            statements.Add(LogCalls.LogVariables(function.Results.Reference.LineNumber, "Results",
+                LexyCodeConstants.ResultsVariable));
+        }
+
+        statements.Add(LogCalls.CloseScope());
         statements.Add(ReturnResults());
 
         var functionSyntax = MethodDeclaration(
@@ -73,6 +93,16 @@ public class FunctionWriter : IRootTokenWriter
             .WithBody(Block(statements));
 
         return functionSyntax;
+    }
+
+    private IEnumerable<VariableUsage> Variables(ComplexType complexType, IReadOnlyList<VariableDefinition> variables, VariableSource source)
+    {
+        return variables.Select(variable => new VariableUsage(
+            VariablePathParser.Parse(variable.Name),
+            complexType,
+            variable.VariableType,
+            source,
+            VariableAccess.Read));
     }
 
     private StatementSyntax ReturnResults()

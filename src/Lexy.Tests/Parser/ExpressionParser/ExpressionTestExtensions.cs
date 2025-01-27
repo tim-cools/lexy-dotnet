@@ -78,6 +78,6 @@ public static class ExpressionTestExtensions
 
     public static void ValidateMemberAccessExpression(this Expression expression, string value)
     {
-        expression.ValidateOfType<MemberAccessExpression>(literal => { literal.Variable.ToString().ShouldBe(value); });
+        expression.ValidateOfType<MemberAccessExpression>(literal => { literal.VariablePath.ToString().ShouldBe(value); });
     }
 }

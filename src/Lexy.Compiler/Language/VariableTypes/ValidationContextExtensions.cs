@@ -1,5 +1,6 @@
 using System;
 using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 
@@ -32,8 +33,13 @@ public static class ValidationContextExtensions
     private static void ValidateCustomVariableType(IValidationContext context, SourceReference reference,
         CustomVariableDeclarationType customVariableDeclarationType, Expression defaultValueExpression)
     {
-        var type = context.RootNodes.GetType(customVariableDeclarationType.Type);
-        if (type == null || type is not EnumType && type is not CustomType)
+        var variablePathComplex = VariablePathParser.Parse(customVariableDeclarationType.Type);
+        var variable = context.VariableContext.CreateVariableReference(reference, variablePathComplex, context);
+        var type = variable?.VariableType;
+        if (type == null ||
+            type is not EnumType
+            && type is not CustomType
+            && type is not ComplexType)
         {
             context.Logger.Fail(reference, $"Unknown type: '{customVariableDeclarationType.Type}'");
             return;
@@ -44,29 +50,36 @@ public static class ValidationContextExtensions
         if (type is not EnumType)
         {
             context.Logger.Fail(reference,
-                $"Invalid default value '{defaultValueExpression}'. Type: '{customVariableDeclarationType.Type}' does not support a default value.");
+                $"Invalid default value '{defaultValueExpression}'. (type: '{customVariableDeclarationType.Type}') does not support a default value.");
             return;
         }
 
-        if (defaultValueExpression is not MemberAccessExpression memberAccessLiteralExpression)
+        if (defaultValueExpression is not MemberAccessExpression memberAccessExpression
+         || memberAccessExpression.VariablePath == null)
         {
             context.Logger.Fail(reference,
                 $"Invalid default value '{defaultValueExpression}'. (type: '{customVariableDeclarationType.Type}')");
             return;
         }
 
-        var variableReference = memberAccessLiteralExpression.Variable;
-        if (variableReference.Parts != 2)
+        var variablePath = memberAccessExpression.VariablePath;
+        if (variablePath.Parts != 2)
+        {
             context.Logger.Fail(reference,
                 $"Invalid default value '{defaultValueExpression}'. (type: '{customVariableDeclarationType.Type}')");
-        if (variableReference.ParentIdentifier != customVariableDeclarationType.Type)
+        }
+        if (variablePath.ParentIdentifier != customVariableDeclarationType.Type)
+        {
             context.Logger.Fail(reference,
                 $"Invalid default value '{defaultValueExpression}'. Invalid enum type. (type: '{customVariableDeclarationType.Type}')");
+        }
 
-        var enumDeclaration = context.RootNodes.GetEnum(variableReference.ParentIdentifier);
-        if (enumDeclaration == null || !enumDeclaration.ContainsMember(variableReference.Path[1]))
+        var enumDeclaration = context.RootNodes.GetEnum(variablePath.ParentIdentifier);
+        if (enumDeclaration == null || !enumDeclaration.ContainsMember(variablePath.Path[1]))
+        {
             context.Logger.Fail(reference,
                 $"Invalid default value '{defaultValueExpression}'. Invalid member. (type: '{customVariableDeclarationType.Type}')");
+        }
     }
 
     private static void ValidatePrimitiveVariableType(IValidationContext context, SourceReference reference,

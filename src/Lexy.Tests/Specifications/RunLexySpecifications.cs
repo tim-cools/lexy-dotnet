@@ -11,7 +11,7 @@ public class RunLexySpecifications : ScopedServicesTestFixture
         LoggingConfiguration.LogFileNames();
 
         var runner = GetService<ISpecificationsRunner>();
-        runner.RunAll("../../../../../../laws/specifications");
+        runner.RunAll("../../../lexy-language/src/Specifications");
     }
 
     [Test]
@@ -20,10 +20,11 @@ public class RunLexySpecifications : ScopedServicesTestFixture
         LoggingConfiguration.LogFileNames();
 
         var runner = GetService<ISpecificationsRunner>();
-        runner.Run("../../../../../../laws/Specifications/Function/ExecutionValidation.lexy");
+        runner.Run("../../../lexy-language/src/Specifications/Function/ComplexVariables.lexy");
 
-        //runner.Run("../../../../../../laws/Specifications/Isolate.lexy");
-        //runner.Run("../../../../../../laws/Specifications/Function/Variables.lexy");
-        //runner.Run("../../../../../../laws/Specifications/BuiltInFunctions/Extract.lexy");
+        //runner.Run("/Users/timcools/_/Lexy/lexy-language/src/Specifications/Table/Syntax.lexy");
+        //runner.Run("../../../lexy-language/src/Specifications/Isolate.lexy");
+        //runner.Run("../../../lexy-language/src/Specifications/Function/Variables.lexy");
+        //runner.Run("../../../lexy-language/src/Specifications/BuiltInFunctions/Extract.lexy");
     }
 }

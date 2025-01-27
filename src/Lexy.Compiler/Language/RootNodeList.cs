@@ -8,14 +8,18 @@ using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
 using Lexy.Compiler.Language.VariableTypes;
+using Table = Lexy.Compiler.Language.Tables.Table;
 
 namespace Lexy.Compiler.Language;
 
 public class RootNodeList : IEnumerable<IRootNode>
 {
-    private readonly IList<IRootNode> values = new Collection<IRootNode>();
+    private readonly IList<IRootNode> values;
 
-    public int Count => values.Count;
+    public RootNodeList(IEnumerable<IRootNode> values = null)
+    {
+        this.values = values != null ? this.values.ToList() : new List<IRootNode>();
+    }
 
     public IEnumerator<IRootNode> GetEnumerator()
     {

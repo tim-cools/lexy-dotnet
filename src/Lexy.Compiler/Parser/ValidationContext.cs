@@ -18,7 +18,6 @@ public class ValidationContext : IValidationContext
         RootNodes = rootNodes ?? throw new ArgumentNullException(nameof(rootNodes));
     }
 
-
     public IVariableContext VariableContext
     {
         get
@@ -33,7 +32,7 @@ public class ValidationContext : IValidationContext
     {
         if (variableContext != null) contexts.Push(variableContext);
 
-        variableContext = new VariableContext(Logger, variableContext);
+        variableContext = new VariableContext(RootNodes, Logger, variableContext);
 
         return new CodeContextScope(() => { return variableContext = contexts.Count == 0 ? null : contexts.Pop(); });
     }

@@ -6,3 +6,8 @@ public interface IChildExpression : INode
 {
     bool ValidatePreviousExpression(IParentExpression expression, IParseLineContext context);
 }
+
+public interface IHasVariableReference : INode
+{
+    VariableReference Variable { get; }
+}

@@ -43,6 +43,7 @@ public static class LoggingConfiguration
                 .Filter.ByExcluding(Matching.FromSource<LexyParser>())
                 .Filter.ByExcluding(Matching.FromSource<LexyCompiler>())
                 .Filter.ByExcluding(Matching.FromSource<ExecutionContext>())
+                .WriteTo.Console()
                 .WriteTo.File(FullLogFile(TestsLogFile)))
             .CreateLogger();
     }
