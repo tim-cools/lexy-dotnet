@@ -4,7 +4,7 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public class RoundFunction : ExpressionFunction
+public class RoundFunction : FunctionCallExpression
 {
     public const string Name = "ROUND";
 
@@ -13,8 +13,8 @@ public class RoundFunction : ExpressionFunction
     public Expression NumberExpression { get; }
     public Expression DigitsExpression { get; }
 
-    protected RoundFunction(Expression numberExpression, Expression digitsExpression, SourceReference reference)
-        : base(reference)
+    private RoundFunction(Expression numberExpression, Expression digitsExpression, ExpressionSource source)
+        : base(Name, source)
     {
         NumberExpression = numberExpression;
         DigitsExpression = digitsExpression;
@@ -33,14 +33,14 @@ public class RoundFunction : ExpressionFunction
             .ValidateType(DigitsExpression, 2, "Digits", PrimitiveType.Number, Reference, FunctionHelp);
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         return PrimitiveType.Number;
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression numberExpression,
+    public static FunctionCallExpression Create(ExpressionSource source, Expression numberExpression,
         Expression powerExpression)
     {
-        return new RoundFunction(numberExpression, powerExpression, reference);
+        return new RoundFunction(numberExpression, powerExpression, source);
     }
 }

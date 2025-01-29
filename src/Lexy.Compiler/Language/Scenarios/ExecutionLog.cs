@@ -70,7 +70,7 @@ public class ExecutionLog : ParsableNode
 
     private IParsableNode ParseAssignment(IParseLineContext context)
     {
-        var assignment = AssignmentDefinition.Parse(context);
+        var assignment = AssignmentDefinitionParser.Parse(context);
         if (assignment == null) return this;
         assignments.Add(assignment);
 

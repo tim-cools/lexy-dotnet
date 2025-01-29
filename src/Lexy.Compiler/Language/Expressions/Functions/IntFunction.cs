@@ -9,13 +9,13 @@ public class IntFunction : SingleArgumentFunction
 
     protected override string FunctionHelp => $"{Name} expects 1 argument (Value)";
 
-    private IntFunction(Expression valueExpression, SourceReference reference)
-        : base(valueExpression, reference, PrimitiveType.Number, PrimitiveType.Number)
+    private IntFunction(Expression valueExpression, ExpressionSource source)
+        : base(Name, valueExpression, source, PrimitiveType.Number, PrimitiveType.Number)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression expression)
+    public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new IntFunction(expression, reference);
+        return new IntFunction(expression, source);
     }
 }

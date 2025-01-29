@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
 using Lexy.Compiler.Language.Expressions.Functions;
-using Lexy.Compiler.Parser;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -15,16 +14,16 @@ internal class ExtractFunctionExpressionStatementException : IExpressionStatemen
     public bool Matches(Expression expression)
     {
         return expression is FunctionCallExpression functionCallExpression
-               && functionCallExpression.ExpressionFunction is ExtractResultsFunction;
+               && functionCallExpression is ExtractResultsFunction;
     }
 
     public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression)
     {
         if (!(expression is FunctionCallExpression functionCallExpression))
             throw new InvalidOperationException("expression should be FunctionCallExpression");
-        if (!(functionCallExpression.ExpressionFunction is ExtractResultsFunction extractResultsFunction))
+        if (!(functionCallExpression is ExtractResultsFunction extractResultsFunction))
             throw new InvalidOperationException(
-                "functionCallExpression.ExpressionFunction should be ExtractResultsFunction");
+                "functionCallExpression.FunctionCallExpression should be ExtractResultsFunction");
 
         return ExtractStatementSyntax(extractResultsFunction.Mapping, extractResultsFunction.FunctionResultVariable);
     }

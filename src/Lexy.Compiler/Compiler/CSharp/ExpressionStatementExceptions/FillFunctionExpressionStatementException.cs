@@ -4,7 +4,6 @@ using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
 using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.Compiler.Language.VariableTypes;
-using Lexy.Compiler.Parser;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -16,18 +15,18 @@ internal class FillFunctionExpressionStatementException : IExpressionStatementEx
     public bool Matches(Expression expression)
     {
         return expression is VariableDeclarationExpression { Assignment: FunctionCallExpression functionCallExpression }
-            && functionCallExpression.ExpressionFunction is FillParametersFunction;
+            && functionCallExpression is FillParametersFunction;
     }
 
     public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression)
     {
-        if (!(expression is VariableDeclarationExpression assignmentExpression))
+        if (expression is not VariableDeclarationExpression assignmentExpression)
             throw new InvalidOperationException("expression should be AssignmentExpression");
-        if (!(assignmentExpression.Assignment is FunctionCallExpression functionCallExpression))
+        if (assignmentExpression.Assignment is not FunctionCallExpression functionCallExpression)
             throw new InvalidOperationException("assignmentExpression.Assignment should be FunctionCallExpression");
-        if (!(functionCallExpression.ExpressionFunction is FillParametersFunction fillParametersFunction))
+        if (functionCallExpression is not FillParametersFunction fillParametersFunction)
             throw new InvalidOperationException(
-                "functionCallExpression.ExpressionFunction should be FillParametersFunction");
+                "functionCallExpression.FunctionCallExpression should be FillParametersFunction");
 
         return FillStatementSyntax(assignmentExpression.Name, fillParametersFunction.Type,
             fillParametersFunction.Mapping);

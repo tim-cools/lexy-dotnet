@@ -6,7 +6,7 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public class ExtractResultsFunction : ExpressionFunction
+public class ExtractResultsFunction : FunctionCallExpression
 {
     public const string Name = "extract";
 
@@ -19,8 +19,8 @@ public class ExtractResultsFunction : ExpressionFunction
 
     public IEnumerable<Mapping> Mapping => mapping;
 
-    private ExtractResultsFunction(Expression valueExpression, SourceReference reference)
-        : base(reference)
+    private ExtractResultsFunction(Expression valueExpression, ExpressionSource source)
+        : base(Name, source)
     {
         ValueExpression = valueExpression;
         FunctionResultVariable = (valueExpression as IdentifierExpression)?.Identifier;
@@ -90,18 +90,19 @@ public class ExtractResultsFunction : ExpressionFunction
         }
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         return new VoidType();
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression expression)
+    public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new ExtractResultsFunction(expression, reference);
+        return new ExtractResultsFunction(expression, source);
     }
 
     public override IEnumerable<VariableUsage> UsedVariables()
     {
-        return mapping.Select(map => map.ToUsedVariable(VariableAccess.Write));
+        return base.UsedVariables()
+            .Union(mapping.Select(map => map.ToUsedVariable(VariableAccess.Write)));
     }
 }

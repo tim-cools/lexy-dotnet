@@ -51,7 +51,7 @@ public class ScenarioRunner : IScenarioRunner
 
         if (!ValidateErrors(context)) return;
 
-        var nodes = function.GetFunctionAndDependencies(rootNodeList);
+        var nodes = DependencyGraphFactory.NodeAndDependencies(rootNodeList, function);
 
         using var compilerResult = lexyCompiler.Compile(nodes);
 

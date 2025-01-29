@@ -9,13 +9,13 @@ public class MonthFunction : SingleArgumentFunction
 
     protected override string FunctionHelp => $"'{Name} expects 1 argument (Date)";
 
-    private MonthFunction(Expression valueExpression, SourceReference reference)
-        : base(valueExpression, reference, PrimitiveType.Date, PrimitiveType.Number)
+    private MonthFunction(Expression valueExpression, ExpressionSource source)
+        : base(Name, valueExpression, source, PrimitiveType.Date, PrimitiveType.Number)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression expression)
+    public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new MonthFunction(expression, reference);
+        return new MonthFunction(expression, source);
     }
 }

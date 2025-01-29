@@ -13,17 +13,17 @@ internal class NewFunctionExpressionStatementException : IExpressionStatementExc
     {
         return expression is VariableDeclarationExpression assignmentExpression
                && assignmentExpression.Assignment is FunctionCallExpression functionCallExpression
-               && functionCallExpression.ExpressionFunction is NewFunction;
+               && functionCallExpression is NewFunction;
     }
 
     public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression)
     {
-        if (!(expression is VariableDeclarationExpression assignmentExpression))
+        if (expression is not VariableDeclarationExpression assignmentExpression)
             throw new InvalidOperationException("expression should be VariableDeclarationExpression");
-        if (!(assignmentExpression.Assignment is FunctionCallExpression functionCallExpression))
+        if (assignmentExpression.Assignment is not FunctionCallExpression functionCallExpression)
             throw new InvalidOperationException("assignmentExpression.Assignment should be FunctionCallExpression");
-        if (functionCallExpression.ExpressionFunction is not NewFunction)
-            throw new InvalidOperationException("functionCallExpression.ExpressionFunction should be NewFunction");
+        if (functionCallExpression is not NewFunction)
+            throw new InvalidOperationException("functionCallExpression.FunctionCallExpression should be NewFunction");
 
         var typeSyntax = Types.Syntax(assignmentExpression.Type);
 

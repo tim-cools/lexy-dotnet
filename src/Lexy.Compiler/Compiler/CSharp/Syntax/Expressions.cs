@@ -4,6 +4,7 @@ using System.Linq;
 using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 using Lexy.Compiler.Compiler.CSharp.ExpressionStatementExceptions;
 using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Language.Expressions.Functions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -186,7 +187,7 @@ internal static class Expressions
 
     private static ExpressionSyntax TranslateFunctionCallExpression(FunctionCallExpression expression)
     {
-        return FunctionCallFactory.CallExpressionSyntax(expression.ExpressionFunction);
+        return FunctionCallFactory.CallExpressionSyntax(expression);
     }
 
     private static ExpressionSyntax TranslateBinaryExpression(BinaryExpression expression)

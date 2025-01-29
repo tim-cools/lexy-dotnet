@@ -6,7 +6,7 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-internal class LookupFunction : ExpressionFunction, IHasNodeDependencies
+internal class LookupFunction : FunctionCallExpression, IHasNodeDependencies
 {
     private const string FunctionHelp =
         "Arguments: LOOKUP(Table, lookUpValue, Table.SearchValueColumn, Table.ResultColumn)";
@@ -31,8 +31,8 @@ internal class LookupFunction : ExpressionFunction, IHasNodeDependencies
 
     private LookupFunction(string tableType, Expression valueExpression,
         MemberAccessLiteral resultColumn, MemberAccessLiteral searchValueColumn,
-        SourceReference tableNameArgumentReference)
-        : base(tableNameArgumentReference)
+        ExpressionSource source)
+        : base(Name, source)
     {
         Table = tableType ?? throw new ArgumentNullException(nameof(tableType));
         ValueExpression = valueExpression ?? throw new ArgumentNullException(nameof(valueExpression));
@@ -40,13 +40,13 @@ internal class LookupFunction : ExpressionFunction, IHasNodeDependencies
         SearchValueColumn = searchValueColumn ?? throw new ArgumentNullException(nameof(searchValueColumn));
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         var table = rootNodeList.GetTable(Table);
         if (table != null) yield return table;
     }
 
-    public static ParseExpressionFunctionsResult Parse(string name, SourceReference functionCallReference,
+    public static ParseExpressionFunctionsResult Create(ExpressionSource source,
         IReadOnlyList<Expression> arguments)
     {
         if (arguments.Count != Arguments)
@@ -78,7 +78,7 @@ internal class LookupFunction : ExpressionFunction, IHasNodeDependencies
         var resultColumn = resultColumnExpression.MemberAccessLiteral;
 
         var lookupFunction = new LookupFunction(tableName, valueExpression, resultColumn, searchValueColumn,
-            functionCallReference);
+            source);
         return ParseExpressionFunctionsResult.Success(lookupFunction);
     }
 
@@ -140,7 +140,7 @@ internal class LookupFunction : ExpressionFunction, IHasNodeDependencies
         }
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         var tableType = context.RootNodes.GetTable(Table);
         var resultColumnHeader = tableType?.Header.Get(ResultColumn);

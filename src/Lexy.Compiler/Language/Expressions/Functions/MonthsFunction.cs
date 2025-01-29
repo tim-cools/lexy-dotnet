@@ -1,21 +1,17 @@
-using Lexy.Compiler.Parser;
-
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
 public class MonthsFunction : EndStartDateFunction
 {
     public const string Name = "MONTHS";
 
-    protected override string FunctionName => Name;
-
-    private MonthsFunction(Expression endDateExpression, Expression startDateExpression, SourceReference reference)
-        : base(endDateExpression, startDateExpression, reference)
+    private MonthsFunction(Expression endDateExpression, Expression startDateExpression, ExpressionSource source)
+        : base(Name, endDateExpression, startDateExpression, source)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression endDateExpression,
+    public static FunctionCallExpression Create(ExpressionSource source, Expression endDateExpression,
         Expression startDateExpression)
     {
-        return new MonthsFunction(endDateExpression, startDateExpression, reference);
+        return new MonthsFunction(endDateExpression, startDateExpression, source);
     }
 }

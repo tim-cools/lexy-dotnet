@@ -8,10 +8,10 @@ namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
 internal static class FunctionCallFactory
 {
-    private static IDictionary<Type, Func<ExpressionFunction, ExpressionSyntax>> expressionSyntaxConvertors
-        = new Dictionary<Type, Func<ExpressionFunction, ExpressionSyntax>>();
-    private static IDictionary<Type, Func<ExpressionFunction, MemberDeclarationSyntax>> customMethods
-        = new Dictionary<Type, Func<ExpressionFunction, MemberDeclarationSyntax>>();
+    private static IDictionary<Type, Func<FunctionCallExpression, ExpressionSyntax>> expressionSyntaxConvertors
+        = new Dictionary<Type, Func<FunctionCallExpression, ExpressionSyntax>>();
+    private static IDictionary<Type, Func<FunctionCallExpression, MemberDeclarationSyntax>> customMethods
+        = new Dictionary<Type, Func<FunctionCallExpression, MemberDeclarationSyntax>>();
 
     static FunctionCallFactory()
     {
@@ -45,7 +45,7 @@ internal static class FunctionCallFactory
 
     private static void AddFactory<TFunction, TFunctionCall>()
         where TFunctionCall : new()
-        where TFunction : ExpressionFunction
+        where TFunction : FunctionCallExpression
     {
         var callExpressionSyntaxMethod = typeof(TFunctionCall)
             .GetMethod(nameof(FunctionCall<TFunction>.CallExpressionSyntax), BindingFlags.Instance | BindingFlags.Public);
@@ -74,7 +74,7 @@ internal static class FunctionCallFactory
         });
     }
 
-    public static ExpressionSyntax CallExpressionSyntax(ExpressionFunction expressionExpressionFunction)
+    public static ExpressionSyntax CallExpressionSyntax(FunctionCallExpression expressionExpressionFunction)
     {
         if (expressionExpressionFunction == null) throw new ArgumentNullException(nameof(expressionExpressionFunction));
 
@@ -86,7 +86,7 @@ internal static class FunctionCallFactory
         return functionCall(expressionExpressionFunction);
     }
 
-    public static MemberDeclarationSyntax CustomMethods(ExpressionFunction expressionExpressionFunction)
+    public static MemberDeclarationSyntax CustomMethods(FunctionCallExpression expressionExpressionFunction)
     {
         if (expressionExpressionFunction == null) throw new ArgumentNullException(nameof(expressionExpressionFunction));
 

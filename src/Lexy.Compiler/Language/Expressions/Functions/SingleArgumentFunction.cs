@@ -5,22 +5,22 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public abstract class SingleArgumentFunction : ExpressionFunction
+public abstract class SingleArgumentFunction : FunctionCallExpression
 {
-    protected abstract string FunctionHelp { get; }
+    private readonly VariableType argumentType;
+    private readonly VariableType resultType;
 
-    protected VariableType ArgumentType { get; }
-    protected VariableType ResultType { get; }
+    protected abstract string FunctionHelp { get; }
 
     public Expression ValueExpression { get; }
 
-    protected SingleArgumentFunction(Expression valueExpression, SourceReference reference,
+    protected SingleArgumentFunction(string functionName, Expression valueExpression, ExpressionSource source,
         VariableType argumentType, VariableType resultType)
-        : base(reference)
+        : base(functionName, source)
     {
         ValueExpression = valueExpression ?? throw new ArgumentNullException(nameof(valueExpression));
-        ArgumentType = argumentType ?? throw new ArgumentNullException(nameof(argumentType));
-        ResultType = resultType ?? throw new ArgumentNullException(nameof(resultType));
+        this.argumentType = argumentType ?? throw new ArgumentNullException(nameof(argumentType));
+        this.resultType = resultType ?? throw new ArgumentNullException(nameof(resultType));
     }
 
     public override IEnumerable<INode> GetChildren()
@@ -30,11 +30,11 @@ public abstract class SingleArgumentFunction : ExpressionFunction
 
     protected override void Validate(IValidationContext context)
     {
-        context.ValidateType(ValueExpression, 1, "Value", ArgumentType, Reference, FunctionHelp);
+        context.ValidateType(ValueExpression, 1, "Value", argumentType, Reference, FunctionHelp);
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
-        return ResultType;
+        return resultType;
     }
 }

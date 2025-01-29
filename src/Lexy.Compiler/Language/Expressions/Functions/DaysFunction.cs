@@ -6,16 +6,14 @@ public class DaysFunction : EndStartDateFunction
 {
     public const string Name = "DAYS";
 
-    protected override string FunctionName => Name;
-
-    private DaysFunction(Expression endDateExpression, Expression startDateExpression, SourceReference reference)
-        : base(endDateExpression, startDateExpression, reference)
+    private DaysFunction(Expression endDateExpression, Expression startDateExpression, ExpressionSource source)
+        : base(Name, endDateExpression, startDateExpression, source)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression endDateExpression,
+    public static FunctionCallExpression Create(ExpressionSource source, Expression endDateExpression,
         Expression startDateExpression)
     {
-        return new DaysFunction(endDateExpression, startDateExpression, reference);
+        return new DaysFunction(endDateExpression, startDateExpression, source);
     }
 }

@@ -4,18 +4,16 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public abstract class EndStartDateFunction : ExpressionFunction
+public abstract class EndStartDateFunction : FunctionCallExpression
 {
     private string FunctionHelp => $"'{FunctionName}' expects 2 arguments (EndDate, StartDate).";
-
-    protected abstract string FunctionName { get; }
 
     public Expression EndDateExpression { get; }
     public Expression StartDateExpression { get; }
 
-    protected EndStartDateFunction(Expression endDateExpression, Expression startDateExpression,
-        SourceReference reference)
-        : base(reference)
+    protected EndStartDateFunction(string functionName, Expression endDateExpression, Expression startDateExpression,
+        ExpressionSource source)
+        : base(functionName, source)
     {
         EndDateExpression = endDateExpression;
         StartDateExpression = startDateExpression;
@@ -34,7 +32,7 @@ public abstract class EndStartDateFunction : ExpressionFunction
             .ValidateType(StartDateExpression, 2, "StartDate", PrimitiveType.Date, Reference, FunctionHelp);
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         return PrimitiveType.Number;
     }

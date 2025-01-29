@@ -6,16 +6,14 @@ public class MinutesFunction : EndStartDateFunction
 {
     public const string Name = "MINUTES";
 
-    protected override string FunctionName => Name;
-
-    private MinutesFunction(Expression endDateExpression, Expression startDateExpression, SourceReference reference)
-        : base(endDateExpression, startDateExpression, reference)
+    private MinutesFunction(Expression endDateExpression, Expression startDateExpression, ExpressionSource source)
+        : base(Name, endDateExpression, startDateExpression, source)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression endDateExpression,
+    public static FunctionCallExpression Create(ExpressionSource source, Expression endDateExpression,
         Expression startDateExpression)
     {
-        return new MinutesFunction(endDateExpression, startDateExpression, reference);
+        return new MinutesFunction(endDateExpression, startDateExpression, source);
     }
 }

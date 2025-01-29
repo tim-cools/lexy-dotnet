@@ -13,9 +13,6 @@ public class Function : RootNode, IHasNodeDependencies
     public const string ParameterName = "Parameters";
     public const string ResultsName = "Results";
 
-    private static readonly LambdaComparer<IRootNode> NodeComparer =
-        new((token1, token2) => token1.NodeName == token2.NodeName);
-
     public FunctionName Name { get; }
     public FunctionParameters Parameters { get; }
     public FunctionResults Results { get; }
@@ -33,7 +30,7 @@ public class Function : RootNode, IHasNodeDependencies
         Name.ParseName(name);
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         var result = new List<IRootNode>();
         AddEnumTypes(rootNodeList, Parameters.Variables, result);
@@ -67,48 +64,7 @@ public class Function : RootNode, IHasNodeDependencies
         return this;
     }
 
-    public IEnumerable<IRootNode> GetFunctionAndDependencies(RootNodeList rootNodeList)
-    {
-        var result = new List<IRootNode> { this };
-        AddDependentNodes(this, rootNodeList, result);
-
-        var processed = 0;
-        while (processed != result.Count)
-        {
-            processed = result.Count;
-            foreach (var node in result.ToList())
-            {
-                AddDependentNodes(node, rootNodeList, result);
-            }
-        }
-
-        return result;
-    }
-
-    private static void AddDependentNodes(INode node, RootNodeList rootNodeList, List<IRootNode> result)
-    {
-        AddNodeDependencies(node, rootNodeList, result);
-
-        var children = node.GetChildren();
-
-        NodesWalker.Walk(children, eachNode => AddNodeDependencies(eachNode, rootNodeList, result));
-    }
-
-    private static void AddNodeDependencies(INode node, RootNodeList rootNodeList, List<IRootNode> result)
-    {
-        if (!(node is IHasNodeDependencies hasDependencies)) return;
-
-        var dependencies = hasDependencies.GetDependencies(rootNodeList);
-        foreach (var dependency in dependencies)
-        {
-            if (!result.Contains(dependency))
-            {
-                result.Add(dependency);
-            }
-        }
-    }
-
-    private static void AddEnumTypes(RootNodeList rootNodeList, IReadOnlyList<VariableDefinition> variableDefinitions,
+    private static void AddEnumTypes(IRootNodeList rootNodeList, IReadOnlyList<VariableDefinition> variableDefinitions,
         List<IRootNode> result)
     {
         foreach (var parameter in variableDefinitions)

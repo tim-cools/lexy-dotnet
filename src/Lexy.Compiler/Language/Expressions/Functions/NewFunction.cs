@@ -6,7 +6,7 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public class NewFunction : ExpressionFunction, IHasNodeDependencies
+public class NewFunction : FunctionCallExpression, IHasNodeDependencies
 {
     public const string Name = "new";
 
@@ -18,21 +18,21 @@ public class NewFunction : ExpressionFunction, IHasNodeDependencies
 
     public ComplexType Type { get; private set; }
 
-    private NewFunction(Expression valueExpression, SourceReference reference)
-        : base(reference)
+    private NewFunction(Expression valueExpression, ExpressionSource source)
+        : base(Name, source)
     {
         ValueExpression = valueExpression ?? throw new ArgumentNullException(nameof(valueExpression));
         TypeLiteral = (valueExpression as MemberAccessExpression)?.MemberAccessLiteral;
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         if (Type != null) yield return rootNodeList.GetNode(Type.Name);
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression expression)
+    public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new NewFunction(expression, reference);
+        return new NewFunction(expression, source);
     }
 
     public override IEnumerable<INode> GetChildren()
@@ -53,7 +53,7 @@ public class NewFunction : ExpressionFunction, IHasNodeDependencies
         Type = complexType;
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         var nodeType = context.RootNodes.GetType(TypeLiteral.Parent);
         return nodeType?.MemberType(TypeLiteral.Member, context) as ComplexType;

@@ -5,14 +5,13 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public class LexyFunction : ExpressionFunction, IHasNodeDependencies
+public class LexyFunction : FunctionCallExpression, IHasNodeDependencies
 {
+    private readonly IReadOnlyList<Expression> arguments;
     private readonly IList<Mapping> mappingParameters = new List<Mapping>();
     private readonly IList<Mapping> mappingResults = new List<Mapping>();
 
-    public string FunctionName { get; }
     public string VariableName { get; private set; }
-    public List<Expression> Arguments { get; }
 
     public IEnumerable<Mapping> MappingParameters => mappingParameters;
     public IEnumerable<Mapping> MappingResults => mappingResults;
@@ -20,13 +19,12 @@ public class LexyFunction : ExpressionFunction, IHasNodeDependencies
     public ComplexType FunctionParametersType { get; private set; }
     public ComplexType FunctionResultsType { get; private set; }
 
-    public LexyFunction(string functionName, List<Expression> arguments, SourceReference reference) : base(reference)
+    public LexyFunction(string functionName, IReadOnlyList<Expression> arguments, ExpressionSource source) : base(functionName, source)
     {
-        FunctionName = functionName;
-        Arguments = arguments;
+        this.arguments = arguments;
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         var function = rootNodeList.GetFunction(FunctionName);
         if (function != null) yield return function;
@@ -34,7 +32,7 @@ public class LexyFunction : ExpressionFunction, IHasNodeDependencies
 
     public override IEnumerable<INode> GetChildren()
     {
-        return Arguments;
+        return arguments;
     }
 
     protected override void Validate(IValidationContext context)
@@ -46,13 +44,13 @@ public class LexyFunction : ExpressionFunction, IHasNodeDependencies
             return;
         }
 
-        if (Arguments.Count > 1)
+        if (arguments.Count > 1)
         {
             context.Logger.Fail(Reference, $"Invalid function argument: '{FunctionName}'. Should be 0 or 1.");
             return;
         }
 
-        if (Arguments.Count == 0)
+        if (arguments.Count == 0)
         {
             FillParametersFunction.GetMapping(Reference, context, function.GetParametersType(),
                 mappingParameters);
@@ -64,17 +62,17 @@ public class LexyFunction : ExpressionFunction, IHasNodeDependencies
             return;
         }
 
-        var argumentType = Arguments[0].DeriveType(context);
+        var argumentType = arguments[0].DeriveType(context);
         var parametersType = function.GetParametersType();
 
         if (argumentType == null || !argumentType.Equals(parametersType))
             context.Logger.Fail(Reference, $"Invalid function argument: '{FunctionName}'. " +
                                            "Argument should be of type function parameters. Use new(Function) of fill(Function) to create an variable of the function result type.");
 
-        VariableName = (Arguments[0] as IdentifierExpression)?.Identifier;
+        VariableName = (arguments[0] as IdentifierExpression)?.Identifier;
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         var function = context.RootNodes.GetFunction(FunctionName);
         return function?.GetResultsType();
@@ -83,7 +81,8 @@ public class LexyFunction : ExpressionFunction, IHasNodeDependencies
 
     public override IEnumerable<VariableUsage> UsedVariables()
     {
-        return mappingParameters.Select(map => map.ToUsedVariable(VariableAccess.Read))
-            .Union(mappingResults.Select(map => map.ToUsedVariable(VariableAccess.Write)));
+        return base.UsedVariables()
+            .Union(mappingParameters.Select(map => map.ToUsedVariable(VariableAccess.Read))
+            .Union(mappingResults.Select(map => map.ToUsedVariable(VariableAccess.Write))));
     }
 }

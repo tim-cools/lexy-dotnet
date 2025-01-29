@@ -4,12 +4,12 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public abstract class NoArgumentFunction : ExpressionFunction
+public abstract class NoArgumentFunction : FunctionCallExpression
 {
     protected abstract VariableType ResultType { get; }
 
-    protected NoArgumentFunction(SourceReference reference)
-        : base(reference)
+    protected NoArgumentFunction(string functionName, ExpressionSource source)
+        : base(functionName, source)
     {
     }
 
@@ -22,7 +22,7 @@ public abstract class NoArgumentFunction : ExpressionFunction
     {
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         return ResultType;
     }

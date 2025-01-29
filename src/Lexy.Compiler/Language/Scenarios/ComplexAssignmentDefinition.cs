@@ -23,7 +23,7 @@ public class ComplexAssignmentDefinition : ParsableNode, IAssignmentDefinition
 
     public override IParsableNode Parse(IParseLineContext context)
     {
-        var assignment = AssignmentDefinition.Parse(context, Variable);
+        var assignment = AssignmentDefinitionParser.Parse(context, Variable);
         if (assignment == null) return this;
 
         assignments.Add(assignment);

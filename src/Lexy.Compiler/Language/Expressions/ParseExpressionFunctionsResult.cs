@@ -2,9 +2,9 @@ using Lexy.Compiler.Language.Expressions.Functions;
 
 namespace Lexy.Compiler.Language.Expressions;
 
-public sealed class ParseExpressionFunctionsResult : ParseResult<ExpressionFunction>
+public sealed class ParseExpressionFunctionsResult : ParseResult<FunctionCallExpression>
 {
-    private ParseExpressionFunctionsResult(ExpressionFunction result) : base(result)
+    private ParseExpressionFunctionsResult(FunctionCallExpression result) : base(result)
     {
     }
 
@@ -12,7 +12,7 @@ public sealed class ParseExpressionFunctionsResult : ParseResult<ExpressionFunct
     {
     }
 
-    public static ParseExpressionFunctionsResult Success(ExpressionFunction result = null)
+    public static ParseExpressionFunctionsResult Success(FunctionCallExpression result = null)
     {
         return new ParseExpressionFunctionsResult(result);
     }

@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 
 internal abstract class MethodFunctionCall<TExpressionFunction> : FunctionCall<TExpressionFunction>
-    where TExpressionFunction : ExpressionFunction
+    where TExpressionFunction : FunctionCallExpression
 {
     protected abstract string ClassName { get; }
     protected abstract string MethodName { get; }

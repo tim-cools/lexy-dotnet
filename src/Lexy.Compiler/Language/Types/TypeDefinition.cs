@@ -3,7 +3,7 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Types;
 
-public class TypeDefinition : RootNode
+public class TypeDefinition : RootNode, ITypeDefinition
 {
     private readonly List<VariableDefinition> variables = new();
 

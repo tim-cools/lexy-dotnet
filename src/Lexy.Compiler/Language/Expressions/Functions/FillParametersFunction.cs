@@ -8,7 +8,7 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
-public class FillParametersFunction : ExpressionFunction, IHasNodeDependencies
+public class FillParametersFunction : FunctionCallExpression, IHasNodeDependencies
 {
     public const string Name = "fill";
 
@@ -24,21 +24,21 @@ public class FillParametersFunction : ExpressionFunction, IHasNodeDependencies
 
     public IEnumerable<Mapping> Mapping => mapping;
 
-    private FillParametersFunction(Expression valueExpression, SourceReference reference)
-        : base(reference)
+    private FillParametersFunction(Expression valueExpression, ExpressionSource source)
+        : base(Name, source)
     {
         ValueExpression = valueExpression ?? throw new ArgumentNullException(nameof(valueExpression));
         TypeLiteral = (valueExpression as MemberAccessExpression)?.MemberAccessLiteral;
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         if (Type != null) yield return rootNodeList.GetNode(Type.Name);
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression expression)
+    public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new FillParametersFunction(expression, reference);
+        return new FillParametersFunction(expression, source);
     }
 
     public override IEnumerable<INode> GetChildren()
@@ -95,7 +95,7 @@ public class FillParametersFunction : ExpressionFunction, IHasNodeDependencies
         }
     }
 
-    public override VariableType DeriveReturnType(IValidationContext context)
+    public override VariableType DeriveType(IValidationContext context)
     {
         var function = context.RootNodes.GetFunction(TypeLiteral.Parent);
         if (function == null) return null;
@@ -110,6 +110,7 @@ public class FillParametersFunction : ExpressionFunction, IHasNodeDependencies
 
     public override IEnumerable<VariableUsage> UsedVariables()
     {
-        return mapping.Select(map => map.ToUsedVariable(VariableAccess.Read));
+        return base.UsedVariables()
+            .Union(mapping.Select(map => map.ToUsedVariable(VariableAccess.Read)));
     }
 }

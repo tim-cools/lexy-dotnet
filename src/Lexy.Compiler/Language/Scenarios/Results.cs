@@ -14,7 +14,7 @@ public class Results : ParsableNode
 
     public override IParsableNode Parse(IParseLineContext context)
     {
-        var assignment = AssignmentDefinition.Parse(context);
+        var assignment = AssignmentDefinitionParser.Parse(context);
         if (assignment != null) assignments.Add(assignment);
         return assignment is IParsableNode parsableNode ? parsableNode : this;
     }

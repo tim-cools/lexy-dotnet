@@ -1,5 +1,4 @@
 using Lexy.Compiler.Language.VariableTypes;
-using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
@@ -9,13 +8,13 @@ public class NowFunction : NoArgumentFunction
 
     protected override VariableType ResultType => PrimitiveType.Date;
 
-    private NowFunction(SourceReference reference)
-        : base(reference)
+    private NowFunction(ExpressionSource source)
+        : base(Name, source)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference)
+    public static FunctionCallExpression Create(ExpressionSource source)
     {
-        return new NowFunction(reference);
+        return new NowFunction(source);
     }
 }

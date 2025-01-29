@@ -14,7 +14,7 @@ public class FunctionCallExpressionTests : ScopedServicesTestFixture
         expression.ValidateOfType<FunctionCallExpression>(functionCallExpression =>
         {
             functionCallExpression.FunctionName.ShouldBe("INT");
-            functionCallExpression.ExpressionFunction.ValidateOfType<IntFunction>(function =>
+            functionCallExpression.ValidateOfType<IntFunction>(function =>
                 function.ValueExpression.ValidateVariableExpression("y"));
         });
     }
@@ -26,7 +26,7 @@ public class FunctionCallExpressionTests : ScopedServicesTestFixture
         expression.ValidateOfType<FunctionCallExpression>(functionCall =>
         {
             functionCall.FunctionName.ShouldBe("INT");
-            functionCall.ExpressionFunction.ValidateOfType<IntFunction>(function =>
+            functionCall.ValidateOfType<IntFunction>(function =>
                 function.ValueExpression.ValidateOfType<BinaryExpression>(multiplication =>
                     multiplication.Right.ValidateOfType<ParenthesizedExpression>(inner =>
                         inner.Expression.ValidateOfType<BinaryExpression>(addition =>
@@ -38,17 +38,16 @@ public class FunctionCallExpressionTests : ScopedServicesTestFixture
     public void NestedParenthesizedMultipleArguments()
     {
         var expression = this.ParseExpression("ROUND(POWER(98.6,3.2),3)");
-        expression.ValidateOfType<FunctionCallExpression>(round =>
+        expression.ValidateOfType<RoundFunction>(round =>
         {
             round.FunctionName.ShouldBe("ROUND");
-            round.Arguments.Count.ShouldBe(2);
-            round.Arguments[0].ValidateOfType<FunctionCallExpression>(power =>
+            round.NumberExpression.ValidateOfType<PowerFunction>(power =>
             {
-                power.Arguments.Count.ShouldBe(2);
-                power.Arguments[0].ValidateNumericLiteralExpression(98.6m);
-                power.Arguments[1].ValidateNumericLiteralExpression(3.2m);
+                power.FunctionName.ShouldBe("POWER");
+                power.NumberExpression.ValidateNumericLiteralExpression(98.6m);
+                power.PowerExpression.ValidateNumericLiteralExpression(3.2m);
             });
-            round.Arguments[1].ValidateNumericLiteralExpression(3);
+            round.DigitsExpression.ValidateNumericLiteralExpression(3);
         });
     }
 
@@ -56,11 +55,10 @@ public class FunctionCallExpressionTests : ScopedServicesTestFixture
     public void CallExtract()
     {
         var expression = this.ParseExpression("extract(results)");
-        expression.ValidateOfType<FunctionCallExpression>(round =>
+        expression.ValidateOfType<ExtractResultsFunction>(round =>
         {
             round.FunctionName.ShouldBe("extract");
-            round.Arguments.Count.ShouldBe(1);
-            round.Arguments[0].ValidateIdentifierExpression("results");
+            round.ValueExpression.ValidateIdentifierExpression("results");
         });
     }
 

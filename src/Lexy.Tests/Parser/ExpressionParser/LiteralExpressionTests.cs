@@ -1,4 +1,5 @@
 using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Language.Expressions.Functions;
 using NUnit.Framework;
 using Shouldly;
 
@@ -63,11 +64,10 @@ public class LiteralExpressionTests : ScopedServicesTestFixture
         expression.ValidateOfType<AssignmentExpression>(assignment =>
         {
             assignment.Variable.ValidateIdentifierExpression("Result");
-            assignment.Assignment.ValidateOfType<FunctionCallExpression>(functionCall =>
+            assignment.Assignment.ValidateOfType<AbsFunction>(functionCall =>
             {
                 functionCall.FunctionName.ShouldBe("ABS");
-                functionCall.Arguments.Count.ShouldBe(1);
-                functionCall.Arguments[0].ValidateNumericLiteralExpression(-2);
+                functionCall.ValueExpression.ValidateNumericLiteralExpression(-2);
             });
         });
     }

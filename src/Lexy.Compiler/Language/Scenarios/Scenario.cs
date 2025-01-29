@@ -8,7 +8,7 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Scenarios;
 
-public class Scenario : RootNode
+public class Scenario : RootNode, IHasNodeDependencies
 {
     public ScenarioName Name { get; }
 
@@ -239,5 +239,14 @@ public class Scenario : RootNode
         {
             context.Logger.Fail(Reference, "Scenario has no function, enum, table or expect errors.");
         }
+    }
+
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
+    {
+        var result = new List<IRootNode>();
+        if (Function != null) result.Add(Function);
+        if (Enum != null) result.Add(Enum);
+        if (Table != null) result.Add(this.Table);
+        return result;
     }
 }

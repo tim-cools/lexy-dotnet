@@ -1,24 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Lexy.Compiler.Language.Enums;
 using Lexy.Compiler.Language.Functions;
 using Lexy.Compiler.Language.Scenarios;
-using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
 using Lexy.Compiler.Language.VariableTypes;
 using Table = Lexy.Compiler.Language.Tables.Table;
 
 namespace Lexy.Compiler.Language;
 
-public class RootNodeList : IEnumerable<IRootNode>
+public class RootNodeList : IRootNodeList
 {
     private readonly IList<IRootNode> values;
 
     public RootNodeList(IEnumerable<IRootNode> values = null)
     {
-        this.values = values != null ? this.values.ToList() : new List<IRootNode>();
+        this.values = values != null ? values.ToList() : new List<IRootNode>();
     }
 
     public IEnumerator<IRootNode> GetEnumerator()

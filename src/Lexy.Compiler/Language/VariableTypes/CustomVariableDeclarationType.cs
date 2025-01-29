@@ -36,7 +36,7 @@ public sealed class CustomVariableDeclarationType : VariableDeclarationType, IHa
         return Type;
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         return VariableType switch
         {

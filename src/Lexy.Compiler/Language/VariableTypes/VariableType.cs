@@ -4,7 +4,7 @@ namespace Lexy.Compiler.Language.VariableTypes;
 
 public abstract class VariableType
 {
-    public virtual IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public virtual IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         yield break;
     }

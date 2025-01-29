@@ -9,13 +9,13 @@ public class TodayFunction : NoArgumentFunction
 
     protected override VariableType ResultType => PrimitiveType.Date;
 
-    private TodayFunction(SourceReference reference)
-        : base(reference)
+    private TodayFunction(ExpressionSource source)
+        : base(Name, source)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference)
+    public static FunctionCallExpression Create(ExpressionSource source)
     {
-        return new TodayFunction(reference);
+        return new TodayFunction(source);
     }
 }

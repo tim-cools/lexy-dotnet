@@ -8,9 +8,9 @@ namespace Lexy.Compiler.Language.VariableTypes;
 public class CustomType : TypeWithMembers
 {
     public string Type { get; }
-    public TypeDefinition TypeDefinition { get; }
+    public ITypeDefinition TypeDefinition { get; }
 
-    public CustomType(string type, TypeDefinition typeDefinition)
+    public CustomType(string type, ITypeDefinition typeDefinition)
     {
         Type = type;
         TypeDefinition = typeDefinition;
@@ -45,7 +45,7 @@ public class CustomType : TypeWithMembers
         return definition?.Type.VariableType;
     }
 
-    public override IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public override IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         yield return TypeDefinition;
     }

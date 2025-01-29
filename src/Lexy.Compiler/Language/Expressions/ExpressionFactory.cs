@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
 
@@ -23,7 +24,7 @@ public class ExpressionFactory : IExpressionFactory
                 { MemberAccessExpression.IsValid, MemberAccessExpression.Parse },
                 { LiteralExpression.IsValid, LiteralExpression.Parse },
                 { BinaryExpression.IsValid, BinaryExpression.Parse },
-                { FunctionCallExpression.IsValid, FunctionCallExpression.Parse }
+                { FunctionCallExpression.IsValid, FunctionCallExpressionParser.Parse }
             };
 
     public ParseExpressionResult Parse(TokenList tokens, Line currentLine)

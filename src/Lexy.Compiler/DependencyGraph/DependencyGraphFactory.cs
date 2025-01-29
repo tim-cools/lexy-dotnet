@@ -15,7 +15,7 @@ public static class DependencyGraphFactory
         return dependencies;
     }
 
-    public static IEnumerable<IRootNode> NodeAndDependencies(RootNodeList rootNodes, IRootNode node)
+    public static IEnumerable<IRootNode> NodeAndDependencies(IRootNodeList rootNodes, IRootNode node)
     {
         if (rootNodes == null) throw new ArgumentNullException(nameof(rootNodes));
         if (node == null) throw new ArgumentNullException(nameof(node));

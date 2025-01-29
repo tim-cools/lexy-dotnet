@@ -20,7 +20,7 @@ public class MemberAccessExpression : Expression, IHasNodeDependencies, IHasVari
         VariablePath = variablePath;
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         var rootNode = rootNodeList.GetNode(MemberAccessLiteral.Parent);
         if (rootNode != null) yield return rootNode;

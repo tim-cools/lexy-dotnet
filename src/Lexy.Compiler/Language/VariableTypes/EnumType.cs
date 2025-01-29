@@ -44,7 +44,7 @@ public class EnumType : TypeWithMembers
         return Enum.Members.Any(member => member.Name == name) ? this : null;
     }
 
-    public override IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public override IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         yield return rootNodeList.GetEnum(Type);
     }

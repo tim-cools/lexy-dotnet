@@ -5,6 +5,7 @@ using Lexy.Compiler.Compiler.CSharp.BuiltInFunctions;
 using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Expressions;
+using Lexy.Compiler.Language.Expressions.Functions;
 using Lexy.Compiler.Language.Functions;
 using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
@@ -43,7 +44,7 @@ public class FunctionWriter : IRootTokenWriter
     private IEnumerable<MemberDeclarationSyntax> CustomBuiltInFunctions(Function function)
     {
         return NodesWalker.WalkWithResult(function.Code.Expressions,
-            node => node is FunctionCallExpression expression ? FunctionCallFactory.CustomMethods(expression.ExpressionFunction) : null)
+            node => node is FunctionCallExpression expression ? FunctionCallFactory.CustomMethods(expression) : null)
             .Where(value => value != null);
     }
 

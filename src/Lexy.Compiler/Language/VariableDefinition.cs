@@ -26,7 +26,7 @@ public class VariableDefinition : Node, IHasNodeDependencies
         Source = source;
     }
 
-    public IEnumerable<IRootNode> GetDependencies(RootNodeList rootNodeList)
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         return VariableType?.GetDependencies(rootNodeList);
     }

@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 
 public static class BuiltInExpressionFunctions
 {
     private static readonly
-        IDictionary<string, Func<string, SourceReference, IReadOnlyList<Expression>, ParseExpressionFunctionsResult>>
+        IDictionary<string, Func<ExpressionSource, IReadOnlyList<Expression>, ParseExpressionFunctionsResult>>
         Values =
             new Dictionary<string,
-                Func<string, SourceReference, IReadOnlyList<Expression>, ParseExpressionFunctionsResult>>
+                Func<ExpressionSource, IReadOnlyList<Expression>, ParseExpressionFunctionsResult>>
             {
                 { IntFunction.Name, Create(IntFunction.Create) },
                 { AbsFunction.Name, Create(AbsFunction.Create) },
@@ -34,26 +33,26 @@ public static class BuiltInExpressionFunctions
                 { MinutesFunction.Name, Create(MinutesFunction.Create) },
                 { SecondsFunction.Name, Create(SecondsFunction.Create) },
 
-                { LookupFunction.Name, LookupFunction.Parse },
-                { LookupRowFunction.Name, LookupRowFunction.Parse },
+                { LookupFunction.Name, LookupFunction.Create },
+                { LookupRowFunction.Name, LookupRowFunction.Create },
 
                 { NewFunction.Name, Create(NewFunction.Create) },
                 { FillParametersFunction.Name, Create(FillParametersFunction.Create) },
                 { ExtractResultsFunction.Name, Create(ExtractResultsFunction.Create) }
             };
 
-    public static ParseExpressionFunctionsResult Parse(string functionName, SourceReference reference,
+    public static ParseExpressionFunctionsResult Parse(string functionName, ExpressionSource source,
         IReadOnlyList<Expression> arguments)
     {
         return Values.TryGetValue(functionName, out var value)
-            ? value(functionName, reference, arguments)
-            : null;
+            ? value(source, arguments)
+            : ParseExpressionFunctionsResult.Success(new LexyFunction(functionName, arguments, source));
     }
 
-    private static Func<string, SourceReference, IReadOnlyList<Expression>, ParseExpressionFunctionsResult> Create(
-        Func<SourceReference, ExpressionFunction> factory)
+    private static Func<ExpressionSource, IReadOnlyList<Expression>, ParseExpressionFunctionsResult> Create(
+        Func<ExpressionSource, FunctionCallExpression> factory)
     {
-        return (name, reference, arguments) =>
+        return (reference, arguments) =>
         {
             if (arguments.Count != 0)
                 return ParseExpressionFunctionsResult.Failed("Invalid number of arguments. No arguments expected.");
@@ -63,10 +62,10 @@ public static class BuiltInExpressionFunctions
         };
     }
 
-    private static Func<string, SourceReference, IReadOnlyList<Expression>, ParseExpressionFunctionsResult> Create(
-        Func<SourceReference, Expression, ExpressionFunction> factory)
+    private static Func<ExpressionSource, IReadOnlyList<Expression>, ParseExpressionFunctionsResult> Create(
+        Func<ExpressionSource, Expression, FunctionCallExpression> factory)
     {
-        return (name, reference, arguments) =>
+        return (reference, arguments) =>
         {
             if (arguments.Count != 1)
                 return ParseExpressionFunctionsResult.Failed("Invalid number of arguments. 1 argument expected.");
@@ -76,10 +75,10 @@ public static class BuiltInExpressionFunctions
         };
     }
 
-    private static Func<string, SourceReference, IReadOnlyList<Expression>, ParseExpressionFunctionsResult> Create(
-        Func<SourceReference, Expression, Expression, ExpressionFunction> factory)
+    private static Func<ExpressionSource, IReadOnlyList<Expression>, ParseExpressionFunctionsResult> Create(
+        Func<ExpressionSource, Expression, Expression, FunctionCallExpression> factory)
     {
-        return (name, reference, arguments) =>
+        return (reference, arguments) =>
         {
             if (arguments.Count != 2)
                 return ParseExpressionFunctionsResult.Failed("Invalid number of arguments. 2 arguments expected.");

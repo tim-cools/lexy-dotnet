@@ -12,16 +12,19 @@ internal class SimpleLexyFunctionFunctionExpressionStatementException : IExpress
 {
     public bool Matches(Expression expression)
     {
-        return expression is FunctionCallExpression { ExpressionFunction: LexyFunction };
+        return expression is LexyFunction;
     }
 
     public IEnumerable<StatementSyntax> CallExpressionSyntax(Expression expression)
     {
-        if (!(expression is FunctionCallExpression functionCallExpression))
+        if (expression is not FunctionCallExpression functionCallExpression)
+        {
             throw new InvalidOperationException("expression should be FunctionCallExpression");
-        if (!(functionCallExpression.ExpressionFunction is LexyFunction lexyFunction))
+        }
+        if (functionCallExpression is not LexyFunction lexyFunction) {
             throw new InvalidOperationException(
-                "functionCallExpression.ExpressionFunction should be ExtractResultsFunction");
+                "functionCallExpression.FunctionCallExpression should be ExtractResultsFunction");
+        }
 
         var parameterVariable = $"{LexyCodeConstants.ParameterVariable}_{expression.Reference.LineNumber}";
         var resultsVariable = $"{LexyCodeConstants.ResultsVariable}_{expression.Reference.LineNumber}";

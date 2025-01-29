@@ -9,13 +9,13 @@ public class AbsFunction : SingleArgumentFunction
 
     protected override string FunctionHelp => $"{Name} expects 1 argument (Value)";
 
-    private AbsFunction(Expression valueExpression, SourceReference reference)
-        : base(valueExpression, reference, PrimitiveType.Number, PrimitiveType.Number)
+    private AbsFunction(Expression valueExpression, ExpressionSource source)
+        : base(Name, valueExpression, source, PrimitiveType.Number, PrimitiveType.Number)
     {
     }
 
-    public static ExpressionFunction Create(SourceReference reference, Expression expression)
+    public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new AbsFunction(expression, reference);
+        return new AbsFunction(expression, source);
     }
 }

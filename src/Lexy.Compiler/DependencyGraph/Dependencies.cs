@@ -9,13 +9,13 @@ public class Dependencies
 {
     private readonly List<IRootNode> circularReferences = new();
     private readonly List<DependencyNode> allNodes = new();
-    private readonly RootNodeList rootNodes;
+    private readonly IRootNodeList rootNodes;
 
     public IList<DependencyNode> Nodes { get; } = new List<DependencyNode>();
     public bool HasCircularReferences => circularReferences.Count > 0;
     public IReadOnlyList<IRootNode> CircularReferences => circularReferences;
 
-    public Dependencies(RootNodeList rootNodes)
+    public Dependencies(IRootNodeList rootNodes)
     {
         this.rootNodes = rootNodes ?? throw new ArgumentNullException(nameof(rootNodes));
     }
