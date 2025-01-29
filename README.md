@@ -21,3 +21,5 @@ Run editor locally
 - **lexy-language** is used in the automated tests to 
 ensure that the parser and compiler are running against the latest lexy language specifications.
 - **lexy-editor** is included in Lexy.Web.Editor which is a starting point for a dotnet backend for the editor web app. This is still an empty project atm.
+
+You can use `yarn update-submodules` to pull the latest content from git.

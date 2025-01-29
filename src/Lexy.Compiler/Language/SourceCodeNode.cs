@@ -52,13 +52,17 @@ public class SourceCodeNode : RootNode
             }
         }
 
-        var tokenName = Parser.NodeName.Parse(context);
-        if (tokenName == null) return null;
-
         var reference = context.Line.LineStartReference();
+        var tokenName = Parser.NodeName.Parse(context);
+        if (tokenName == null)
+        {
+            var firstToken = context.Line.Tokens.Length > 0 ? context.Line.Tokens[0].Value : context.Line.Content;
+            context.Logger.Fail(reference, $"Invalid token '{firstToken}'. Keyword expected.");
+            return null;
+        }
+
         var rootNode = tokenName.Keyword switch
         {
-            null => null,
             Keywords.FunctionKeyword => Function.Create(tokenName.Name, reference, context.ExpressionFactory),
             Keywords.EnumKeyword => EnumDefinition.Parse(tokenName, reference),
             Keywords.ScenarioKeyword => Scenario.Parse(tokenName, reference),
