@@ -176,9 +176,12 @@ public class ScenarioRunner : IScenarioRunner
             return false;
         }
 
-        if (Scenario.ExpectErrors.Messages.Any(message => !failedMessages.Any(failedMessage => failedMessage.Contains(message))))
+        var errorNotFound = Scenario.ExpectErrors.Messages.Any(message =>
+            !failedMessages.Any(failedMessage => failedMessage.Contains(message)));
+
+        if (errorNotFound)
         {
-            Fail($"Wrong error occurred", StringArrayBuilder
+            Fail($"Wrong error(s) occurred", StringArrayBuilder
                 .New("Expected:").List(Scenario.ExpectErrors.Messages)
                 .Add("Actual:").List(failedMessages).Array());
             return false;
@@ -215,7 +218,7 @@ public class ScenarioRunner : IScenarioRunner
             return false; // don't compile and run rest of scenario
         }
 
-        Fail($"Wrong error(s) occurred.", StringArrayBuilder
+        Fail($"Wrong root error(s) occurred.", StringArrayBuilder
             .New("Expected:").List(Scenario.ExpectRootErrors.Messages)
             .Add("Actual: ").List(parserLogger.ErrorMessages())
             .Array());

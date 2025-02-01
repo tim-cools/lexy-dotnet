@@ -57,7 +57,7 @@ public class SourceCodeNode : RootNode
         if (tokenName == null)
         {
             var firstToken = context.Line.Tokens.Length > 0 ? context.Line.Tokens[0].Value : context.Line.Content;
-            context.Logger.Fail(reference, $"Invalid token '{firstToken}'. Keyword expected.");
+            context.Logger.Fail(reference, $"Invalid token '{firstToken}'. Keyword and name expected.");
             return null;
         }
 

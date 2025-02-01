@@ -54,50 +54,53 @@ public class VariableContext : IVariableContext
                ContainChild(parent.VariableType, path.ChildrenReference(), context);
     }
 
-    public VariableReference CreateVariableReference(SourceReference reference, VariablePath path, IValidationContext validationContext) {
-        var rootVariableType = rootNodes.GetType(path.ParentIdentifier);
-        if (rootVariableType != null) {
-            return this.CreateTypeVariableReference(reference, path, rootVariableType, validationContext);
-        }
-        return CreateVariableReferenceFromRegisteredVariables(path, reference, validationContext);
+    public VariableReference CreateVariableReference(SourceReference reference, VariablePath path, IValidationContext validationContext)
+    {
+        VariableReference ExecuteWithPriority(Func<VariablePath,IValidationContext, VariableReference> firstPriorityHandler,
+            Func<VariablePath,IValidationContext, VariableReference> secondPriorityHandler)
+        {
+            var value1 = firstPriorityHandler(path, validationContext);
+            if (value1 != null) return value1;
+
+            var value2 = secondPriorityHandler(path, validationContext);
+            if (value2 != null) return value2;
+
+            logger.Fail(reference, $"Unknown variable name: '{path.FullPath()}'");
+            return null;
+        };
+
+        var containsMemberAccess = path.Parts > 1;
+        var fromTypeSystem = CreateVariableReferenceFromTypeSystem;
+        var fromVariables = CreateVariableReferenceFromRegisteredVariables;
+        return containsMemberAccess
+            ? ExecuteWithPriority(fromTypeSystem, fromVariables)
+            : ExecuteWithPriority(fromVariables, fromTypeSystem);
     }
 
-    private VariableReference CreateVariableReferenceFromRegisteredVariables(VariablePath path,
-        SourceReference reference, IValidationContext validationContext) {
+    private VariableReference CreateVariableReferenceFromRegisteredVariables(VariablePath path, IValidationContext validationContext) {
         var variable = GetVariable(path.ParentIdentifier);
-        if (variable == null) {
-            logger.Fail(reference, $"Unknown variable name: '{path.FullPath()}'");
-            return null;
-        }
+        if (variable == null) return null;
+
         var variableType = GetVariableType(path, validationContext);
-        if (variableType == null) {
-            logger.Fail(reference, $"Unknown variable name: '{path.FullPath()}'");
-            return null;
-        }
+        if (variableType == null) return null;
+
         return new VariableReference(path, null, variableType, variable.VariableSource);
     }
 
-    private VariableReference CreateTypeVariableReference(SourceReference reference, VariablePath path,
-        TypeWithMembers rootVariableType, IValidationContext validationContext) {
+    private VariableReference CreateVariableReferenceFromTypeSystem(VariablePath path, IValidationContext validationContext) {
+
+        if (path.Parts > 2) return null;
+
+        var rootVariableType = rootNodes.GetType(path.ParentIdentifier);
+        if (rootVariableType == null) return null;
+
         if (path.Parts == 1) {
             return new VariableReference(path, rootVariableType, rootVariableType, VariableSource.Type);
         }
-        var parentIdentifier = path.ParentIdentifier;
-        if (path.Parts > 2) {
-            logger.Fail(reference, $"Invalid member access '{path}'. Variable '{parentIdentifier}' not found.");
-            return null;
-        }
-        var typeWithMembers = rootVariableType as ITypeWithMembers;
-        if (typeWithMembers == null) {
-            logger.Fail(reference, $"Invalid member access '{path}'. Variable '{parentIdentifier}' not found.");
-            return null;
-        }
+
         var member = path.LastPart();
-        var memberType = typeWithMembers.MemberType(member, validationContext);
-        if (memberType == null) {
-            logger.Fail(reference,
-                $"Invalid member access '{path}'. Member '{member}' not found on '{parentIdentifier}'.");
-        }
+        var memberType = rootVariableType.MemberType(member, validationContext);
+        if (memberType == null) return null;
         return new VariableReference(path, rootVariableType, memberType, VariableSource.Type);
     }
 

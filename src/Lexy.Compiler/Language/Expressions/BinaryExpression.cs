@@ -155,6 +155,10 @@ public class BinaryExpression : Expression
 
     public override VariableType DeriveType(IValidationContext context)
     {
+        if (Operator is ExpressionOperator.Equals or ExpressionOperator.NotEqual) {
+            return PrimitiveType.Boolean;
+        }
+
         var left = Left.DeriveType(context);
         var right = Right.DeriveType(context);
 

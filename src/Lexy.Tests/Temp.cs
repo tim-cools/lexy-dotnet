@@ -4,6 +4,12 @@ using Lexy.RunTime;
 
 namespace Lexy.Runtime
 {
+    public enum A
+    {
+        B,
+        C
+    }
+
     public class Table__SimpleTable
     {
         public class __Row
@@ -15,6 +21,12 @@ namespace Lexy.Runtime
         private static List<__Row> __values;
         static Table__SimpleTable()
         {
+            A A = A.B;
+            if (A == A.B)
+            {
+
+            }
+
             __values = new List<__Row>
             {
                 new __Row
