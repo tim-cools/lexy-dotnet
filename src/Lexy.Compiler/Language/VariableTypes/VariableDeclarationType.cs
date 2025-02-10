@@ -11,10 +11,10 @@ public abstract class VariableDeclarationType : Node
     }
 
 
-    protected abstract VariableType CreateVariableType(IValidationContext context);
+    protected abstract VariableType ValidateVariableType(IValidationContext context);
 
     protected override void Validate(IValidationContext context)
     {
-        VariableType = CreateVariableType(context);
+        VariableType = ValidateVariableType(context);
     }
 }

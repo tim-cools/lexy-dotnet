@@ -47,9 +47,14 @@ public class IdentifierExpression : Expression, IHasVariableReference
         CreateVariableReference(context);
     }
 
-    private void CreateVariableReference(IValidationContext context) {
+    private void CreateVariableReference(IValidationContext context)
+    {
         var path = VariablePathParser.Parse(Identifier);
         Variable = context.VariableContext.CreateVariableReference(Reference, path, context);
+        if (Variable == null)
+        {
+            context.Logger.Fail(Reference, $"Invalid identifier: '{path.FullPath()}'");
+        }
     }
 
     public override VariableType DeriveType(IValidationContext context)

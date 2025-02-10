@@ -4,6 +4,12 @@ namespace Lexy.RunTime;
 
 public static class BuiltInDateFunctions
 {
+
+    public static string Format(DateTime value)
+    {
+        return value.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
     public static DateTime Now()
     {
         return DateTime.Now;

@@ -56,8 +56,13 @@ public class MemberAccessExpression : Expression, IHasNodeDependencies, IHasVari
         CreateVariableReference(context);
     }
 
-    private void CreateVariableReference(IValidationContext context) {
+    private void CreateVariableReference(IValidationContext context)
+    {
         Variable = context.VariableContext.CreateVariableReference(Reference, VariablePath, context);
+        if (Variable == null)
+        {
+            context.Logger.Fail(Reference, $"Invalid identifier: '{VariablePath.FullPath()}'");
+        }
     }
 
     public override VariableType DeriveType(IValidationContext context)

@@ -30,7 +30,7 @@ public class MemberAccessLiteral : Token, ILiteralToken
         if (Parts.Length != 2) return null;
 
         var rootType = context.RootNodes.GetType(Parent);
-        return rootType is not ITypeWithMembers typeWithMembers ? null : typeWithMembers.MemberType(Member, context);
+        return rootType is not ITypeWithMembers typeWithMembers ? null : typeWithMembers.MemberType(Member, context.RootNodes);
     }
 
     public override string ToString()

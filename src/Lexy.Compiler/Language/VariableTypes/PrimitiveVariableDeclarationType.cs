@@ -36,7 +36,7 @@ public sealed class PrimitiveVariableDeclarationType : VariableDeclarationType
         return Type;
     }
 
-    protected override VariableType CreateVariableType(IValidationContext context)
+    protected override VariableType ValidateVariableType(IValidationContext context)
     {
         return new PrimitiveType(Type);
     }

@@ -9,6 +9,9 @@ namespace Lexy.Compiler.Language.Expressions;
 
 public class BinaryExpression : Expression
 {
+    private record OperatorCombination(VariableType LeftType, VariableType RightType,
+        ExpressionOperator ExpressionOperator);
+
     private static readonly IList<ExpressionOperator> ComparisonOperators = new[]
     {
         ExpressionOperator.GreaterThan,
@@ -17,6 +20,51 @@ public class BinaryExpression : Expression
         ExpressionOperator.LessThanOrEqual,
         ExpressionOperator.Equals,
         ExpressionOperator.NotEqual
+    };
+
+    private static readonly IList<OperatorCombination> AllowedOperationCombinations = new[]
+    {
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.String, ExpressionOperator.Equals),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.Equals),
+        new OperatorCombination(PrimitiveType.Boolean, PrimitiveType.Boolean, ExpressionOperator.Equals),
+        new OperatorCombination(PrimitiveType.Date, PrimitiveType.Date, ExpressionOperator.Equals),
+        new OperatorCombination(EnumType.Generic(), EnumType.Generic(), ExpressionOperator.Equals),
+
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.String, ExpressionOperator.NotEqual),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.NotEqual),
+        new OperatorCombination(PrimitiveType.Boolean, PrimitiveType.Boolean, ExpressionOperator.NotEqual),
+        new OperatorCombination(PrimitiveType.Date, PrimitiveType.Date, ExpressionOperator.NotEqual),
+        new OperatorCombination(EnumType.Generic(), EnumType.Generic(), ExpressionOperator.NotEqual),
+
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.String, ExpressionOperator.Addition),
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.Number, ExpressionOperator.Addition),
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.Boolean, ExpressionOperator.Addition),
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.Date, ExpressionOperator.Addition),
+        new OperatorCombination(PrimitiveType.String, EnumType.Generic(), ExpressionOperator.Addition),
+
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.Addition),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.Subtraction),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.Multiplication),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.Division),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.Modulus),
+
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.String, ExpressionOperator.GreaterThan),
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.String, ExpressionOperator.GreaterThanOrEqual),
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.String, ExpressionOperator.LessThan),
+        new OperatorCombination(PrimitiveType.String, PrimitiveType.String, ExpressionOperator.LessThanOrEqual),
+
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.GreaterThan),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.GreaterThanOrEqual),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.LessThan),
+        new OperatorCombination(PrimitiveType.Number, PrimitiveType.Number, ExpressionOperator.LessThanOrEqual),
+
+        new OperatorCombination(PrimitiveType.Date, PrimitiveType.Date, ExpressionOperator.GreaterThan),
+        new OperatorCombination(PrimitiveType.Date, PrimitiveType.Date, ExpressionOperator.GreaterThanOrEqual),
+        new OperatorCombination(PrimitiveType.Date, PrimitiveType.Date, ExpressionOperator.LessThan),
+        new OperatorCombination(PrimitiveType.Date, PrimitiveType.Date, ExpressionOperator.LessThanOrEqual),
+
+        new OperatorCombination(PrimitiveType.Boolean, PrimitiveType.Boolean, ExpressionOperator.And),
+        new OperatorCombination(PrimitiveType.Boolean, PrimitiveType.Boolean, ExpressionOperator.Or),
     };
 
     private static readonly IList<OperatorEntry> SupportedOperatorsByPriority = new List<OperatorEntry>
@@ -43,6 +91,9 @@ public class BinaryExpression : Expression
     public Expression Left { get; }
     public Expression Right { get; }
     public ExpressionOperator Operator { get; }
+
+    public VariableType LeftVariableType { get; private set; }
+    public VariableType RightVariableType { get; private set; }
 
     private BinaryExpression(Expression left, Expression right, ExpressionOperator operatorValue,
         ExpressionSource source, SourceReference reference) : base(source, reference)
@@ -146,7 +197,6 @@ public class BinaryExpression : Expression
         return SupportedOperatorsByPriority.FirstOrDefault(entry => entry.OperatorType == operatorTokenType);
     }
 
-
     public override IEnumerable<INode> GetChildren()
     {
         yield return Left;
@@ -155,14 +205,49 @@ public class BinaryExpression : Expression
 
     protected override void Validate(IValidationContext context)
     {
-        var left = Left.DeriveType(context);
-        var right = Right.DeriveType(context);
-
-        if (!left.Equals(right))
+        LeftVariableType = Left.DeriveType(context);
+        RightVariableType = Right.DeriveType(context);
+        if (LeftVariableType == null || RightVariableType == null)
         {
             context.Logger.Fail(Reference,
-                $"Invalid expression type. Left expression: '{left}'. Right expression '{right}.");
+                $"Invalid operator '{Operator}'. Can't derive type.");
+            return;
         }
+
+        if (!IsAllowedOperation(LeftVariableType, RightVariableType))
+        {
+            context.Logger.Fail(Reference,
+                $"Invalid operator '{Operator}'. Left type: '{LeftVariableType}' and right type '{RightVariableType}' not supported.");
+        }
+    }
+
+    private bool IsAllowedOperation(VariableType left, VariableType right)
+    {
+        return AllowedOperationCombinations.Any(allowed =>
+        {
+            if (allowed.ExpressionOperator != Operator) return false;
+
+            var leftEnum = left is EnumType;
+            var rightEnum = right is EnumType;
+            var allowedLeftEnum = allowed.LeftType is EnumType;
+            var allowedRightEnum = allowed.RightType is EnumType;
+
+            if (allowedLeftEnum && allowedRightEnum)
+            {
+                //if left and right is enum, the enum should be of the same type
+                return leftEnum && rightEnum && left.Equals(right);
+            }
+            if (allowedLeftEnum)
+            {
+                return leftEnum && allowed.RightType.Equals(right);
+            }
+            if (allowedRightEnum)
+            {
+                return allowed.LeftType.Equals(left) && rightEnum;
+            }
+
+            return allowed.LeftType.Equals(left) && allowed.RightType.Equals(right);
+        });
     }
 
     public override VariableType DeriveType(IValidationContext context)

@@ -41,7 +41,7 @@ public static class ValidationContextExtensions
             && type is not CustomType
             && type is not ComplexType)
         {
-            context.Logger.Fail(reference, $"Unknown type: '{customVariableDeclarationType.Type}'");
+            //logged by CustomVariableDeclarationType
             return;
         }
 

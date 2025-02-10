@@ -1,6 +1,5 @@
 using System;
 using Lexy.Compiler.Language.Tables;
-using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.VariableTypes;
 
@@ -38,21 +37,21 @@ public class TableType : TypeWithMembers
         return TableName;
     }
 
-    public override VariableType MemberType(string name, IValidationContext context)
+    public override VariableType MemberType(string name, IRootNodeList rootNodes)
     {
         switch(name)
         {
             case "Count":
                 return PrimitiveType.Number;
             case Table.RowName:
-                return TableRowType(context);
+                return TableRowType(rootNodes);
         };
         if (Table.Header?.GetColumn(name) != null) return new ComplexType(name, Table, ComplexTypeSource.TableColumn, Array.Empty<ComplexTypeMember>());
         return null;
     }
 
-    private ComplexType TableRowType(IValidationContext context)
+    private ComplexType TableRowType(IRootNodeList rootNodes)
     {
-        return context.RootNodes.GetTable(TableName)?.GetRowType();
+        return rootNodes.GetTable(TableName)?.GetRowType();
     }
 }

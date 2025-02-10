@@ -38,7 +38,8 @@ public sealed class CustomVariableDeclarationType : VariableDeclarationType, IHa
 
     public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
-        return VariableType switch
+        var type = GetVariableType(rootNodeList);
+        return type switch
         {
             CustomType customType => new[] { customType.TypeDefinition },
             ComplexType complexType => new[] { complexType.Node },
@@ -46,28 +47,36 @@ public sealed class CustomVariableDeclarationType : VariableDeclarationType, IHa
         };
     }
 
-    protected override VariableType CreateVariableType(IValidationContext context)
+    protected override VariableType ValidateVariableType(IValidationContext context)
+    {
+        var type = GetVariableType(context.RootNodes);
+        if (type == null)
+        {
+            context.Logger.Fail(Reference, "Invalid type: '" + Type + "'");
+        }
+        return type;
+    }
+
+    private VariableType GetVariableType(IRootNodeList rootNodes)
     {
         if (!Type.Contains('.'))
         {
-            return context.RootNodes.GetType(Type);
+            return rootNodes.GetType(Type);
         }
 
         var parts = Type.Split(".");
         if (parts.Length > 2)
         {
-            context.Logger.Fail(Reference, "Invalid type: '" + Type + "'");
             return null;
         }
 
-        var parent = context.RootNodes.GetType(parts[0]);
+        var parent = rootNodes.GetType(parts[0]);
         if (parent == null)
         {
-            context.Logger.Fail(Reference, "Invalid type: '" + Type + "'");
             return null;
         }
 
-        return parent.MemberType(parts[1], context);
+        return parent.MemberType(parts[1], rootNodes);
     }
 
     public override IEnumerable<INode> GetChildren()

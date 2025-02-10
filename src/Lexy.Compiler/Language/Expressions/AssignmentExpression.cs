@@ -59,7 +59,7 @@ public class AssignmentExpression : Expression
 
         var variableReference = hasVariableReference.Variable;
         var expressionType = Assignment.DeriveType(context);
-        if (!variableReference.VariableType.Equals(expressionType))
+        if (expressionType != null && !variableReference.VariableType.Equals(expressionType))
         {
             context.Logger.Fail(Reference,
                 $"Variable '{variableReference}' of type '{variableReference.VariableType}' is not assignable from expression of type '{expressionType}'.");

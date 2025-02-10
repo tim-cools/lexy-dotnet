@@ -37,30 +37,27 @@ public class FactoryTests : ScopedServicesTestFixture
     public void SimpleEnum()
     {
         var dependencies = ServiceProvider.BuildGraph(enumDefinition);
-        dependencies.Nodes.Count.ShouldBe(1);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleEnum");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(EnumDefinition));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes.Count.ShouldBe(1);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleEnum");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
     }
 
     [Test]
     public void SimpleTable()
     {
         var dependencies = ServiceProvider.BuildGraph(table);
-        dependencies.Nodes.Count.ShouldBe(1);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleTable");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Table));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes.Count.ShouldBe(1);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleTable");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
     }
 
     [Test]
     public void SimpleFunction()
     {
         var dependencies = ServiceProvider.BuildGraph(function);
-        dependencies.Nodes.Count.ShouldBe(1);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes.Count.ShouldBe(1);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleFunction");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
     }
 
     [Test]
@@ -72,15 +69,12 @@ Function: Caller
     var parameters = new(SimpleFunction.Parameters)
 ");
 
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
-        dependencies.Nodes[1].Name.ShouldBe("Caller");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
-        dependencies.Nodes[1].Dependencies[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[1].Dependencies[0].Type.ShouldBe(typeof(Function));
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleFunction");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Caller");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes[1].Dependencies[0].ShouldBe("SimpleFunction");
     }
 
     [Test]
@@ -92,15 +86,12 @@ Function: Caller
     var parameters = new(SimpleFunction.Results)
 ");
 
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
-        dependencies.Nodes[1].Name.ShouldBe("Caller");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
-        dependencies.Nodes[1].Dependencies[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[1].Dependencies[0].Type.ShouldBe(typeof(Function));
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleFunction");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Caller");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes[1].Dependencies[0].ShouldBe("SimpleFunction");
     }
 
     [Test]
@@ -114,15 +105,12 @@ Function: Caller
     var parameters = fill(SimpleFunction.Parameters)
 ");
 
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
-        dependencies.Nodes[1].Name.ShouldBe("Caller");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
-        dependencies.Nodes[1].Dependencies[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[1].Dependencies[0].Type.ShouldBe(typeof(Function));
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleFunction");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Caller");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes[1].Dependencies[0].ShouldBe("SimpleFunction");
     }
 
     [Test]
@@ -136,15 +124,12 @@ Function: Caller
     var parameters = fill(SimpleFunction.Results)
 ");
 
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
-        dependencies.Nodes[1].Name.ShouldBe("Caller");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
-        dependencies.Nodes[1].Dependencies[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[1].Dependencies[0].Type.ShouldBe(typeof(Function));
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleFunction");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Caller");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes[1].Dependencies[0].ShouldBe("SimpleFunction");
     }
 
     [Test]
@@ -156,15 +141,12 @@ Function: Caller
     var result = LOOKUP(SimpleTable, 2, SimpleTable.Search, SimpleTable.Value)
 ");
 
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleTable");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Table));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
-        dependencies.Nodes[1].Name.ShouldBe("Caller");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
-        dependencies.Nodes[1].Dependencies[0].Name.ShouldBe("SimpleTable");
-        dependencies.Nodes[1].Dependencies[0].Type.ShouldBe(typeof(Table));
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleTable");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Caller");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes[1].Dependencies[0].ShouldBe("SimpleTable");
     }
 
     [Test]
@@ -179,13 +161,11 @@ Scenario: Simple
   Parameters
     Value = 2
 ");
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("SimpleFunction");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
-        dependencies.Nodes[1].Name.ShouldBe("Simple");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(Scenario));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("SimpleFunction");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Simple");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
     }
 
     [Test]
@@ -196,10 +176,9 @@ Type: Simple
   number Value1
   string Value2
 ");
-        dependencies.Nodes.Count.ShouldBe(1);
-        dependencies.Nodes[0].Name.ShouldBe("Simple");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(TypeDefinition));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes.Count.ShouldBe(1);
+        dependencies.DependencyNodes[0].Name.ShouldBe("Simple");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
     }
 
     [Test]
@@ -215,13 +194,11 @@ Type: Parent
   string Value2
   Inner Value3
 ");
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("Inner");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(TypeDefinition));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(0);
-        dependencies.Nodes[1].Name.ShouldBe("Parent");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(TypeDefinition));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("Inner");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(0);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Parent");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
     }
 
     [Test]
@@ -238,13 +215,11 @@ Type: Parent
   string Value2
   Inner Value3
 ", false);
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("Inner");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(TypeDefinition));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(1);
-        dependencies.Nodes[1].Name.ShouldBe("Parent");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(TypeDefinition));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("Inner");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Parent");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
         dependencies.CircularReferences.Count().ShouldBe(2);
         dependencies.CircularReferences[0].NodeName.ShouldBe("Inner");
         dependencies.CircularReferences[1].NodeName.ShouldBe("Parent");
@@ -263,13 +238,11 @@ Function: Parent
     Inner()
 ", false);
 
-        dependencies.Nodes.Count.ShouldBe(2);
-        dependencies.Nodes[0].Name.ShouldBe("Inner");
-        dependencies.Nodes[0].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[0].Dependencies.Count.ShouldBe(1);
-        dependencies.Nodes[1].Name.ShouldBe("Parent");
-        dependencies.Nodes[1].Type.ShouldBe(typeof(Function));
-        dependencies.Nodes[1].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes.Count.ShouldBe(2);
+        dependencies.DependencyNodes[0].Name.ShouldBe("Inner");
+        dependencies.DependencyNodes[0].Dependencies.Count.ShouldBe(1);
+        dependencies.DependencyNodes[1].Name.ShouldBe("Parent");
+        dependencies.DependencyNodes[1].Dependencies.Count.ShouldBe(1);
         dependencies.CircularReferences.Count().ShouldBe(2);
         dependencies.CircularReferences[0].NodeName.ShouldBe("Inner");
         dependencies.CircularReferences[1].NodeName.ShouldBe("Parent");

@@ -15,6 +15,7 @@ namespace Lexy.Compiler.Language;
 public class SourceCodeNode : RootNode
 {
     private readonly IList<Include> includes = new List<Include>();
+    private IEnumerable<IRootNode> sortedNodes;
 
     public override string NodeName => "SourceCodeNode";
 
@@ -82,25 +83,7 @@ public class SourceCodeNode : RootNode
 
     public override IEnumerable<INode> GetChildren()
     {
-        return RootNodes.OrderBy(NodeImportance).ToList();
-    }
-
-    private static int NodeImportance(IRootNode rootNode)
-    {
-        switch (rootNode)
-        {
-            case EnumDefinition:
-                return 0;
-            case Table:
-            case TypeDefinition:
-                return 1;
-            case Function:
-                return 2;
-            case Scenario:
-                return 3;
-            default:
-                return 0;
-        }
+        return sortedNodes ?? RootNodes;
     }
 
     protected override void Validate(IValidationContext context)
@@ -116,5 +99,17 @@ public class SourceCodeNode : RootNode
     public IEnumerable<Include> GetDueIncludes()
     {
         return includes.Where(include => !include.IsProcessed).ToList();
+    }
+
+    public void SortByDependency(IList<IRootNode> sortedNodes)
+    {
+        this.sortedNodes = WithoutScenarioInlineNode(sortedNodes);
+    }
+
+    private IList<IRootNode> WithoutScenarioInlineNode(IList<IRootNode> sortedNodes)
+    {
+        return sortedNodes
+            .Where(where => RootNodes.GetNode(where.NodeName) != null)
+            .ToList();
     }
 }

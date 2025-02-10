@@ -10,24 +10,16 @@ public class ParseFunctionTests : ScopedServicesTestFixture
     public void TestDuplicatedFunctionName()
     {
         const string code = @"Function: ValidateTableKeyword
-# Validate table keywords
-  Include
-    table ValidateTableKeyword
-  Parameters
   Results
     number Result
   Code
-    Result = ValidateTableKeyword.Count
+    Result = 2
 
 Function: ValidateTableKeyword
-# Validate table keywords
-  Include
-    table ValidateTableKeyword
-  Parameters
   Results
     number Result
   Code
-    Result = ValidateTableKeyword.Count";
+    Result = 2";
 
         var(_, logger) = ServiceProvider.ParseNodes(code);
 

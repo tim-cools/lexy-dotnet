@@ -28,7 +28,9 @@ public class VariableDefinition : Node, IHasNodeDependencies
 
     public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
-        return VariableType?.GetDependencies(rootNodeList);
+        return Type is IHasNodeDependencies hasNodeDependencies
+            ? hasNodeDependencies.GetDependencies(rootNodeList)
+            : Array.Empty<IRootNode>();
     }
 
     public static VariableDefinition Parse(VariableSource source, IParseLineContext context)
@@ -83,10 +85,6 @@ public class VariableDefinition : Node, IHasNodeDependencies
     protected override void Validate(IValidationContext context)
     {
         VariableType = Type.VariableType;
-        if (VariableType == null)
-        {
-            context.Logger.Fail(Reference, $"Invalid type '{Type}' for {Source} variable '{Name}'");
-        }
 
         context.VariableContext.RegisterVariableAndVerifyUnique(Reference, Name, VariableType, Source);
 

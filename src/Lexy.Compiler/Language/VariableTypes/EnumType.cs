@@ -39,7 +39,7 @@ public class EnumType : TypeWithMembers
         return Type;
     }
 
-    public override VariableType MemberType(string name, IValidationContext context)
+    public override VariableType MemberType(string name, IRootNodeList rootNodes)
     {
         return Enum.Members.Any(member => member.Name == name) ? this : null;
     }
@@ -47,5 +47,10 @@ public class EnumType : TypeWithMembers
     public override IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
         yield return rootNodeList.GetEnum(Type);
+    }
+
+    public static VariableType Generic()
+    {
+        return new EnumType("generic", new EnumDefinition("generic", new SourceReference(new SourceFile("generic"), 1, 1)));
     }
 }

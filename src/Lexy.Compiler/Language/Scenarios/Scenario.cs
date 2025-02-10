@@ -106,8 +106,10 @@ public class Scenario : RootNode, IHasNodeDependencies
 
         var tokenName = Parser.NodeName.Parse(context);
         if (tokenName.Name != null)
+        {
             context.Logger.Fail(context.Line.TokenReference(1),
-                $"Unexpected function name. Inline function should not have a name: '{tokenName.Name}'");
+                $"Unexpected function name. Inline function should not have a name: '{tokenName.Name}'. Remove ':' to target an existing function.");
+        }
 
         Function = Function.Create($"{Name.Value}Function", reference, context.ExpressionFactory);
         context.Logger.SetCurrentNode(Function);
@@ -224,6 +226,13 @@ public class Scenario : RootNode, IHasNodeDependencies
     {
         var result = new List<IRootNode>();
         if (Function != null) result.Add(Function);
+        if (FunctionName?.IsEmpty() == false)
+        {
+            var functionNode = rootNodeList.GetFunction(FunctionName.Value);
+            if (functionNode != null) {
+                result.Add(functionNode);
+            }
+        }
         if (Enum != null) result.Add(Enum);
         if (Table != null) result.Add(this.Table);
         return result;

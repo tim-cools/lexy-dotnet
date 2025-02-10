@@ -20,40 +20,10 @@ public static class BuiltInTableFunctions
         if (tableValues == null) throw new ArgumentNullException(nameof(tableValues));
         if (getValue == null) throw new ArgumentNullException(nameof(getValue));
         if (getResult == null) throw new ArgumentNullException(nameof(getResult));
+
         var functionName = $"Lookup '{resultName}' by '{valueName}' from table '{tableName}'";
-
-        TRow lastRow = null;
-
-        for (var index = 0; index < tableValues.Count; index++)
-        {
-            var row = tableValues[index];
-            var value = getValue(row);
-
-            var valueComparedToCondition = value.CompareTo(condition);
-            if (valueComparedToCondition == 0)
-            {
-                context.LogChild($"{functionName} returned value from row: {index + 1}");
-                return getResult(row);
-            }
-
-            if (valueComparedToCondition > 0)
-            {
-                context.LogChild($"{functionName} returned value from previous row: {index}");
-
-                if (lastRow == null)
-                    throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
-
-                return getResult(lastRow);
-            }
-
-            lastRow = row;
-        }
-
-        if (lastRow == null)
-            throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
-
-        context.LogChild($"{functionName} returned value from last row: {tableValues.Count}");
-        return getResult(lastRow);
+        var row = LookUp(tableValues, condition, _ => true, getValue, context, functionName);
+        return getResult(row);
     }
 
     public static TRow LookUpRow<TCondition, TRow>(
@@ -68,40 +38,9 @@ public static class BuiltInTableFunctions
     {
         if (tableValues == null) throw new ArgumentNullException(nameof(tableValues));
         if (getValue == null) throw new ArgumentNullException(nameof(getValue));
+
         var functionName = $"LookupRow' by '{valueName}' from table '{tableName}'";
-
-        TRow lastRow = null;
-
-        for (var index = 0; index < tableValues.Count; index++)
-        {
-            var row = tableValues[index];
-            var value = getValue(row);
-
-            var valueComparedToCondition = value.CompareTo(condition);
-            if (valueComparedToCondition == 0)
-            {
-                context.LogChild($"{functionName} returned value from row: {index + 1}");
-                return row;
-            }
-
-            if (valueComparedToCondition > 0)
-            {
-                context.LogChild($"{functionName} returned value from previous row: {index}");
-
-                if (lastRow == null)
-                    throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
-
-                return lastRow;
-            }
-
-            lastRow = row;
-        }
-
-        if (lastRow == null)
-            throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
-
-        context.LogChild($"{functionName} returned value from last row: {tableValues.Count}");
-        return lastRow;
+        return LookUp(tableValues, condition, _ => true, getValue, context, functionName);
     }
 
     public static TResult LookUpBy<TDiscriminator, TCondition, TRow, TResult>(
@@ -124,47 +63,14 @@ public static class BuiltInTableFunctions
         if (getValue == null) throw new ArgumentNullException(nameof(getValue));
         if (getResult == null) throw new ArgumentNullException(nameof(getResult));
 
-        var functionName = $"Lookup '{resultName}' by discriminator '{discriminatorName}' and value '{valueName}' from table '{tableName}'";
-
-        TRow lastRow = null;
-
-        for (var index = 0; index < tableValues.Count; index++)
+        var checkDiscriminator = (TRow row) =>
         {
-            var row = tableValues[index];
             var discriminatorValue = getDiscriminator(row);
-            if (discriminator.CompareTo(discriminatorValue) != 0) continue;
-
-            var value = getValue(row);
-            var valueComparedToCondition = value.CompareTo(condition);
-            if (valueComparedToCondition == 0)
-            {
-                context.LogChild($"{functionName} returned value from row: {index + 1}");
-                return getResult(row);
-            }
-
-            if (valueComparedToCondition > 0)
-            {
-                context.LogChild($"{functionName} returned value from previous row: {index}");
-
-                if (lastRow == null)
-                {
-                    throw new ExecutionException(
-                        $"{functionName} failed. Discriminator '{discriminator}' and search value '{condition}' not found.");
-                }
-                return getResult(lastRow);
-            }
-
-            lastRow = row;
-        }
-
-        if (lastRow == null)
-        {
-            throw new ExecutionException(
-                $"{functionName} failed. Discriminator '{discriminator}' and search value '{condition}' not found.");
-        }
-
-        context.LogChild($"{functionName} returned value from last row: {tableValues.Count}");
-        return getResult(lastRow);
+            return discriminator.CompareTo(discriminatorValue) == 0;
+        };
+        var functionName = $"Lookup '{resultName}' by discriminator '{discriminatorName}' and value '{valueName}' from table '{tableName}'";
+        var row = LookUp(tableValues, condition, checkDiscriminator, getValue, context, functionName);
+        return getResult(row);
     }
 
     public static TRow LookUpRowBy<TDiscriminator, TCondition, TRow>(
@@ -184,15 +90,34 @@ public static class BuiltInTableFunctions
         if (tableValues == null) throw new ArgumentNullException(nameof(tableValues));
         if (getValue == null) throw new ArgumentNullException(nameof(getValue));
 
+        var checkDiscriminator = (TRow row) =>
+        {
+            var discriminatorValue = getDiscriminator(row);
+            return discriminator.CompareTo(discriminatorValue) == 0;
+        };
         var functionName = $"LookupRow' by by discriminator '{discriminatorName}' and value '{valueName}' from table '{tableName}'";
+        return LookUp(tableValues, condition, checkDiscriminator, getValue, context, functionName);
+    }
+
+    private static TRow LookUp<TCondition, TRow>(
+        IReadOnlyList<TRow> tableValues,
+        TCondition condition,
+        Func<TRow, bool> checkDiscriminator,
+        Func<TRow, TCondition> getValue,
+        IExecutionContext context,
+        string functionName)
+        where TRow : class
+        where TCondition : IComparable
+    {
+        if (tableValues == null) throw new ArgumentNullException(nameof(tableValues));
+        if (getValue == null) throw new ArgumentNullException(nameof(getValue));
 
         TRow lastRow = null;
 
         for (var index = 0; index < tableValues.Count; index++)
         {
             var row = tableValues[index];
-            var discriminatorValue = getDiscriminator(row);
-            if (discriminator.CompareTo(discriminatorValue) != 0) continue;
+            if (!checkDiscriminator(row)) continue;
 
             var value = getValue(row);
             var valueComparedToCondition = value.CompareTo(condition);
@@ -209,7 +134,7 @@ public static class BuiltInTableFunctions
                 if (lastRow == null)
                 {
                     throw new ExecutionException(
-                        $"{functionName} failed. Discriminator '{discriminator}' and search value '{condition}' not found.");
+                        $"{functionName} failed. Search value '{condition}' not found.");
                 }
                 return lastRow;
             }
@@ -219,7 +144,7 @@ public static class BuiltInTableFunctions
 
         if (lastRow == null)
         {
-            throw new ExecutionException($"{functionName} failed. Discriminator '{discriminator}' and search value '{condition}' not found.");
+            throw new ExecutionException($"{functionName} failed. Search value '{condition}' not found.");
         }
 
         context.LogChild($"{functionName} returned value from last row: {tableValues.Count}");

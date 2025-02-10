@@ -69,7 +69,7 @@ internal abstract class TableFunction : FunctionCallExpression, IHasNodeDependen
         if (valueType == null || !valueType.Equals(columnType))
         {
             context.Logger.Fail(Reference,
-                $"Invalid argument ${argumentIndex}. Column type '${columnName}': '${columnType}' doesn't match condition type '${valueType}'. ${FunctionHelp}");
+                $"Invalid argument ${argumentIndex}. Column type '{columnName}': '{columnType}' doesn't match condition type '{valueType}'. {FunctionHelp}");
         }
     }
 }

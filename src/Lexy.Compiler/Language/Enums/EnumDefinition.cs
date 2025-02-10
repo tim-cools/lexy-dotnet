@@ -12,7 +12,7 @@ public class EnumDefinition : RootNode
 
     public IList<EnumMember> Members { get; } = new List<EnumMember>();
 
-    private EnumDefinition(string name, SourceReference reference) : base(reference)
+    internal EnumDefinition(string name, SourceReference reference) : base(reference)
     {
         Name = new EnumName(reference);
         Name.ParseName(name);

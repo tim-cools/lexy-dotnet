@@ -47,8 +47,12 @@ public class LexyParser : ILexyParser
 
         parserLogger.LogNodes(context.Nodes);
 
-        ValidateNodesTree(context);
-        DetectCircularDependencies(context);
+        var dependencyGraph = SortByDependencyAndCheckCircularDependencies(context);
+        if (dependencyGraph != null)
+        {
+            context.RootNode.SortByDependency(dependencyGraph.SortedNodes);
+            ValidateNodesTree(context);
+        }
 
         if (!context.Options.SuppressException)
         {
@@ -152,10 +156,10 @@ public class LexyParser : ILexyParser
         context.RootNode.ValidateTree(validationContext);
     }
 
-    private void DetectCircularDependencies(IParserContext context)
+    private Dependencies SortByDependencyAndCheckCircularDependencies(IParserContext context)
     {
         var dependencies = DependencyGraphFactory.Create(context.Nodes);
-        if (!dependencies.HasCircularReferences) return;
+        if (!dependencies.HasCircularReferences) return dependencies;
 
         foreach (var circularReference in dependencies.CircularReferences)
         {
@@ -163,6 +167,8 @@ public class LexyParser : ILexyParser
             context.Logger.Fail(circularReference.Reference,
                 $"Circular reference detected in: '{circularReference.NodeName}'");
         }
+
+        return null;
     }
 
     private void Reset(IParserContext context)

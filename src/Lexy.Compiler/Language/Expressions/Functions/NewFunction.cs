@@ -46,7 +46,7 @@ public class NewFunction : FunctionCallExpression, IHasNodeDependencies
         if (valueType is not ComplexType complexType)
         {
             context.Logger.Fail(Reference,
-                $"Invalid argument 1. 'Value' should be of type 'ComplexType' but is '{valueType.GetType()}'. {FunctionHelp}");
+                $"Invalid argument 1. 'Value' should be of type 'ComplexType' but is '{valueType?.GetType()}'. {FunctionHelp}");
             return;
         }
 
@@ -56,6 +56,6 @@ public class NewFunction : FunctionCallExpression, IHasNodeDependencies
     public override VariableType DeriveType(IValidationContext context)
     {
         var nodeType = context.RootNodes.GetType(TypeLiteral.Parent);
-        return nodeType?.MemberType(TypeLiteral.Member, context) as ComplexType;
+        return nodeType?.MemberType(TypeLiteral.Member, context.RootNodes) as ComplexType;
     }
 }

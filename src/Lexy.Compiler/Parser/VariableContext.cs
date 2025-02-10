@@ -65,7 +65,6 @@ public class VariableContext : IVariableContext
             var value2 = secondPriorityHandler(path, validationContext);
             if (value2 != null) return value2;
 
-            logger.Fail(reference, $"Unknown variable name: '{path.FullPath()}'");
             return null;
         };
 
@@ -99,7 +98,7 @@ public class VariableContext : IVariableContext
         }
 
         var member = path.LastPart();
-        var memberType = rootVariableType.MemberType(member, validationContext);
+        var memberType = rootVariableType.MemberType(member, validationContext.RootNodes);
         if (memberType == null) return null;
         return new VariableReference(path, rootVariableType, memberType, VariableSource.Type);
     }
@@ -132,7 +131,7 @@ public class VariableContext : IVariableContext
     {
         var typeWithMembers = parentType as ITypeWithMembers;
 
-        var memberVariableType = typeWithMembers?.MemberType(path.ParentIdentifier, context);
+        var memberVariableType = typeWithMembers?.MemberType(path.ParentIdentifier, context.RootNodes);
         if (memberVariableType == null) return false;
 
         return !path.HasChildIdentifiers
@@ -144,7 +143,7 @@ public class VariableContext : IVariableContext
     {
         if (parentType is not ITypeWithMembers typeWithMembers) return null;
 
-        var memberVariableType = typeWithMembers.MemberType(path.ParentIdentifier, context);
+        var memberVariableType = typeWithMembers.MemberType(path.ParentIdentifier, context.RootNodes);
         if (memberVariableType == null) return null;
 
         return !path.HasChildIdentifiers

@@ -20,7 +20,7 @@ public class ComplexType : VariableType, ITypeWithMembers
         Members = members ?? throw new ArgumentNullException(nameof(members));
     }
 
-    public VariableType MemberType(string name, IValidationContext context)
+    public VariableType MemberType(string name, IRootNodeList rootNodes)
     {
         return Members.FirstOrDefault(member => member.Name == name)?.Type;
     }

@@ -37,23 +37,23 @@ public class FunctionType : TypeWithMembers
         return Type;
     }
 
-    public override VariableType MemberType(string name, IValidationContext context)
+    public override VariableType MemberType(string name, IRootNodeList rootNodes)
     {
         return name switch
         {
-            Function.ParameterName => FunctionParametersType(context),
-            Function.ResultsName => FunctionResultsType(context),
+            Function.ParameterName => FunctionParametersType(rootNodes),
+            Function.ResultsName => FunctionResultsType(rootNodes),
             _ => null
         };
     }
 
-    private ComplexType FunctionParametersType(IValidationContext context)
+    private ComplexType FunctionParametersType(IRootNodeList rootNodes)
     {
-        return context.RootNodes.GetFunction(Type)?.GetParametersType();
+        return rootNodes.GetFunction(Type)?.GetParametersType();
     }
 
-    private ComplexType FunctionResultsType(IValidationContext context)
+    private ComplexType FunctionResultsType(IRootNodeList rootNodes)
     {
-        return context.RootNodes.GetFunction(Type)?.GetResultsType();
+        return rootNodes.GetFunction(Type)?.GetResultsType();
     }
 }

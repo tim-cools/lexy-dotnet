@@ -4,6 +4,7 @@ using Lexy.Compiler.Language.Functions;
 using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Language.Types;
+using Lexy.Compiler.Language.VariableTypes;
 
 namespace Lexy.Compiler.Language;
 
@@ -16,4 +17,5 @@ public interface IRootNodeList : IEnumerable<IRootNode>
     TypeDefinition GetCustomType(string name);
     IEnumerable<Scenario> GetScenarios();
     EnumDefinition GetEnum(string name);
+    TypeWithMembers GetType(string name);
 }

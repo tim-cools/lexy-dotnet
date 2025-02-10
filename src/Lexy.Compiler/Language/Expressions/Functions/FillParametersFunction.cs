@@ -33,7 +33,10 @@ public class FillParametersFunction : FunctionCallExpression, IHasNodeDependenci
 
     public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
     {
-        if (Type != null) yield return rootNodeList.GetNode(Type.Name);
+        if (TypeLiteral == null) yield break;
+
+        var rootNode = rootNodeList.GetNode(TypeLiteral.ToString());
+        if (rootNode != null) yield return rootNode;
     }
 
     public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
@@ -57,8 +60,6 @@ public class FillParametersFunction : FunctionCallExpression, IHasNodeDependenci
         }
 
         Type = complexType;
-
-        if (complexType == null) return;
 
         GetMapping(Reference, context, complexType, mapping);
     }

@@ -39,7 +39,7 @@ public class CustomType : TypeWithMembers
         return Type;
     }
 
-    public override VariableType MemberType(string name, IValidationContext context)
+    public override VariableType MemberType(string name, IRootNodeList rootNodes)
     {
         var definition = TypeDefinition.Variables.FirstOrDefault(variable => variable.Name == name);
         return definition?.Type.VariableType;

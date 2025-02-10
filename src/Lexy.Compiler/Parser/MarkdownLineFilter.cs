@@ -6,7 +6,7 @@ public class MarkdownLineFilter : ILineFilter
 
     public bool UseLine(string line)
     {
-        if (line == "```")
+        if (line.Trim() == "```")
         {
             inCodeBlock = !inCodeBlock;
             return false;

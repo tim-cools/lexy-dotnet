@@ -8,31 +8,12 @@ using Lexy.Compiler.Language.Expressions.Functions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static Lexy.Compiler.Compiler.CSharp.Syntax.TranslateBinaryExpressions;
 
 namespace Lexy.Compiler.Compiler.CSharp.Syntax;
 
 internal static class Expressions
 {
-    private static readonly IDictionary<ExpressionOperator, SyntaxKind> TranslateOperators =
-        new Dictionary<ExpressionOperator, SyntaxKind>
-        {
-            { ExpressionOperator.Addition, SyntaxKind.AddExpression },
-            { ExpressionOperator.Subtraction, SyntaxKind.SubtractExpression },
-            { ExpressionOperator.Multiplication, SyntaxKind.MultiplyExpression },
-            { ExpressionOperator.Division, SyntaxKind.DivideExpression },
-            { ExpressionOperator.Modulus, SyntaxKind.ModuloExpression },
-
-            { ExpressionOperator.GreaterThan, SyntaxKind.GreaterThanExpression },
-            { ExpressionOperator.GreaterThanOrEqual, SyntaxKind.GreaterThanOrEqualExpression },
-            { ExpressionOperator.LessThan, SyntaxKind.LessThanExpression },
-            { ExpressionOperator.LessThanOrEqual, SyntaxKind.LessThanOrEqualExpression },
-
-            { ExpressionOperator.And, SyntaxKind.LogicalAndExpression },
-            { ExpressionOperator.Or, SyntaxKind.LogicalOrExpression },
-            { ExpressionOperator.Equals, SyntaxKind.EqualsExpression },
-            { ExpressionOperator.NotEqual, SyntaxKind.NotEqualsExpression }
-        };
-
     private static readonly IEnumerable<IExpressionStatementException> RenderStatementExceptions =
         new IExpressionStatementException[]
         {
@@ -218,22 +199,5 @@ internal static class Expressions
     private static ExpressionSyntax TranslateFunctionCallExpression(FunctionCallExpression expression)
     {
         return FunctionCallFactory.CallExpressionSyntax(expression);
-    }
-
-    private static ExpressionSyntax TranslateBinaryExpression(BinaryExpression expression)
-    {
-        var kind = Translate(expression.Operator);
-        return BinaryExpression(
-            kind,
-            ExpressionSyntax(expression.Left),
-            ExpressionSyntax(expression.Right));
-    }
-
-    private static SyntaxKind Translate(ExpressionOperator expressionOperator)
-    {
-        if (!TranslateOperators.TryGetValue(expressionOperator, out var result))
-            throw new ArgumentOutOfRangeException(nameof(expressionOperator), expressionOperator, null);
-
-        return result;
     }
 }

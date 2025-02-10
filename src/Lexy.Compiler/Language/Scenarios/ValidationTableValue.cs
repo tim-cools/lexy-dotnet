@@ -29,6 +29,11 @@ public class ValidationTableValue : Node
 
     public object GetValue()
     {
+        if (Expression is MemberAccessExpression enumValue)
+        {
+            return enumValue.ToString();
+        }
+
         var literal = Expression as LiteralExpression;
         return literal?.Literal.TypedValue;
     }

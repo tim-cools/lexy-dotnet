@@ -10,7 +10,7 @@ public sealed class ImplicitVariableDeclaration : VariableDeclarationType
     {
     }
 
-    protected override VariableType CreateVariableType(IValidationContext context)
+    protected override VariableType ValidateVariableType(IValidationContext context)
     {
         throw new InvalidOperationException("Not supported. Nodes should be Validated first.");
     }

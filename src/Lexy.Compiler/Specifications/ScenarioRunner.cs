@@ -220,6 +220,22 @@ public class ScenarioRunner : IScenarioRunner
         }
     }
 
+    private IReadOnlyList<string> GetDependenciesErrors()
+    {
+        var node = function
+                   ?? Scenario.Function
+                   ?? Scenario.Enum
+                   ?? (IRootNode)Scenario.Table;
+        if (node == null)
+        {
+            Fail("Scenario has no function, enum or table.", Array.Empty<string>());
+            return null;
+        }
+
+        var dependencies = DependencyGraphFactory.NodeAndDependencies(rootNodeList, node);
+        return parserLogger.ErrorNodesMessages(dependencies);
+    }
+
     private bool ValidateScenarioErrors()
     {
         var failedMessages = parserLogger.ErrorNodeMessages(Scenario);
@@ -230,26 +246,22 @@ public class ScenarioRunner : IScenarioRunner
 
         if (skipValidationWhenExecutionErrorsAreExpected) return true;
 
+        var failedDependenciesMessages = GetDependenciesErrors();
+
+        var allErrors = failedDependenciesMessages != null
+            ? failedMessages.Union(failedDependenciesMessages).ToList()
+            : failedMessages.ToList();
         var expectErrors = Scenario.ExpectErrors;
-        return ValidateExpectedErrors("Parsing Scenario", failedMessages, expectErrors?.Messages);
+        return ValidateExpectedErrors("Parsing Scenario", allErrors, expectErrors?.Messages);
     }
 
     private bool ValidateErrors()
     {
         if (Scenario.ExpectRootErrors?.HasValues == true) return ValidateRootErrors();
 
-        var node = function
-                   ?? Scenario.Function
-                   ?? Scenario.Enum
-                   ?? (IRootNode)Scenario.Table;
-        if (node == null)
-        {
-            Fail("Scenario has no function, enum or table.", Array.Empty<string>());
-            return false;
-        }
+        var failedMessages = GetDependenciesErrors();
+        if (failedMessages == null) return false;
 
-        var dependencies = DependencyGraphFactory.NodeAndDependencies(rootNodeList, node);
-        var failedMessages = parserLogger.ErrorNodesMessages(dependencies);
         var expectErrors = Scenario.ExpectErrors;
         return ValidateExpectedErrors("Parsing", failedMessages, expectErrors?.Messages);
     }
@@ -257,19 +269,26 @@ public class ScenarioRunner : IScenarioRunner
     private bool ValidateRootErrors()
     {
         var failedMessages = parserLogger.ErrorMessages();
-        return ValidateExpectedErrors("Root", failedMessages, Scenario.ExpectRootErrors?.Messages, true);
+        return ValidateExpectedErrors("Root", failedMessages, Scenario.ExpectRootErrors?.Messages);
     }
 
     private bool ValidateExecutionErrors(Exception exception)
     {
-        return !ValidateExpectedErrors("Execution", exception.ToString().Split("\n"),
+        var errors = ExceptionErrorsWithoutEmptyLinesAndStackTrace(exception);
+        return !ValidateExpectedErrors("Execution", errors,
             Scenario.ExpectExecutionErrors?.Messages);
+    }
+
+    private static IReadOnlyList<string> ExceptionErrorsWithoutEmptyLinesAndStackTrace(Exception exception)
+    {
+        return exception.ToString().Split("\n")
+            .Where(line => !string.IsNullOrWhiteSpace(line) && !line.TrimStart().StartsWith("at "))
+            .ToList();
     }
 
     private bool ValidateExpectedErrors(string title,
         IReadOnlyList<string> actualErrors,
-        IEnumerable<string> expectErrors,
-        bool strictAllMessages = false)
+        IEnumerable<string> expectErrors)
     {
         if (actualErrors.Count > 0 && expectErrors == null)
         {
@@ -287,7 +306,7 @@ public class ScenarioRunner : IScenarioRunner
             return false;
         }
 
-        var errorNotFound = false;
+        var notFound = new List<string>();
         var remainingMessages = actualErrors.ToList();
         foreach (var expectError in expectErrors)
         {
@@ -298,20 +317,31 @@ public class ScenarioRunner : IScenarioRunner
             }
             else
             {
-                errorNotFound = true;
+                notFound.Add(expectError);
             }
         }
 
-        if ((strictAllMessages && remainingMessages.Any()) || errorNotFound)
+        if (remainingMessages.Any() || notFound.Any())
         {
             Fail($"Wrong {title} error(s) occurred.", StringArrayBuilder
-                .New("Expected:").List(expectErrors)
-                .Add("Actual:").List(actualErrors).Array());
+                .New("Expected:").List(MarkAsFound(expectErrors, notFound))
+                .Add("Actual:").List(MarkAsFound(actualErrors, remainingMessages))
+                .Array());
             return false;
         }
 
         context.Success(Scenario);
         return false;
+    }
+
+    private IReadOnlyList<string> MarkAsFound(IEnumerable<string> expectErrors,
+        IReadOnlyList<string> remainingMessages)
+    {
+        return expectErrors
+            .Select(expectError => remainingMessages.Contains(expectError)
+                ? $"(not found) {expectError}"
+                : $"(found)     {expectError}")
+            .ToList();
     }
 
     private bool ValidateExecutionLogging(FunctionResult result)

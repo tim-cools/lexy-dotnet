@@ -61,8 +61,8 @@ public class ParseScenarioTests : ScopedServicesTestFixture
         errors.Length.ShouldBe(4, logger.ErrorMessages().Format(2));
         errors[0].ShouldBe("tests.lexy(1, 1): ERROR - Scenario has no function, enum, table or expect errors.");
         errors[1].ShouldBe("tests.lexy(2, 3): ERROR - Invalid token 'Functtion'. Keyword expected.");
-        errors[2].ShouldBe("tests.lexy(4, 5): ERROR - Unknown variable name: 'Value'");
-        errors[3].ShouldBe("tests.lexy(6, 5): ERROR - Unknown variable name: 'Result'");
+        errors[2].ShouldBe("tests.lexy(4, 5): ERROR - Invalid identifier: 'Value'");
+        errors[3].ShouldBe("tests.lexy(6, 5): ERROR - Invalid identifier: 'Result'");
     }
 
     [Test]
@@ -200,6 +200,6 @@ public class ParseScenarioTests : ScopedServicesTestFixture
         errors.Length.ShouldBe(1);
         errors[0].ShouldBe(
             "tests.lexy(2, 13): ERROR - Unexpected function name. " +
-            "Inline function should not have a name: 'ThisShouldNotBeAllowed'");
+            "Inline function should not have a name: 'ThisShouldNotBeAllowed'. Remove ':' to target an existing function.");
     }
 }

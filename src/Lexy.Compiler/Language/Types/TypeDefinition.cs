@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Types;
 
-public class TypeDefinition : RootNode, ITypeDefinition
+public class TypeDefinition : RootNode, ITypeDefinition, IHasNodeDependencies
 {
     private readonly List<VariableDefinition> variables = new();
 
@@ -27,6 +29,15 @@ public class TypeDefinition : RootNode, ITypeDefinition
         var variableDefinition = VariableDefinition.Parse(VariableSource.Parameters, context);
         if (variableDefinition != null) variables.Add(variableDefinition);
         return this;
+    }
+
+    public IEnumerable<IRootNode> GetDependencies(IRootNodeList rootNodeList)
+    {
+        var dependencies = Variables.SelectMany(variable =>
+            variable.Type is IHasNodeDependencies hasDependencies
+            ? hasDependencies.GetDependencies(rootNodeList)
+            : Array.Empty<IRootNode>());
+        return dependencies;
     }
 
     public override IEnumerable<INode> GetChildren()
