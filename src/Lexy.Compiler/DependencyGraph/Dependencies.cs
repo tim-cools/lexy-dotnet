@@ -162,7 +162,8 @@ public class Dependencies
             .Select(pair => pair.Key);
         var processing = new Queue<string>(nodesWithoutDependants);
 
-        while (processing.Count > 0) {
+        while (processing.Count > 0)
+        {
             var nodeName = processing.Dequeue();
             var node = nodesMap[nodeName];
             var dependencyNode = dependencyMap[nodeName];
