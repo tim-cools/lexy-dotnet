@@ -6,7 +6,8 @@ namespace Lexy.Tests.Specifications;
 public class RunSingleSpecification : ScopedServicesTestFixture
 {
     [Test]
-    public void SpecificFile() // used for debugging a specific file from IDE
+    [Ignore("Used for debugging a specific file from IDE")]
+    public void SpecificFile()
     {
         LoggingConfiguration.LogFileNames();
 

@@ -9,6 +9,7 @@ public interface IValidationContext
     RootNodeList RootNodes { get; }
 
     IVariableContext VariableContext { get; }
+    ITreeValidationVisitor Visitor { get; }
 
     IDisposable CreateVariableScope();
 }

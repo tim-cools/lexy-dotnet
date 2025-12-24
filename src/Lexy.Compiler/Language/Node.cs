@@ -6,31 +6,38 @@ namespace Lexy.Compiler.Language;
 
 public abstract class Node : INode
 {
+    public SourceReference Reference { get; }
+
     protected Node(SourceReference reference)
     {
         Reference = reference ?? throw new ArgumentNullException(nameof(reference));
     }
 
-    public SourceReference Reference { get; }
-
     public virtual void ValidateTree(IValidationContext context)
     {
-        var children = GetChildren();
-        foreach (var child in children)
-        {
-            ValidateNodeTree(context, child);
-        }
+        context.Visitor.Enter(this);
 
+        ValidateChildren(context);
         Validate(context);
+
+        context.Visitor.Leave(this);
     }
 
     public abstract IEnumerable<INode> GetChildren();
 
-    protected virtual void ValidateNodeTree(IValidationContext context, INode child)
+    protected abstract void Validate(IValidationContext context);
+
+    private void ValidateChildren(IValidationContext context)
     {
-        if (child == null) throw new InvalidOperationException($"({GetType().Name}) Child is null");
-        child.ValidateTree(context);
+        var children = GetChildren();
+        foreach (var child in children)
+        {
+            ValidateChild(context, child);
+        }
     }
 
-    protected abstract void Validate(IValidationContext context);
+    protected virtual void ValidateChild(IValidationContext context, INode child)
+    {
+        child.ValidateTree(context);
+    }
 }

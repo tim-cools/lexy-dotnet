@@ -154,7 +154,8 @@ public class DeriveTypeTests : ScopedServicesTestFixture
     private VariableType DeriveType(string expressionValue, Action<IValidationContext> validationContextHandler = null)
     {
         var logger = new ParserLogger(ServiceProvider.GetRequiredService<ILogger<LexyParser>>());
-        var validationContext = new ValidationContext(logger, new RootNodeList());
+        var visitor = new TrackLoggingCurrentNodeVisitor(logger);
+        var validationContext = new ValidationContext(logger, new RootNodeList(), visitor);
 
         using var _ = validationContext.CreateVariableScope();
 

@@ -52,7 +52,9 @@ public class CaseExpression : Expression, IParsableNode
         if (tokens.IsKeyword(0, Keywords.Default)) return ParseDefaultCase(source, tokens, factory);
 
         if (tokens.Length == 1)
+        {
             return ParseExpressionResult.Invalid<CaseExpression>("Invalid 'case'. No parameters found.");
+        }
 
         var value = tokens.TokensFrom(1);
         var valueExpression = factory.Parse(value, source.Line);

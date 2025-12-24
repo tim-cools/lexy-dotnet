@@ -169,15 +169,16 @@ public class Scenario : RootNode, IHasNodeDependencies
         if (ExpectExecutionErrors != null) yield return ExpectExecutionErrors;
     }
 
-    protected override void ValidateNodeTree(IValidationContext context, INode child)
+    protected override void ValidateChild(IValidationContext context, INode child)
     {
-        if (!ReferenceEquals(child, Function))
+        if (ReferenceEquals(child, Function))
+        {
+            base.ValidateChild(context, child);
+        }
+        else
         {
             ValidateWithFunctionVariables(context, child);
-            return;
         }
-
-        base.ValidateNodeTree(context, child);
     }
 
     private void ValidateWithFunctionVariables(IValidationContext context, INode child)
@@ -185,7 +186,7 @@ public class Scenario : RootNode, IHasNodeDependencies
         using (context.CreateVariableScope())
         {
             AddFunctionParametersAndResultsForValidation(context);
-            base.ValidateNodeTree(context, child);
+            base.ValidateChild(context, child);
         }
     }
 

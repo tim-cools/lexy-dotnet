@@ -9,7 +9,6 @@ public interface IParserContext
     RootNodeList Nodes { get; }
     SourceCodeNode RootNode { get; }
 
-    ParseOptions Options { get; }
     ILineFilter LineFilter { get; }
 
     void AddFileIncluded(string fileName);

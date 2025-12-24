@@ -6,17 +6,22 @@ namespace Lexy.Compiler.Parser;
 
 public class ValidationContext : IValidationContext
 {
+    private class OnDispose : IDisposable
+    {
+        private readonly Action onDispose;
+
+        public OnDispose(Action onDispose) => this.onDispose = onDispose;
+
+        public void Dispose() => onDispose();
+    }
+
     private readonly Stack<IVariableContext> contexts = new();
     private IVariableContext variableContext;
 
     public IParserLogger Logger { get; }
     public RootNodeList RootNodes { get; }
 
-    public ValidationContext(IParserLogger logger, RootNodeList rootNodes)
-    {
-        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        RootNodes = rootNodes ?? throw new ArgumentNullException(nameof(rootNodes));
-    }
+    public ITreeValidationVisitor Visitor { get; }
 
     public IVariableContext VariableContext
     {
@@ -27,28 +32,32 @@ public class ValidationContext : IValidationContext
         }
     }
 
+    public ValidationContext(IParserLogger logger, RootNodeList rootNodes, ITreeValidationVisitor visitor)
+    {
+        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        RootNodes = rootNodes ?? throw new ArgumentNullException(nameof(rootNodes));
+        Visitor = visitor ?? throw new ArgumentNullException(nameof(visitor));
+    }
 
     public IDisposable CreateVariableScope()
     {
-        if (variableContext != null) contexts.Push(variableContext);
+        StoreCurrentVariableContext();
 
         variableContext = new VariableContext(RootNodes, Logger, variableContext);
 
-        return new CodeContextScope(() => { return variableContext = contexts.Count == 0 ? null : contexts.Pop(); });
+        return new OnDispose(RevertToPreviousVariableContext);
     }
 
-    private class CodeContextScope : IDisposable
+    private void StoreCurrentVariableContext()
     {
-        private readonly Func<IVariableContext> func;
-
-        public CodeContextScope(Func<IVariableContext> func)
+        if (variableContext != null)
         {
-            this.func = func;
+            contexts.Push(variableContext);
         }
+    }
 
-        public void Dispose()
-        {
-            func();
-        }
+    private void RevertToPreviousVariableContext()
+    {
+        variableContext = contexts.Count == 0 ? null : contexts.Pop();
     }
 }

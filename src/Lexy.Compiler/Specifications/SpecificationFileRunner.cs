@@ -72,11 +72,12 @@ public class SpecificationFileRunner : ISpecificationFileRunner
     {
         if (!logger.HasRootErrors()) return;
 
-        var rootScenarioRunner =
-            scenarioRunners.FirstOrDefault(runner => runner.Scenario.ExpectRootErrors.HasValues);
+        var rootScenarioRunner = scenarioRunners.FirstOrDefault(runner => runner.Scenario.ExpectRootErrors?.HasValues == true);
 
         if (rootScenarioRunner == null)
+        {
             throw new InvalidOperationException(
                 $"{fileName} has root errors but no scenario that verifies expected root errors. Errors: {logger.ErrorRootMessages().Format(2)}");
+        }
     }
 }

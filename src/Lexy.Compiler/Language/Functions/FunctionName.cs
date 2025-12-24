@@ -15,7 +15,7 @@ public class FunctionName : Node
 
     public void ParseName(string name)
     {
-        Value = name ?? throw new ArgumentNullException(nameof(name));
+        Value = name;
     }
 
     public override IEnumerable<INode> GetChildren()

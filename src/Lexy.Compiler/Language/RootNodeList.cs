@@ -14,7 +14,7 @@ public class RootNodeList : IRootNodeList
 {
     private readonly IList<IRootNode> values;
 
-    public RootNodeList(IEnumerable<IRootNode> values = null)
+    public RootNodeList(params IRootNode[] values)
     {
         this.values = values != null ? values.ToList() : new List<IRootNode>();
     }

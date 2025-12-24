@@ -18,9 +18,9 @@ public class LexyCompiler : ILexyCompiler
     private readonly ILogger<LexyCompiler> compilationLogger;
     private readonly ILogger<ExecutionContext> executionLogger;
 
-    public LexyCompiler(ILogger<LexyCompiler> logger, ILogger<ExecutionContext> executionLogger)
+    public LexyCompiler(ILogger<LexyCompiler> compilationLogger, ILogger<ExecutionContext> executionLogger)
     {
-        this.compilationLogger = logger ?? throw new ArgumentNullException(nameof(logger));
+        this.compilationLogger = compilationLogger ?? throw new ArgumentNullException(nameof(compilationLogger));
         this.executionLogger = executionLogger ?? throw new ArgumentNullException(nameof(executionLogger));
     }
 
@@ -43,7 +43,6 @@ public class LexyCompiler : ILexyCompiler
             throw;
         }
     }
-
 
     private static CSharpCompilation CreateSyntaxTree(SyntaxNode root, ICompilationEnvironment compilationEnvironment)
     {

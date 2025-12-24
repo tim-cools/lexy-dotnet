@@ -152,7 +152,8 @@ public class LexyParser : ILexyParser
 
     private void ValidateNodesTree(IParserContext context)
     {
-        var validationContext = new ValidationContext(context.Logger, context.Nodes);
+        var visitor = new TrackLoggingCurrentNodeVisitor(context.Logger);
+        var validationContext = new ValidationContext(context.Logger, context.Nodes, visitor);
         context.RootNode.ValidateTree(validationContext);
     }
 

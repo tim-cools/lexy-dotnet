@@ -202,4 +202,20 @@ public class ParseScenarioTests : ScopedServicesTestFixture
             "tests.lexy(2, 13): ERROR - Unexpected function name. " +
             "Inline function should not have a name: 'ThisShouldNotBeAllowed'. Remove ':' to target an existing function.");
     }
+
+    [Test]
+    public void ScenarioWithInlineFunctionShouldLogErrorOnFunction()
+    {
+        const string code = @"Scenario: TestScenario
+  Function:
+    Unkown";
+
+        var (scenario, logger) = ServiceProvider.ParseScenario(code);
+
+        logger.NodeHasErrors(scenario.Function).ShouldBeTrue();
+
+        var errors = logger.ErrorNodeMessages(scenario.Function);
+        errors.Length.ShouldBe(1);
+        errors[0].ShouldBe("tests.lexy(2, 3): ERROR - Invalid token 'Unkown'.");
+    }
 }
