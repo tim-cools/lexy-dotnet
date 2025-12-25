@@ -9,8 +9,8 @@ public static class Keywords
 {
     public const string Function = "function";
     public const string EnumKeyword = "enum";
-    public const string TableKeyword = "Table:";
-    public const string TypeKeyword = "Type:";
+    public const string TableKeyword = "table";
+    public const string TypeKeyword = "type";
     public const string ScenarioKeyword = "scenario";
 
     public const string If = "if";

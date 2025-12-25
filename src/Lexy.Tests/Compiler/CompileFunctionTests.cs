@@ -54,7 +54,7 @@ public class CompileFunctionTests : ScopedServicesTestFixture
     [Test]
     public void TestMemberAccessAssignment()
     {
-        using var script = ServiceProvider.CompileFunction(@"Table: ValidateTableKeyword
+        using var script = ServiceProvider.CompileFunction(@"table ValidateTableKeyword
 // Validate table keywords
   | number Value | number Result |
   | 0 | 0 |
@@ -126,7 +126,7 @@ function TestSimpleReturn
     public void CustomType()
     {
         using var script = ServiceProvider.CompileFunction(@"
-Type: SimpleComplex
+type SimpleComplex
   number First
   string Second
     
@@ -147,11 +147,11 @@ function TestCustomType
     public void CustomTypeNestedProperties()
     {
         using var script = ServiceProvider.CompileFunction(@"
-Type: InnerComplex
+type InnerComplex
   number First
   string Second
     
-Type: SimpleComplex
+type SimpleComplex
   InnerComplex Inner
     
 function TestCustomType

@@ -31,7 +31,7 @@ function SimpleFunction
     [Test]
     public void TableVariablesShouldNotStoreFullTableInLogging()
     {
-        using var script = ServiceProvider.CompileFunction($@"Table: SimpleTable
+        using var script = ServiceProvider.CompileFunction($@"table SimpleTable
 // Validate table keywords
   | number Search | number Value |
   | 0 | 0 |
@@ -49,7 +49,7 @@ function ValidateTableKeywordFunction
     [Test]
     public void TableVariablesShouldNotStoreFullTableInLoggingRow()
     {
-        using var script = ServiceProvider.CompileFunction(@"Table: SimpleTable
+        using var script = ServiceProvider.CompileFunction(@"table SimpleTable
   | number Search | number Value | string Extra |
   | 0 | 0 | ""ext"" |
   | 1 | 1 | ""ra""  |

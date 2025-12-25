@@ -17,7 +17,7 @@ public class DependencyOrderTests : ScopedServicesTestFixture
   Code
     Result = LOOKUP(TableExample, EnumExample.Single, TableExample.Example, TableExample.Value)
 
-Table: TableExample
+table TableExample
   | EnumExample Example | number Value |
   | EnumExample.Single  | 123          |
 
@@ -98,15 +98,15 @@ function FunctionWithEnumDependency
   Code
     Result = 666
 
-Type: NestedType
+type NestedType
   EnumExample EnumValue
   number Result = 888
 
-Type: TypeExample
+type TypeExample
   EnumExample EnumValue
   NestedType Nested
 
-Table: TableExample
+table TableExample
   | EnumExample Example | number Value |
   | EnumExample.Single  | 123          |
 

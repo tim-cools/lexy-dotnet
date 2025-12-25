@@ -14,7 +14,7 @@ public class ParseTableTests : ScopedServicesTestFixture
     [Test]
     public void TestInAndStringColumns()
     {
-        const string code = @"Table: TestTable
+        const string code = @"table TestTable
   | number Value | string Result |
   | 7 | ""Test quoted"" |
   | 8 | ""Test"" |";
@@ -37,7 +37,7 @@ public class ParseTableTests : ScopedServicesTestFixture
     [Test]
     public void TestDateTimeAndBoolean()
     {
-        const string code = @"Table: TestTable
+        const string code = @"table TestTable
   | date Value | boolean Result |
   | d""2024-12-18T17:07:45"" | false |
   | d""2024-12-18T17:08:12"" | true |";

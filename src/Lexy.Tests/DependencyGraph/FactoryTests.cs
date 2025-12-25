@@ -17,7 +17,7 @@ public class FactoryTests : ScopedServicesTestFixture
   Second
 ";
 
-    private const string table = @"Table: SimpleTable
+    private const string table = @"table SimpleTable
   | number Search | string Value |
   | 0 | ""0"" |
   | 1 | ""1"" |
@@ -172,7 +172,7 @@ scenario Simple
     public void SimpleType()
     {
         var dependencies = ServiceProvider.BuildGraph(@"
-Type: Simple
+type Simple
   number Value1
   string Value2
 ");
@@ -185,11 +185,11 @@ Type: Simple
     public void ComplexType()
     {
         var dependencies = ServiceProvider.BuildGraph(@"
-Type: Inner
+type Inner
   number Value1
   string Value2
 
-Type: Parent
+type Parent
   number Value1
   string Value2
   Inner Value3
@@ -205,12 +205,12 @@ Type: Parent
     public void CircularType()
     {
         var dependencies = ServiceProvider.BuildGraph(@"
-Type: Inner
+type Inner
   number Value1
   string Value2
   Parent Value3
 
-Type: Parent
+type Parent
   number Value1
   string Value2
   Inner Value3
