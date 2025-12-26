@@ -26,11 +26,12 @@ public static class Keywords
     public const string ValidationTable = "validationTable";
 
     public const string Code = "Code";
-    public const string ExpectErrors = "ExpectErrors";
-    public const string ExpectComponentErrors = "ExpectComponentErrors";
-    public const string ExpectExecutionErrors = "ExpectExecutionErrors";
-    public const string ExecutionLogging = "ExecutionLogging";
-    public const string ExecutionLog = "Log";
+
+    public const string ExpectErrors = "expectErrors";
+    public const string ExpectComponentErrors = "expectComponentErrors";
+    public const string ExpectExecutionErrors = "expectExecutionErrors";
+    public const string ExecutionLogging = "executionLogging";
+    public const string ExecutionLog = "log";
 
     public const string ImplicitVariableDeclaration = "var";
 
