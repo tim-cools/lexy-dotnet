@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lexy.Compiler.Language.Types;
-using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.VariableTypes;
 
@@ -45,7 +44,7 @@ public class CustomType : TypeWithMembers
         return definition?.Type.VariableType;
     }
 
-    public override IEnumerable<IComponentNode> GetDependencies(IComponentNodeList componentNodeList)
+    public override IEnumerable<IComponentNode> GetDependencies(IComponentNodeList componentNodes)
     {
         yield return TypeDefinition;
     }

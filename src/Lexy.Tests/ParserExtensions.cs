@@ -4,14 +4,11 @@ using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Enums;
 using Lexy.Compiler.Language.Functions;
 using Lexy.Compiler.Language.Scenarios;
-using Lexy.Compiler.Language.Tables;
 using Lexy.Compiler.Parser;
 using Microsoft.Extensions.DependencyInjection;
 using Table = Lexy.Compiler.Language.Tables.Table;
 
 namespace Lexy.Tests;
-
-public record ParseResult<T>(T Result, IParserLogger Logger);
 
 public static class ParserExtensions
 {

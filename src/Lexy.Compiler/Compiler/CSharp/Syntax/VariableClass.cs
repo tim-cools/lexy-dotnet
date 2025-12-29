@@ -8,20 +8,20 @@ namespace Lexy.Compiler.Compiler.CSharp.Syntax;
 
 public static class VariableClass
 {
-    public static MemberDeclarationSyntax TranslateVariablesClass(string className, IReadOnlyList<VariableDefinition> variables)
+    public static MemberDeclarationSyntax Syntax(string className, IReadOnlyList<VariableDefinition> variables)
     {
-        var fields = TranslateVariablesClass(variables);
+        var fields = Syntax(variables);
         return SyntaxFactory.ClassDeclaration(className)
             .WithModifiers(Modifiers.Public())
             .WithMembers(SyntaxFactory.List(fields));
     }
 
-    private static IEnumerable<MemberDeclarationSyntax> TranslateVariablesClass(IReadOnlyList<VariableDefinition> variables)
+    private static IEnumerable<MemberDeclarationSyntax> Syntax(IReadOnlyList<VariableDefinition> variables)
     {
-        return variables.Select(TranslateVariable);
+        return variables.Select(VariableSyntax);
     }
 
-    private static FieldDeclarationSyntax TranslateVariable(VariableDefinition variable)
+    private static FieldDeclarationSyntax VariableSyntax(VariableDefinition variable)
     {
         var initializer = DefaultExpression(variable);
 

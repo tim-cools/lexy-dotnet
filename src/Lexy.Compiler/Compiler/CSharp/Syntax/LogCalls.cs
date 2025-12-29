@@ -150,7 +150,7 @@ internal static class LogCalls
         var rest = variables.Length > 1 ? variables.Take(variables.Length - 1).ToArray() : null;
         var variableExpression = variable.Source == VariableSource.Type
             ? LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(variable.Path.FullPath()))
-            : VariableReferences.Translate(variable);
+            : VariableReferences.Syntax(variable);
         return InvocationExpression(
                 MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,

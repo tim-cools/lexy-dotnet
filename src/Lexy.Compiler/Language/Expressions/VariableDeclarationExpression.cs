@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
@@ -11,11 +10,11 @@ public class VariableDeclarationExpression : Expression
 {
     private VariableType variableType;
 
-    public VariableDeclarationType Type { get; }
+    public VariableTypeDeclaration Type { get; }
     public string Name { get; }
     public Expression Assignment { get; }
 
-    private VariableDeclarationExpression(VariableDeclarationType variableType, string variableName,
+    private VariableDeclarationExpression(VariableTypeDeclaration variableType, string variableName,
         Expression assignment,
         ExpressionSource source, SourceReference reference) : base(source, reference)
     {
@@ -53,7 +52,7 @@ public class VariableDeclarationExpression : Expression
                && tokens.IsTokenType<StringLiteralToken>(0)
                && tokens.IsTokenType<StringLiteralToken>(1)
             || tokens.Length == 2
-               && tokens.IsTokenType<MemberAccessLiteral>(0)
+               && tokens.IsTokenType<MemberAccessLiteralToken>(0)
                && tokens.IsTokenType<StringLiteralToken>(1)
             || tokens.Length >= 4
                && tokens.IsKeyword(0, Keywords.ImplicitVariableDeclaration)
@@ -90,14 +89,14 @@ public class VariableDeclarationExpression : Expression
 
     private VariableType GetVariableType(IValidationContext context, VariableType assignmentType)
     {
-        if (Type is ImplicitVariableDeclaration implicitVariableType)
+        if (Type is ImplicitVariableTypeDeclaration implicitVariableType)
         {
             implicitVariableType.Define(assignmentType);
             return assignmentType;
         }
 
         variableType = Type.VariableType;
-        if (Assignment != null && !assignmentType.Equals(variableType))
+        if (Assignment != null && (assignmentType == null || !assignmentType.Equals(variableType)))
         {
             context.Logger.Fail(Reference, "Invalid expression. Literal or enum value expression expected.");
         }
@@ -112,7 +111,7 @@ public class VariableDeclarationExpression : Expression
 
     public override IEnumerable<VariableUsage> UsedVariables()
     {
-        yield return new VariableUsage(VariablePathParser.Parse(Name), null, variableType, VariableSource.Code, VariableAccess.Write);
+        yield return new VariableUsage(IdentifierPath.Parse(Name), null, variableType, VariableSource.Code, VariableAccess.Write);
 
         if (Assignment == null) yield break;
 

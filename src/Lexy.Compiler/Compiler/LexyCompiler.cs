@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Lexy.Compiler.Compiler.CSharp;
+using Lexy.Compiler.FunctionLibraries;
 using Lexy.Compiler.Language;
 using Lexy.RunTime;
 using Microsoft.CodeAnalysis;
@@ -18,9 +19,12 @@ public class LexyCompiler : ILexyCompiler
     private readonly ILogger<LexyCompiler> compilationLogger;
     private readonly ILogger<ExecutionContext> executionLogger;
 
-    public LexyCompiler(ILogger<LexyCompiler> compilationLogger, ILogger<ExecutionContext> executionLogger)
+    private readonly ILibraries libraries;
+
+    public LexyCompiler(ILogger<LexyCompiler> compilationLogger, ILibraries libraries, ILogger<ExecutionContext> executionLogger)
     {
         this.compilationLogger = compilationLogger ?? throw new ArgumentNullException(nameof(compilationLogger));
+        this.libraries = libraries ?? throw new ArgumentNullException(nameof(libraries));
         this.executionLogger = executionLogger ?? throw new ArgumentNullException(nameof(executionLogger));
     }
 
@@ -44,7 +48,7 @@ public class LexyCompiler : ILexyCompiler
         }
     }
 
-    private static CSharpCompilation CreateSyntaxTree(SyntaxNode root, ICompilationEnvironment compilationEnvironment)
+    private CSharpCompilation CreateSyntaxTree(SyntaxNode root, ICompilationEnvironment compilationEnvironment)
     {
         var syntaxTree = SyntaxTree(root);
         var references = GetDllReferences();
@@ -56,7 +60,7 @@ public class LexyCompiler : ILexyCompiler
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    private static List<MetadataReference> GetDllReferences()
+    private List<MetadataReference> GetDllReferences()
     {
         var references = new List<MetadataReference>
         {
@@ -64,7 +68,10 @@ public class LexyCompiler : ILexyCompiler
             MetadataReference.CreateFromFile(typeof(ExecutionContext).Assembly.Location)
         };
 
-        Assembly.GetEntryAssembly().GetReferencedAssemblies()
+        references.AddRange(libraries.All()
+            .Select(library => MetadataReference.CreateFromFile(library.Assembly.Location)));
+
+        Assembly.GetEntryAssembly()?.GetReferencedAssemblies()
             .ToList()
             .ForEach(reference =>
                 references.Add(MetadataReference.CreateFromFile(Assembly.Load(reference).Location)));
@@ -100,19 +107,16 @@ public class LexyCompiler : ILexyCompiler
             .WithMembers(SingletonList<MemberDeclarationSyntax>(namespaceDeclaration));
     }
 
-    private MemberDeclarationSyntax GenerateMember(IComponentNode node, ICompilationEnvironment environment)
+    private static MemberDeclarationSyntax GenerateMember(IComponentNode node, ICompilationEnvironment environment)
     {
-        var writer = CSharpCode.GetWriter(node);
+        var writer = CSharpCode.GetGenerator(node);
 
-        var generatedType = writer.CreateCode(node);
+        var generatedType = writer(node);
 
         environment.AddType(generatedType);
 
         return generatedType.Syntax;
     }
 
-    private static UsingDirectiveSyntax Using(string ns)
-    {
-        return UsingDirective(ParseName(ns));
-    }
+    private static UsingDirectiveSyntax Using(string ns) => UsingDirective(ParseName(ns));
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lexy.Compiler.Parser;
+using Lexy.Compiler.Language.Functions;
 
 namespace Lexy.Compiler.Language.VariableTypes;
 
@@ -24,6 +24,8 @@ public class ComplexType : VariableType, ITypeWithMembers
     {
         return Members.FirstOrDefault(member => member.Name == name)?.Type;
     }
+
+    public IInstanceFunction GetFunction(string name) => null;
 
     protected bool Equals(ComplexType other)
     {

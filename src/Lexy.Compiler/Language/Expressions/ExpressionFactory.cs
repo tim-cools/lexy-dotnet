@@ -8,34 +8,38 @@ namespace Lexy.Compiler.Language.Expressions;
 
 public class ExpressionFactory : IExpressionFactory
 {
-    private static readonly IDictionary<Func<TokenList, bool>, Func<ExpressionSource, IExpressionFactory, ParseExpressionResult>>
+    private record Entry(Func<TokenList, bool> IsValid, Func<ExpressionSource, IExpressionFactory, ParseExpressionResult> Parse);
+
+    private static readonly IList<Entry>
         factories =
-            new Dictionary<Func<TokenList, bool>, Func<ExpressionSource, IExpressionFactory, ParseExpressionResult>>
+            new List<Entry>()
             {
-                { IfExpression.IsValid, IfExpression.Parse },
-                { ElseExpression.IsValid, ElseExpression.Parse },
-                { ElseIfExpression.IsValid, ElseIfExpression.Parse },
-                { SwitchExpression.IsValid, SwitchExpression.Parse },
-                { CaseExpression.IsValid, CaseExpression.Parse },
-                { VariableDeclarationExpression.IsValid, VariableDeclarationExpression.Parse },
-                { AssignmentExpression.IsValid, AssignmentExpression.Parse },
-                { ParenthesizedExpression.IsValid, ParenthesizedExpression.Parse },
-                { BracketedExpression.IsValid, BracketedExpression.Parse },
-                { IdentifierExpression.IsValid, IdentifierExpression.Parse },
-                { MemberAccessExpression.IsValid, MemberAccessExpression.Parse },
-                { LiteralExpression.IsValid, LiteralExpression.Parse },
-                { BinaryExpression.IsValid, BinaryExpression.Parse },
-                { FunctionCallExpression.IsValid, FunctionCallExpressionParser.Parse }
+                new (IfExpression.IsValid, IfExpression.Parse),
+                new (ElseExpression.IsValid, ElseExpression.Parse),
+                new (ElseIfExpression.IsValid, ElseIfExpression.Parse),
+                new (SwitchExpression.IsValid, SwitchExpression.Parse),
+                new (CaseExpression.IsValid, CaseExpression.Parse),
+                new (VariableDeclarationExpression.IsValid, VariableDeclarationExpression.Parse),
+                new (AssignmentExpression.IsValid, AssignmentExpression.Parse),
+                new (ParenthesizedExpression.IsValid, ParenthesizedExpression.Parse),
+                new (BracketedExpression.IsValid, BracketedExpression.Parse),
+                new (IdentifierExpression.IsValid, IdentifierExpression.Parse),
+                new (MemberAccessExpression.IsValid, MemberAccessExpression.Parse),
+                new (LiteralExpression.IsValid, LiteralExpression.Parse),
+                new (BinaryExpression.IsValid, BinaryExpression.Parse),
+                new (FunctionCallExpression.IsValid, FunctionCallExpressionParser.Parse)
             };
 
     public ParseExpressionResult Parse(TokenList tokens, Line currentLine)
     {
         foreach (var factory in factories)
-            if (factory.Key(tokens))
+        {
+            if (factory.IsValid(tokens))
             {
                 var source = new ExpressionSource(currentLine, tokens);
-                return factory.Value(source, this);
+                return factory.Parse(source, this);
             }
+        }
 
         return ParseExpressionResult.Invalid<Expression>($"Invalid expression: {tokens}");
     }

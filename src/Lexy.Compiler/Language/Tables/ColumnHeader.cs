@@ -7,9 +7,9 @@ namespace Lexy.Compiler.Language.Tables;
 public class ColumnHeader : Node
 {
     public string Name { get; }
-    public VariableDeclarationType Type { get; }
+    public VariableTypeDeclaration Type { get; }
 
-    public ColumnHeader(string name, VariableDeclarationType type, SourceReference reference) : base(reference)
+    private ColumnHeader(string name, VariableTypeDeclaration type, SourceReference reference) : base(reference)
     {
         Name = name;
         Type = type;

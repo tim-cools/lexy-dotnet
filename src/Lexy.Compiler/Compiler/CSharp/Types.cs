@@ -11,12 +11,12 @@ namespace Lexy.Compiler.Compiler.CSharp;
 
 internal static class Types
 {
-    public static ExpressionSyntax TranslateDate(DateTimeLiteral dateTimeLiteral)
+    public static ExpressionSyntax DateSyntax(DateTimeLiteral dateTimeLiteral)
     {
-        return TranslateDate(dateTimeLiteral.DateTimeValue);
+        return DateSyntax(dateTimeLiteral.DateTimeValue);
     }
 
-    private static ExpressionSyntax TranslateDate(DateTime dateTimeValue)
+    private static ExpressionSyntax DateSyntax(DateTime dateTimeValue)
     {
         return ObjectCreationExpression(
                 QualifiedName(
@@ -86,26 +86,26 @@ internal static class Types
         };
     }
 
-    public static TypeSyntax Syntax(VariableDeclarationType type)
+    public static TypeSyntax Syntax(VariableTypeDeclaration type)
     {
         return type switch
         {
-            PrimitiveVariableDeclarationType primitive => Syntax(primitive.Type),
-            CustomVariableDeclarationType customVariable => IdentifierNameSyntax(customVariable),
-            ImplicitVariableDeclaration implicitVariable => Syntax(implicitVariable.VariableType),
+            PrimitiveVariableTypeDeclaration primitive => Syntax(primitive.Type),
+            CustomVariableTypeDeclaration customVariable => IdentifierNameSyntax(customVariable),
+            ImplicitVariableTypeDeclaration implicitVariable => Syntax(implicitVariable.VariableType),
             _ => throw new InvalidOperationException("Couldn't map type: " + type)
         };
     }
 
-    private static TypeSyntax IdentifierNameSyntax(CustomVariableDeclarationType customVariable)
+    private static TypeSyntax IdentifierNameSyntax(CustomVariableTypeDeclaration customVariableType)
     {
-        return customVariable.VariableType switch
+        return customVariableType.VariableType switch
         {
             EnumType enumType => IdentifierName(ClassNames.EnumClassName(enumType.Type)),
             TableType tableType => IdentifierName(ClassNames.TableClassName(tableType.TableName)),
             CustomType customType => IdentifierName(ClassNames.TypeClassName(customType.Type)),
             ComplexType complexType => ComplexTypeIdentifierNameSyntax(complexType),
-            _ => throw new InvalidOperationException("Couldn't map type: " + customVariable.VariableType)
+            _ => throw new InvalidOperationException("Couldn't map type: " + customVariableType.VariableType)
         };
     }
 
@@ -126,32 +126,32 @@ internal static class Types
         };
     }
 
-    public static ExpressionSyntax TypeDefaultExpression(VariableDeclarationType variableDeclarationType)
+    public static ExpressionSyntax TypeDefaultExpression(VariableTypeDeclaration variableTypeDeclaration)
     {
-        return variableDeclarationType switch
+        return variableTypeDeclaration switch
         {
-            PrimitiveVariableDeclarationType expression => PrimitiveTypeDefaultExpression(expression),
-            CustomVariableDeclarationType customType => DefaultExpressionSyntax(customType),
+            PrimitiveVariableTypeDeclaration expression => PrimitiveTypeDefaultExpression(expression),
+            CustomVariableTypeDeclaration customType => DefaultExpressionSyntax(customType),
             _ => throw new InvalidOperationException(
-                $"Wrong VariableDeclarationType {variableDeclarationType.GetType()}")
+                $"Wrong VariableDeclarationType {variableTypeDeclaration.GetType()}")
         };
     }
 
-    private static ExpressionSyntax DefaultExpressionSyntax(CustomVariableDeclarationType customType)
+    private static ExpressionSyntax DefaultExpressionSyntax(CustomVariableTypeDeclaration custom)
     {
-        if (customType.VariableType is CustomType)
+        if (custom.VariableType is CustomType)
         {
-            return ObjectCreationExpression(IdentifierNameSyntax(customType)).WithArgumentList(ArgumentList());
+            return ObjectCreationExpression(IdentifierNameSyntax(custom)).WithArgumentList(ArgumentList());
         }
 
-        if (customType.VariableType is ComplexType)
+        if (custom.VariableType is ComplexType)
         {
-            return ObjectCreationExpression(IdentifierNameSyntax(customType)).WithArgumentList(ArgumentList());
+            return ObjectCreationExpression(IdentifierNameSyntax(custom)).WithArgumentList(ArgumentList());
         }
-        return DefaultExpression(IdentifierNameSyntax(customType));
+        return DefaultExpression(IdentifierNameSyntax(custom));
     }
 
-    private static ExpressionSyntax PrimitiveTypeDefaultExpression(PrimitiveVariableDeclarationType type)
+    private static ExpressionSyntax PrimitiveTypeDefaultExpression(PrimitiveVariableTypeDeclaration type)
     {
         switch (type.Type)
         {
@@ -166,7 +166,7 @@ internal static class Types
                     Literal(""));
 
             case TypeNames.Date:
-                return TranslateDate(DateTypeDefault.Value);
+                return DateSyntax(DateTypeDefault.Value);
 
             default:
                 throw new InvalidOperationException("Invalid type: " + type.Type);
