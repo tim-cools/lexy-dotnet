@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Functions;
 
 namespace Lexy.Compiler.FunctionLibraries;
 
 public class Library : ILibrary
 {
-    private readonly Type type;
     private readonly IDictionary<string, LibraryFunction> functions;
+
+    public Type Type { get; }
 
     private Library(Type type, IDictionary<string, LibraryFunction> functions)
     {
-        this.type = type;
+        this.Type = type;
         this.functions = functions;
     }
 

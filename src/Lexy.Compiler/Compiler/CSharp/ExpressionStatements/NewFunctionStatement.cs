@@ -9,14 +9,14 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace Lexy.Compiler.Compiler.CSharp.ExpressionStatements;
 
 //var xxx = new(yyy)
-internal class NewFunctionStatementCreator : IExpressionStatementCreator<VariableDeclarationExpression>
+internal static class NewFunctionStatement
 {
-    public bool Matches(VariableDeclarationExpression expression)
+    public static bool Matches(VariableDeclarationExpression expression)
     {
         return expression.Assignment is NewFunction;
     }
 
-    public IEnumerable<StatementSyntax> CreateExpressionSyntax(VariableDeclarationExpression expression)
+    public static IEnumerable<StatementSyntax> Create(VariableDeclarationExpression expression)
     {
         if (expression == null) throw new ArgumentNullException(nameof(expression));
 

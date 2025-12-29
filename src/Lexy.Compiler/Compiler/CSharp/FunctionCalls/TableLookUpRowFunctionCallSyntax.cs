@@ -12,11 +12,11 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Lexy.Compiler.Compiler.CSharp.FunctionCalls;
 
-internal class TableLookUpRowFunctionCallCreator : IFunctionCallCreator<MemberFunctionCallExpression>
+internal static class TableLookUpRowFunctionCallSyntax
 {
-    public bool Matches(MemberFunctionCallExpression expression) => expression.FunctionCall is LookUpRowFunctionCall;
+    public static bool Matches(MemberFunctionCallExpression expression) => expression.FunctionCall is LookUpRowFunctionCall;
 
-    public ExpressionSyntax CreateExpressionSyntax(MemberFunctionCallExpression expression)
+    public static ExpressionSyntax Create(MemberFunctionCallExpression expression)
     {
         var lookupFunction = expression.FunctionCall as LookUpRowFunctionCall
                              ?? throw new InvalidOperationException("expression.FunctionCall should be LookUpRowFunctionCall");

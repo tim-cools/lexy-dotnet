@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Enums;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Lexy.Compiler.Compiler.CSharp.Writers;
+namespace Lexy.Compiler.Compiler.CSharp.Components;
 
-public static class EnumWriter
+public static class EnumClass
 {
     public static GeneratedClass CreateCode(EnumDefinition enumDefinition)
     {

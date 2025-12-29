@@ -2,11 +2,11 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.VariableTypes;
 
-public abstract class VariableDeclarationType : Node
+public abstract class VariableTypeDeclaration : Node
 {
     public VariableType VariableType { get; protected set; }
 
-    protected VariableDeclarationType(SourceReference reference) : base(reference)
+    protected VariableTypeDeclaration(SourceReference reference) : base(reference)
     {
     }
 

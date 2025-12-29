@@ -64,7 +64,7 @@ public class Function : ComponentNode, IHasNodeDependencies
     {
         foreach (var parameter in variableDefinitions)
         {
-            if (parameter.Type is not CustomVariableDeclarationType enumVariableType) continue;
+            if (parameter.Type is not CustomVariableTypeDeclaration enumVariableType) continue;
 
             var dependency = componentNodes.GetEnum(enumVariableType.Type);
             if (dependency != null) result.Add(dependency);

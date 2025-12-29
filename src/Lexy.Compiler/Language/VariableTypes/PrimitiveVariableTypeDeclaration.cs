@@ -4,16 +4,16 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.VariableTypes;
 
-public sealed class PrimitiveVariableDeclarationType : VariableDeclarationType
+public sealed class PrimitiveVariableTypeDeclaration : VariableTypeDeclaration
 {
     public string Type { get; }
 
-    public PrimitiveVariableDeclarationType(string type, SourceReference reference) : base(reference)
+    public PrimitiveVariableTypeDeclaration(string type, SourceReference reference) : base(reference)
     {
         Type = type ?? throw new ArgumentNullException(nameof(type));
     }
 
-    protected bool Equals(PrimitiveVariableDeclarationType other)
+    protected bool Equals(PrimitiveVariableTypeDeclaration other)
     {
         return Type == other.Type;
     }
@@ -23,7 +23,7 @@ public sealed class PrimitiveVariableDeclarationType : VariableDeclarationType
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PrimitiveVariableDeclarationType)obj);
+        return Equals((PrimitiveVariableTypeDeclaration)obj);
     }
 
     public override int GetHashCode()

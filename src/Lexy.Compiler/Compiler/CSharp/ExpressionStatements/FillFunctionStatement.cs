@@ -12,14 +12,14 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace Lexy.Compiler.Compiler.CSharp.ExpressionStatements;
 
 //var xxx = fill(yyy)
-internal class FillFunctionStatementCreator : IExpressionStatementCreator<VariableDeclarationExpression>
+internal static class FillFunctionStatement
 {
-    public bool Matches(VariableDeclarationExpression expression)
+    public static bool Matches(VariableDeclarationExpression expression)
     {
         return expression.Assignment is FillParametersFunction;
     }
 
-    public IEnumerable<StatementSyntax> CreateExpressionSyntax(VariableDeclarationExpression expression)
+    public static IEnumerable<StatementSyntax> Create(VariableDeclarationExpression expression)
     {
         if (expression == null) throw new ArgumentNullException(nameof(expression));
 

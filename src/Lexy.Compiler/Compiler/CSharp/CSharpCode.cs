@@ -1,5 +1,5 @@
 using System;
-using Lexy.Compiler.Compiler.CSharp.Writers;
+using Lexy.Compiler.Compiler.CSharp.Components;
 using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Enums;
 using Lexy.Compiler.Language.Functions;
@@ -11,14 +11,14 @@ namespace Lexy.Compiler.Compiler.CSharp;
 
 internal static class CSharpCode
 {
-    public static Func<IComponentNode, GeneratedClass> GetWriter(IComponentNode componentNode)
+    public static Func<IComponentNode, GeneratedClass> GetGenerator(IComponentNode componentNode)
     {
         return componentNode switch
         {
-            Function _ => Cast<Function>(FunctionWriter.CreateCode),
-            EnumDefinition _ => Cast<EnumDefinition>(EnumWriter.CreateCode),
-            Table _ => Cast<Table>(TableWriter.CreateCode),
-            TypeDefinition _ => Cast<TypeDefinition>(TypeWriter.CreateCode),
+            Function _ => Cast<Function>(FunctionClass.CreateCode),
+            EnumDefinition _ => Cast<EnumDefinition>(EnumClass.CreateCode),
+            Table _ => Cast<Table>(TableClass.CreateCode),
+            TypeDefinition _ => Cast<TypeDefinition>(TypeClass.CreateCode),
             Scenario _ => null,
             _ => throw new InvalidOperationException("No writer defined: " + componentNode.GetType())
         };

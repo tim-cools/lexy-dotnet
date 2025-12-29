@@ -9,7 +9,7 @@ namespace Lexy.Compiler.Compiler.CSharp.Syntax;
 
 internal static class VariableReferences
 {
-    public static ExpressionSyntax Translate(VariableReference variableReference)
+    public static ExpressionSyntax Syntax(VariableReference variableReference)
     {
         if (variableReference == null) throw new ArgumentNullException(nameof(variableReference));
 

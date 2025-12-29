@@ -15,27 +15,24 @@ internal static class FunctionCallSyntax
 
     static FunctionCallSyntax()
     {
-        AddCreator<MemberFunctionCallExpression, TableLookUpFunctionCallCreator>();
-        AddCreator<MemberFunctionCallExpression, TableLookUpRowFunctionCallCreator>();
-        AddCreator<LexyFunctionCallExpression, LexyFunctionCallCreator>();
-        AddCreator<MemberFunctionCallExpression, LibraryFunctionCallCreator>();
+        Add<MemberFunctionCallExpression>(TableLookUpFunctionCallSyntax.Matches, TableLookUpFunctionCallSyntax.Create);
+        Add<MemberFunctionCallExpression>(TableLookUpRowFunctionCallSyntax.Matches, TableLookUpRowFunctionCallSyntax.Create);
+        Add<LexyFunctionCallExpression>(LexyFunctionCallSyntax.Matches, LexyFunctionCallSyntax.Create);
+        Add<MemberFunctionCallExpression>(LibraryFunctionCallSyntax.Matches, LibraryFunctionCallSyntax.Create);
     }
 
-    private static void AddCreator<TExpression, TCreator>()
+    private static void Add<TExpression>(Func<TExpression, bool> matches, Func<TExpression, ExpressionSyntax> create)
         where TExpression : FunctionCallExpression
-        where TCreator : IFunctionCallCreator<TExpression>, new()
     {
         bool Matches(FunctionCallExpression expression)
         {
-            var creator = new TCreator();
-            return expression is TExpression specific && creator.Matches(specific);
+            return expression is TExpression specific && matches(specific);
         }
 
         ExpressionSyntax Create(FunctionCallExpression expression)
         {
-            var creator = new TCreator();
             var specific = CastExpression<TExpression>(expression);
-            return creator.CreateExpressionSyntax(specific);
+            return create(specific);
         }
 
         entries.Add(new Entry(Matches, Create));

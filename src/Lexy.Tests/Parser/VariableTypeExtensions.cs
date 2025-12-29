@@ -5,9 +5,9 @@ namespace Lexy.Tests.Parser;
 
 internal static class VariableTypeExtensions
 {
-    public static void ShouldBePrimitiveType(this VariableDeclarationType type, string name)
+    public static void ShouldBePrimitiveType(this VariableTypeDeclaration type, string name)
     {
-        type.ShouldBeOfType<PrimitiveVariableDeclarationType>()
+        type.ShouldBeOfType<PrimitiveVariableTypeDeclaration>()
             .Type.ShouldBe(name);
     }
 }

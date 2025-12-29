@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lexy.Compiler.Infrastructure;
 using Lexy.Compiler.Language;
 
@@ -32,5 +33,10 @@ public class Libraries : ILibraries
     public ILibrary GetLibrary(IdentifierPath identifier)
     {
         return libraries.TryGetValue(identifier.ToString(), out var library) ? library : null;
+    }
+
+    public IEnumerable<Type> All()
+    {
+        return libraries.Select(library => library.Value.Type);
     }
 }

@@ -12,7 +12,7 @@ using static Lexy.Compiler.Compiler.CSharp.Syntax.Expressions;
 
 namespace Lexy.Compiler.Compiler.CSharp.Syntax;
 
-internal static class TranslateBinaryExpressions
+internal static class BinaryExpressionsSyntax
 {
     private static readonly IList<ExpressionOperator> ComparisonOperators = new[]
     {
@@ -24,7 +24,7 @@ internal static class TranslateBinaryExpressions
         ExpressionOperator.LessThanOrEqual,
     };
 
-    private static readonly IDictionary<ExpressionOperator, SyntaxKind> TranslateOperators =
+    private static readonly IDictionary<ExpressionOperator, SyntaxKind> OperatorsSyntax =
         new Dictionary<ExpressionOperator, SyntaxKind>
         {
             { ExpressionOperator.Addition, SyntaxKind.AddExpression },
@@ -44,29 +44,28 @@ internal static class TranslateBinaryExpressions
             { ExpressionOperator.NotEqual, SyntaxKind.NotEqualsExpression }
         };
 
-    public static ExpressionSyntax TranslateBinaryExpression(BinaryExpression expression)
+    public static ExpressionSyntax BinaryExpressionSyntax(BinaryExpression expression)
     {
         if (expression.LeftVariableType.Equals(PrimitiveType.String) &&
             expression.Operator == ExpressionOperator.Addition)
         {
-            return TranslateStringAddition(expression);
+            return StringAdditionSyntax(expression);
         }
         if (IsStringComparison(expression))
         {
-            return TranslateStringComparison(expression);
+            return StringComparisonSyntax(expression);
         }
 
-
-        var kind = Translate(expression.Operator);
+        var kind = Syntax(expression.Operator);
         return BinaryExpression(
             kind,
             ExpressionSyntax(expression.Left),
             ExpressionSyntax(expression.Right));
     }
 
-    private static ExpressionSyntax TranslateStringAddition(BinaryExpression expression)
+    private static ExpressionSyntax StringAdditionSyntax(BinaryExpression expression)
     {
-        var kind = Translate(expression.Operator);
+        var kind = Syntax(expression.Operator);
         var expressionSyntax = ExpressionSyntax(expression.Right);
         if (expression.RightVariableType.Equals(PrimitiveType.Date))
         {
@@ -135,9 +134,9 @@ internal static class TranslateBinaryExpressions
         return expressionSyntax;
     }
 
-    private static ExpressionSyntax TranslateStringComparison(BinaryExpression expression)
+    private static ExpressionSyntax StringComparisonSyntax(BinaryExpression expression)
     {
-        var kind = Translate(expression.Operator);
+        var kind = Syntax(expression.Operator);
         return BinaryExpression(
             kind,
             InvocationExpression(
@@ -166,9 +165,9 @@ internal static class TranslateBinaryExpressions
                && ComparisonOperators.Contains(expression.Operator);
     }
 
-    private static SyntaxKind Translate(ExpressionOperator expressionOperator)
+    private static SyntaxKind Syntax(ExpressionOperator expressionOperator)
     {
-        if (!TranslateOperators.TryGetValue(expressionOperator, out var result))
+        if (!OperatorsSyntax.TryGetValue(expressionOperator, out var result))
             throw new ArgumentOutOfRangeException(nameof(expressionOperator), expressionOperator, null);
 
         return result;

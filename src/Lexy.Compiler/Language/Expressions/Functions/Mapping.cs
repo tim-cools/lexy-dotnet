@@ -1,6 +1,4 @@
-using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
-using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.Expressions.Functions;
 

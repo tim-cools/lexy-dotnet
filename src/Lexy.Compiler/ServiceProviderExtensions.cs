@@ -46,7 +46,7 @@ public static class ServiceProviderExtensions
         where TInterface : class
         where IImplementation : class, TInterface
     {
-        services.TryAdd(ServiceDescriptor.Singleton(factory));
+        services.Replace(ServiceDescriptor.Singleton(factory));
 
         return services;
     }

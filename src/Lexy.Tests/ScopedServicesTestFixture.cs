@@ -6,24 +6,23 @@ namespace Lexy.Tests;
 
 public abstract class ScopedServicesTestFixture
 {
+    private ServiceProvider instance;
     private IServiceScope serviceScope;
 
-    protected IServiceScope ServiceScope
+    protected IServiceProvider ServiceProvider
     {
         get
         {
             if (serviceScope == null) throw new InvalidOperationException("ServiceScope not set");
-
-            return serviceScope;
+            return serviceScope.ServiceProvider;
         }
     }
-
-    protected IServiceProvider ServiceProvider => ServiceScope.ServiceProvider;
 
     [SetUp]
     public void SetUp()
     {
-        serviceScope = TestServiceProvider.CreateScope();
+        var instance = ServiceProviderConfiguration.CreateServices(Initialize);
+        serviceScope = instance.CreateScope();
     }
 
     [TearDown]
@@ -33,8 +32,12 @@ public abstract class ScopedServicesTestFixture
         serviceScope = null;
     }
 
-    public T GetService<T>()
+    protected T GetService<T>()
     {
         return ServiceProvider.GetRequiredService<T>();
+    }
+
+    protected virtual void Initialize(IServiceCollection serviceCollection)
+    {
     }
 }

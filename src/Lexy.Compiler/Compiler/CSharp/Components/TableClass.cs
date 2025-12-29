@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lexy.Compiler.Compiler.CSharp.Syntax;
-using Lexy.Compiler.Language;
 using Lexy.Compiler.Language.Tables;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Lexy.Compiler.Compiler.CSharp.Writers;
+namespace Lexy.Compiler.Compiler.CSharp.Components;
 
-internal static class TableWriter
+internal static class TableClass
 {
     public static GeneratedClass CreateCode(Table table)
     {

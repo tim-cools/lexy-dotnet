@@ -4,9 +4,9 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.VariableTypes;
 
-public sealed class ImplicitVariableDeclaration : VariableDeclarationType
+public sealed class ImplicitVariableTypeDeclaration : VariableTypeDeclaration
 {
-    public ImplicitVariableDeclaration(SourceReference reference) : base(reference)
+    public ImplicitVariableTypeDeclaration(SourceReference reference) : base(reference)
     {
     }
 

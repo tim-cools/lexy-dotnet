@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Lexy.Compiler.Language.Scenarios;
 using Lexy.Compiler.Language.VariableTypes;
 using Lexy.Compiler.Parser;
 using Lexy.Compiler.Parser.Tokens;
@@ -11,11 +10,11 @@ public class VariableDeclarationExpression : Expression
 {
     private VariableType variableType;
 
-    public VariableDeclarationType Type { get; }
+    public VariableTypeDeclaration Type { get; }
     public string Name { get; }
     public Expression Assignment { get; }
 
-    private VariableDeclarationExpression(VariableDeclarationType variableType, string variableName,
+    private VariableDeclarationExpression(VariableTypeDeclaration variableType, string variableName,
         Expression assignment,
         ExpressionSource source, SourceReference reference) : base(source, reference)
     {
@@ -90,7 +89,7 @@ public class VariableDeclarationExpression : Expression
 
     private VariableType GetVariableType(IValidationContext context, VariableType assignmentType)
     {
-        if (Type is ImplicitVariableDeclaration implicitVariableType)
+        if (Type is ImplicitVariableTypeDeclaration implicitVariableType)
         {
             implicitVariableType.Define(assignmentType);
             return assignmentType;

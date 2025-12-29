@@ -12,11 +12,11 @@ public class VariableDefinition : Node, IHasNodeDependencies
 {
     public Expression DefaultExpression { get; }
     public VariableSource Source { get; }
-    public VariableDeclarationType Type { get; }
+    public VariableTypeDeclaration Type { get; }
     public VariableType VariableType { get; private set; }
     public string Name { get; }
 
-    private VariableDefinition(string name, VariableDeclarationType type,
+    private VariableDefinition(string name, VariableTypeDeclaration type,
         VariableSource source, SourceReference reference, Expression defaultExpression = null) : base(reference)
     {
         Type = type ?? throw new ArgumentNullException(nameof(type));

@@ -17,16 +17,16 @@ internal static class TokenValuesSyntax
                 SyntaxFactory.Literal(token.Value)),
             NumberLiteralToken number => SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,
                 SyntaxFactory.Literal($"{number.NumberValue}m", number.NumberValue)),
-            DateTimeLiteral dateTimeLiteral => Types.TranslateDate(dateTimeLiteral),
+            DateTimeLiteral dateTimeLiteral => Types.DateSyntax(dateTimeLiteral),
             BooleanLiteral boolean => SyntaxFactory.LiteralExpression(boolean.BooleanValue
                 ? SyntaxKind.TrueLiteralExpression
                 : SyntaxKind.FalseLiteralExpression),
-            MemberAccessLiteralToken memberAccess => TranslateMemberAccessLiteral(memberAccess),
+            MemberAccessLiteralToken memberAccess => MemberAccessLiteralSyntax(memberAccess),
             _ => throw new InvalidOperationException("Couldn't map type: " + token.GetType())
         };
     }
 
-    private static ExpressionSyntax TranslateMemberAccessLiteral(MemberAccessLiteralToken memberAccess)
+    private static ExpressionSyntax MemberAccessLiteralSyntax(MemberAccessLiteralToken memberAccess)
     {
         var parts = memberAccess.Parts;
         if (parts.Length != 2) throw new InvalidOperationException("Only 2 parts expected.");

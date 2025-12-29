@@ -7,11 +7,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Lexy.Compiler.Compiler.CSharp.FunctionCalls;
 
 //LexyFunction(variable)
-internal class LexyFunctionCallCreator : IFunctionCallCreator<LexyFunctionCallExpression>
+internal static class LexyFunctionCallSyntax
 {
-    public bool Matches(LexyFunctionCallExpression expression) => true;
+    public static bool Matches(LexyFunctionCallExpression expression) => true;
 
-    public ExpressionSyntax CreateExpressionSyntax(LexyFunctionCallExpression expression)
+    public static  ExpressionSyntax Create(LexyFunctionCallExpression expression)
     {
         if (expression.AutoMap)
         {

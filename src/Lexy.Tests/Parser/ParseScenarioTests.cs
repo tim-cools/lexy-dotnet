@@ -112,20 +112,20 @@ public class ParseScenarioTests : ScopedServicesTestFixture
         scenario.Function.ShouldNotBeNull();
         scenario.Function.Parameters.Variables.Count.ShouldBe(2);
         scenario.Function.Parameters.Variables[0].Name.ShouldBe("Value1");
-        scenario.Function.Parameters.Variables[0].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
+        scenario.Function.Parameters.Variables[0].Type.ValidateOfType<PrimitiveVariableTypeDeclaration>(value =>
             ShouldBeStringTestExtensions.ShouldBe(value.Type, "number"));
         scenario.Function.Parameters.Variables[0].DefaultExpression.ToString().ShouldBe("123");
         scenario.Function.Parameters.Variables[1].Name.ShouldBe("Value2");
-        scenario.Function.Parameters.Variables[1].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
+        scenario.Function.Parameters.Variables[1].Type.ValidateOfType<PrimitiveVariableTypeDeclaration>(value =>
             value.Type.ShouldBe("number"));
         scenario.Function.Parameters.Variables[1].DefaultExpression.ToString().ShouldBe("456");
         scenario.Function.Results.Variables.Count.ShouldBe(2);
         scenario.Function.Results.Variables[0].Name.ShouldBe("Result1");
-        scenario.Function.Results.Variables[0].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
+        scenario.Function.Results.Variables[0].Type.ValidateOfType<PrimitiveVariableTypeDeclaration>(value =>
             value.Type.ShouldBe("number"));
         scenario.Function.Results.Variables[0].DefaultExpression.ShouldBeNull();
         scenario.Function.Results.Variables[1].Name.ShouldBe("Result2");
-        scenario.Function.Results.Variables[1].Type.ValidateOfType<PrimitiveVariableDeclarationType>(value =>
+        scenario.Function.Results.Variables[1].Type.ValidateOfType<PrimitiveVariableTypeDeclaration>(value =>
             value.Type.ShouldBe("number"));
         scenario.Function.Results.Variables[1].DefaultExpression.ShouldBeNull();
         scenario.Function.Code.Expressions.Count.ShouldBe(2);

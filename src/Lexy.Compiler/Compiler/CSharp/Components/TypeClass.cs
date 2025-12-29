@@ -2,9 +2,9 @@ using System;
 using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.Language.Types;
 
-namespace Lexy.Compiler.Compiler.CSharp.Writers;
+namespace Lexy.Compiler.Compiler.CSharp.Components;
 
-internal static class TypeWriter
+internal static class TypeClass
 {
     public static GeneratedClass CreateCode(TypeDefinition typeDefinition)
     {
@@ -12,7 +12,7 @@ internal static class TypeWriter
 
         var className = ClassNames.TypeClassName(typeDefinition.Name.Value);
 
-        var classDeclaration = VariableClass.TranslateVariablesClass(className, typeDefinition.Variables);
+        var classDeclaration = VariableClass.Syntax(className, typeDefinition.Variables);
 
         return new GeneratedClass(typeDefinition, className, classDeclaration);
     }

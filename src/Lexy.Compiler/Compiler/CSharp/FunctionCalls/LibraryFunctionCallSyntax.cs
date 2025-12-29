@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Lexy.Compiler.Compiler.CSharp.Syntax;
 using Lexy.Compiler.FunctionLibraries;
@@ -13,11 +12,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lexy.Compiler.Compiler.CSharp.FunctionCalls;
 
-internal class LibraryFunctionCallCreator : IFunctionCallCreator<MemberFunctionCallExpression>
+internal static class LibraryFunctionCallSyntax
 {
-    public bool Matches(MemberFunctionCallExpression expression) => expression.FunctionCall is LibraryFunctionCall;
+    public static bool Matches(MemberFunctionCallExpression expression) => expression.FunctionCall is LibraryFunctionCall;
 
-    public ExpressionSyntax CreateExpressionSyntax(MemberFunctionCallExpression expression)
+    public static ExpressionSyntax Create(MemberFunctionCallExpression expression)
     {
         var functionCall = expression.FunctionCall as LibraryFunctionCall
             ?? throw new InvalidOperationException("expression.FunctionCall should not be null.");

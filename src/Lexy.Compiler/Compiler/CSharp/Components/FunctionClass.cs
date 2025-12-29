@@ -9,9 +9,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Lexy.Compiler.Compiler.CSharp.Syntax.Expressions;
 
-namespace Lexy.Compiler.Compiler.CSharp.Writers;
+namespace Lexy.Compiler.Compiler.CSharp.Components;
 
-public static class FunctionWriter
+public static class FunctionClass
 {
     public static GeneratedClass CreateCode(Function function)
     {
@@ -19,8 +19,8 @@ public static class FunctionWriter
 
         var members = new List<MemberDeclarationSyntax>
         {
-            VariableClass.TranslateVariablesClass(LexyCodeConstants.ParametersType, function.Parameters.Variables),
-            VariableClass.TranslateVariablesClass(LexyCodeConstants.ResultsType, function.Results.Variables),
+            VariableClass.Syntax(LexyCodeConstants.ParametersType, function.Parameters.Variables),
+            VariableClass.Syntax(LexyCodeConstants.ResultsType, function.Results.Variables),
             RunMethod(function)
         };
 

@@ -10,11 +10,11 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace Lexy.Compiler.Compiler.CSharp.ExpressionStatements;
 
 //extract(yyy)
-internal class ExtractFunctionStatementCreator : IExpressionStatementCreator<ExtractResultsFunction>
+internal static class ExtractFunctionStatement
 {
-    public bool Matches(ExtractResultsFunction expression) => true;
+    public static bool Matches(ExtractResultsFunction expression) => true;
 
-    public IEnumerable<StatementSyntax> CreateExpressionSyntax(ExtractResultsFunction expression)
+    public static IEnumerable<StatementSyntax> Create(ExtractResultsFunction expression)
     {
         if (expression == null) throw new ArgumentNullException(nameof(expression));
 

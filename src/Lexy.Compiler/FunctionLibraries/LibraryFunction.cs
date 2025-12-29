@@ -81,15 +81,3 @@ internal class LibraryFunction : IInstanceFunction
         return parameters.Select(parameter => PrimitiveType.Parse(parameter.ParameterType)).ToArray();
     }
 }
-
-internal class LibraryFunctionCall : IInstanceFunctionCall
-{
-    public IdentifierPath FullTypeName { get; }
-    public VariableType ReturnType { get; }
-
-    public LibraryFunctionCall(IdentifierPath fullTypeName, VariableType returnType)
-    {
-        FullTypeName = fullTypeName;
-        ReturnType = returnType;
-    }
-}

@@ -21,7 +21,7 @@ public class LexyParserTests : ScopedServicesTestFixture
         function.Name.Value.ShouldBe("TestSimpleReturn");
         function.Results.Variables.Count.ShouldBe(1);
         function.Results.Variables[0].Name.ShouldBe("Result");
-        function.Results.Variables[0].Type.ValidateOfType<PrimitiveVariableDeclarationType>(type =>
+        function.Results.Variables[0].Type.ValidateOfType<PrimitiveVariableTypeDeclaration>(type =>
             type.Type.ShouldBe("number"));
         function.Code.Expressions.Count.ShouldBe(1);
         function.Code.Expressions[0].ToString().ShouldBe("Result=777");

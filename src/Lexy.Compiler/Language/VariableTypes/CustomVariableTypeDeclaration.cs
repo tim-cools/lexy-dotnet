@@ -4,16 +4,16 @@ using Lexy.Compiler.Parser;
 
 namespace Lexy.Compiler.Language.VariableTypes;
 
-public sealed class CustomVariableDeclarationType : VariableDeclarationType, IHasNodeDependencies
+public sealed class CustomVariableTypeDeclaration : VariableTypeDeclaration, IHasNodeDependencies
 {
     public string Type { get; }
 
-    public CustomVariableDeclarationType(string type, SourceReference reference) : base(reference)
+    public CustomVariableTypeDeclaration(string type, SourceReference reference) : base(reference)
     {
         Type = type;
     }
 
-    private bool Equals(CustomVariableDeclarationType other)
+    private bool Equals(CustomVariableTypeDeclaration other)
     {
         return Type == other.Type;
     }
@@ -23,7 +23,7 @@ public sealed class CustomVariableDeclarationType : VariableDeclarationType, IHa
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((CustomVariableDeclarationType)obj);
+        return Equals((CustomVariableTypeDeclaration)obj);
     }
 
     public override int GetHashCode()
