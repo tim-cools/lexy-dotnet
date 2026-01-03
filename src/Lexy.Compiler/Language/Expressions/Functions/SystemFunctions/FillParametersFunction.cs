@@ -20,7 +20,7 @@ public class FillParametersFunction : FunctionCallExpression, IHasNodeDependenci
 
     public Expression ValueExpression { get; }
 
-    public ComplexType Type { get; private set; }
+    public GeneratedType Type { get; private set; }
 
     public IEnumerable<Mapping> Mapping => mapping;
 
@@ -52,28 +52,28 @@ public class FillParametersFunction : FunctionCallExpression, IHasNodeDependenci
     protected override void Validate(IValidationContext context)
     {
         var valueType = ValueExpression.DeriveType(context);
-        if (valueType is not ComplexType complexType)
+        if (valueType is not GeneratedType generatedType)
         {
             context.Logger.Fail(Reference,
-                $"Invalid argument 1. 'Value' should be of type 'ComplexType' but is '{valueType}'. {FunctionHelp}");
+                $"Invalid argument 1. 'Value' should be of type 'GeneratedType' but is '{valueType}'. {FunctionHelp}");
             return;
         }
 
-        Type = complexType;
+        Type = generatedType;
 
-        GetMapping(Reference, context, complexType, mapping);
+        GetMapping(Reference, context, generatedType, mapping);
     }
 
-    internal static void GetMapping(SourceReference reference, IValidationContext context, ComplexType complexType,
+    internal static void GetMapping(SourceReference reference, IValidationContext context, GeneratedType generatedType,
         IList<Mapping> mapping)
     {
         if (reference == null) throw new ArgumentNullException(nameof(reference));
         if (context == null) throw new ArgumentNullException(nameof(context));
         if (mapping == null) throw new ArgumentNullException(nameof(mapping));
 
-        if (complexType == null) return;
+        if (generatedType == null) return;
 
-        foreach (var member in complexType.Members)
+        foreach (var member in generatedType.Members)
         {
             var variable = context.VariableContext.GetVariable(member.Name);
             if (variable == null) continue;

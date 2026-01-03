@@ -11,7 +11,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Lexy.Compiler.Compiler.CSharp.ExpressionStatements;
 
-//var xxx = fill(yyy)
+//Syntax: "var result = fill(params)"
 internal static class FillFunctionStatement
 {
     public static bool Matches(VariableDeclarationExpression expression)

@@ -8,7 +8,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Lexy.Compiler.Compiler.CSharp.ExpressionStatements;
 
-//var xxx = new(yyy)
+//Syntax: "var variable = new(VariableType)"
 internal static class NewFunctionStatement
 {
     public static bool Matches(VariableDeclarationExpression expression)

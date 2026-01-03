@@ -128,7 +128,7 @@ public class FunctionCallExpressionTests : ScopedServicesTestFixture
     public void CallExtract()
     {
         var expression = this.ParseExpression("extract(result)");
-        expression.ValidateOfType<ExtractResultsFunction>(round =>
+        expression.ValidateOfType<ExtractResultsFunctionExpression>(round =>
         {
             round.ValueExpression.ValidateIdentifierExpression("result");
         });
