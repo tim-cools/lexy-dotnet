@@ -11,8 +11,8 @@ public static class FunctionCallExpressionParser
     private static readonly IDictionary<string, Func<ExpressionSource, IReadOnlyList<Expression>, ParseExpressionFunctionsResult>>
         SystemFunctions = new Dictionary<string, Func<ExpressionSource, IReadOnlyList<Expression>, ParseExpressionFunctionsResult>>
         {
-            { NewFunction.Name, ForFirstArgument(NewFunction.Create) },
-            { FillParametersFunction.Name, ForFirstArgument(FillParametersFunction.Create) },
+            { NewFunctionExpression.Name, ForFirstArgument(NewFunctionExpression.Create) },
+            { FillParametersFunctionExpression.Name, ForFirstArgument(FillParametersFunctionExpression.Create) },
             { ExtractResultsFunctionExpression.Name, ForFirstArgument(ExtractResultsFunctionExpression.Create) }
         };
 

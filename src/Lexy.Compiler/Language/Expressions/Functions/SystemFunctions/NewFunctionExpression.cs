@@ -6,7 +6,7 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Expressions.Functions.SystemFunctions;
 
-public class NewFunction : FunctionCallExpression, IHasNodeDependencies
+public class NewFunctionExpression : FunctionCallExpression, IHasNodeDependencies
 {
     public const string Name = "new";
 
@@ -18,7 +18,7 @@ public class NewFunction : FunctionCallExpression, IHasNodeDependencies
 
     public GeneratedType Type { get; private set; }
 
-    private NewFunction(Expression valueExpression, ExpressionSource source)
+    private NewFunctionExpression(Expression valueExpression, ExpressionSource source)
         : base(source)
     {
         ValueExpression = valueExpression ?? throw new ArgumentNullException(nameof(valueExpression));
@@ -32,7 +32,7 @@ public class NewFunction : FunctionCallExpression, IHasNodeDependencies
 
     public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new NewFunction(expression, source);
+        return new NewFunctionExpression(expression, source);
     }
 
     public override IEnumerable<INode> GetChildren()

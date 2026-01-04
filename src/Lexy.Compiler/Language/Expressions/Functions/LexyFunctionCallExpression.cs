@@ -69,7 +69,7 @@ public class LexyFunctionCallExpression : FunctionCallExpression, IHasNodeDepend
     {
         if (functionParametersType is GeneratedType complexParameterType)
         {
-            FillParametersFunction.GetMapping(Reference, context, complexParameterType, mappingParameters);
+            FillParametersFunctionExpression.GetMapping(Reference, context, complexParameterType, mappingParameters);
         }
 
         if (functionResultsType is GeneratedType complexResultsType)

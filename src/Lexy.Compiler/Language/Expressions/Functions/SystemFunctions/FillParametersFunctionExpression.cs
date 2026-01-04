@@ -8,7 +8,7 @@ using Lexy.Compiler.Parser.Tokens;
 
 namespace Lexy.Compiler.Language.Expressions.Functions.SystemFunctions;
 
-public class FillParametersFunction : FunctionCallExpression, IHasNodeDependencies
+public class FillParametersFunctionExpression : FunctionCallExpression, IHasNodeDependencies
 {
     public const string Name = "fill";
 
@@ -24,7 +24,7 @@ public class FillParametersFunction : FunctionCallExpression, IHasNodeDependenci
 
     public IEnumerable<Mapping> Mapping => mapping;
 
-    private FillParametersFunction(Expression valueExpression, ExpressionSource source)
+    private FillParametersFunctionExpression(Expression valueExpression, ExpressionSource source)
         : base(source)
     {
         ValueExpression = valueExpression ?? throw new ArgumentNullException(nameof(valueExpression));
@@ -41,7 +41,7 @@ public class FillParametersFunction : FunctionCallExpression, IHasNodeDependenci
 
     public static FunctionCallExpression Create(ExpressionSource source, Expression expression)
     {
-        return new FillParametersFunction(expression, source);
+        return new FillParametersFunctionExpression(expression, source);
     }
 
     public override IEnumerable<INode> GetChildren()

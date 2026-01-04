@@ -10,10 +10,7 @@ public class ComplexAssignmentDefinition : ParsableNode, IAssignmentDefinition
 
     public IdentifierPath Variable { get; }
 
-    public IReadOnlyList<IAssignmentDefinition> Assignments
-    {
-        get { return assignments; }
-    }
+    public IReadOnlyList<IAssignmentDefinition> Assignments => assignments;
 
     public ComplexAssignmentDefinition(IdentifierPath variable, SourceReference reference)
         : base(reference)
